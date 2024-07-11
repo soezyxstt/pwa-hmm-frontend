@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Item = ({
   title,
@@ -7,27 +8,19 @@ const Item = ({
   stars,
   index,
   itemId,
-  setItemId,
-  setOpen,
 }: {
   title: string;
   stars: number;
   price: number;
   index: number;
   itemId: number;
-  setOpen: (open: boolean) => void;
-  setItemId: (id: number) => void;
 }) => {
   const new_price = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const COLORS = ['bg-kuning', 'bg-hijau', 'bg-oren', 'bg-blue-500'];
 
   return (
-    <div
+    <Link href={`?id=${itemId}&size=M`}
       className='rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300 ease-in-out'
-      onClick={() => {
-        setItemId(index);
-        setOpen(true);
-      }}
     >
       <Image
         src={`/images/store.png`}
@@ -58,7 +51,7 @@ const Item = ({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

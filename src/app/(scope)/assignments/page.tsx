@@ -55,15 +55,15 @@ const AssingmentPage = () => {
   return (
     <>
       <Header title='Assignments' />
-      <Table className='text-xs md:text-sm text-center'>
+      <Table className='text-sm md:text-base text-center'>
         <TableHeader>
           <TableRow>
             <TableHead className='text-center'>Status</TableHead>
             <TableHead className='text-center'>Course</TableHead>
-            <TableHead className='text-center'>Class</TableHead>
             <TableHead className='text-center'>Name</TableHead>
             <TableHead className='text-center'>Deadline</TableHead>
             <TableHead className='text-center'>Submission</TableHead>
+            <TableHead className='text-center'>Class</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -76,10 +76,10 @@ const AssingmentPage = () => {
                 />
               </TableCell>
               <TableCell>{item.course}</TableCell>
-              <TableCell>{item.class}</TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.deadline}</TableCell>
               <TableCell>{item.submission}</TableCell>
+              <TableCell>{item.class}</TableCell>
             </TableRow>
           ))}
         </TableBody>

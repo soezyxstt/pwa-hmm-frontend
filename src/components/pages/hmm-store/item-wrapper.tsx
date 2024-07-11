@@ -1,18 +1,19 @@
-'use client';
-
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import Pagination from '@/components/pagination';
 import Item from './item';
-import { useState, type HTMLAttributes } from 'react';
+import { type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import Link from 'next/link';
 
-const Main = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
-  const [page, setPage] = useState(1);
-  const [itemId, setItemId] = useState(0);
-  const [open, setOpen] = useState(false);
-  const isMd = useMediaQuery('(min-width: 768px)');
+const Main = ({
+  className,
+  searchParams,
+  ...props
+}: {
+  searchParams: Record<string, string>;
+} & HTMLAttributes<HTMLDivElement>) => {
+  const id = searchParams['id'];
+  const size = searchParams['size'];
 
   return (
     <div
@@ -20,30 +21,25 @@ const Main = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
       {...props}
     >
       <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 flex-1 grid-rows-2'>
-        {[...Array(isMd ? 8 : 6).fill(1)].map((_, i) => (
+        {[...Array(12).fill(1)].map((_, i) => (
           <Item
             title='Goodie Bag'
             price={(60 + Math.round(Math.random() * 40)) * 1000}
             stars={3.5 + Math.round(Math.random() * 15) / 10}
             index={i + 1}
-            itemId={itemId}
-            setItemId={setItemId}
-            setOpen={setOpen}
+            itemId={i}
             key={i}
           />
         ))}
       </div>
-      <Pagination
-        page={page}
-        totalPage={6}
-        setPage={setPage}
-        className=''
-      />
-      <Dialog
-        open={open}
-        onOpenChange={setOpen}
-      >
+      <Dialog open={Number(id) <= 7}>
         <DialogContent className='p-0 max-w-[90vw] w-[440px] rounded-xl'>
+          <Link
+            href='?id=undefined&size=undefined'
+            className='absolute top-2 right-4 z-50 text-2xl text-stone-800'
+          >
+            &times;
+          </Link>
           <Image
             src={`/images/store.png`}
             alt='item'
@@ -73,12 +69,18 @@ const Main = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
               <div className=''>
                 <p className='text-abu-3 text-3xs'>Size</p>
                 <div className='flex gap-4 mt-2'>
-                  <button className='rounded text-2xs px-2 py-1 '>S</button>
-                  <button className='rounded text-2xs px-2 py-1 bg-yellow-400'>
-                    M
-                  </button>
-                  <button className='rounded text-2xs px-2 py-1 '>L</button>
-                  <button className='rounded text-2xs px-2 py-1 '>XL</button>
+                  {['S', 'M', 'L', 'XL'].map((s, i) => (
+                    <Link
+                      href={`?id=${id}&size=${s}`}
+                      key={i}
+                      className={cn(
+                        'rounded text-2xs px-2 py-1 hover:bg-yellow-200',
+                        size === s && 'bg-yellow-400 hover:bg-yellow-400'
+                      )}
+                    >
+                      {s}
+                    </Link>
+                  ))}
                 </div>
               </div>
               <button className='px-4 py-1 text-xs font-semibold bg-navy text-white rounded-full'>

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 export default function Berita() {
   const images = ['berita.png', 'logo.png', 'store.png'];
   const ref = useRef(<div />) as unknown as RefObject<HTMLDivElement>;
-  const [desc, setDesc] = useState('');
+  const [desc, setDesc] = useState('This is image 1');
   const [index, setIndex] = useState(0);
 
   function handleNext() {
@@ -21,7 +21,7 @@ export default function Berita() {
           left: ref.current.scrollLeft + ref.current.clientWidth,
           behavior: 'smooth',
         });
-        let i = Math.floor(ref.current.scrollLeft / ref.current.clientWidth) + 1;
+        const i = Math.floor((ref.current.scrollLeft + 25) / ref.current.clientWidth) + 1;
         setDesc(`This is image ${i + 1}`);
         setIndex(i);
       } else {
@@ -73,7 +73,7 @@ export default function Berita() {
           </div>
         ))}
       </div>
-      <div className='flex flex-col gap-4 justify-end absolute px-6 w-full h-full bg-gradient-to-t from-black/40 via-black/35 to-black/5 top-0 left-0 py-4 md:py-6 md:px-8'>
+      <div className='flex flex-col gap-4 justify-end absolute px-6 w-full h-full bg-gradient-to-t from-black/40 via-black/25 to-black/5 top-0 left-0 py-4 md:py-6 md:px-8'>
         <div className='text-white md:text-md font-semibold'>
           {desc}
         </div>

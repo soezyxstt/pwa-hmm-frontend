@@ -1,10 +1,11 @@
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import Link from 'next/link';
 
 const ProfileMenu = () => {
   return (
-    <div className='flex gap-3 items-center'>
+    <Link href="/profile" className='flex gap-3 items-center'>
       <button
         className='bg-white p-2 rounded-full text-lg'
         title='notifications'
@@ -30,7 +31,7 @@ const ProfileMenu = () => {
           <AvatarFallback className='bg-white'>HM</AvatarFallback>
         </Avatar>
       </div>
-    </div>
+    </Link>
   );
 };
 

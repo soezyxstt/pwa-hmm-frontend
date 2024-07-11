@@ -193,12 +193,12 @@ const SelectMonth = ({
           <CaretSortIcon className='h-4 w-4 shrink-0 opacity-50' />
         </button>
       </PopoverTrigger>
-      <PopoverContent className='w-[15vw] p-0'>
+      <PopoverContent className='w-40 p-0 border border-navy'>
         <Tabs
           defaultValue='m'
           className=''
         >
-          <TabsList className='bg-transparent w-full flex *:flex-1 *:border-none'>
+          <TabsList className='bg-transparent w-full flex *:flex-1 *:border-none border border-navy/50'>
             <TabsTrigger value='m'>Months</TabsTrigger>
             <TabsTrigger value='y'>Years</TabsTrigger>
           </TabsList>

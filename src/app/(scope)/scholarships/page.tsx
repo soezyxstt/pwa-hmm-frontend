@@ -1,8 +1,10 @@
+import Header from '@/components/header';
+
 const ScholarshipPage = () => {
   return (
-    <div>
-      <h1>Scholarships</h1>
-    </div>
+    <>
+      <Header title='Scholarships' />
+    </>
   );
 }
 

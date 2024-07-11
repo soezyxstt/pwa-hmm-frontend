@@ -34,7 +34,7 @@ const Item = ({
         alt='item'
         width={300}
         height={300}
-        style={{ borderRadius: '0' }}
+        className='object-cover aspect-[16/10]'
       />
       <div className='bg-white py-4 px-7 relative overflow-hidden space-y-2'>
         <div

@@ -1,9 +1,10 @@
+import Header from '@/components/header';
+
 const MyCareerPage = () => {
   return (
-    <div>
-      <h1>My Career</h1>
-      <p>My Career Page</p>
-    </div>
+    <>
+      <Header title='My Career' />
+    </>
   );
 }
 

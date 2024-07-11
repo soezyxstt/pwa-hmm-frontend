@@ -1,8 +1,10 @@
+import Header from '@/components/header';
+
 const MyHMMPage: React.FC = () => {
   return (
-    <div>
-      <h1>MyHMMPage</h1>
-    </div>
+    <>
+      <Header title='MyHMM' />
+    </>
   );
 }
 

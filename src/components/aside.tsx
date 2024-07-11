@@ -67,7 +67,7 @@ function CusLink({
   return (
     <Link
       className={cn(
-        'py-2.5 pl-4 rounded-l-full hover:bg-background hover:text-navy flex gap-4 items-center transition-all duration-150 ease-in-out',
+        'py-2.5 pl-4 rounded-l-full md:hover:bg-background hover:text-navy flex gap-4 items-center transition-all duration-150 ease-in-out',
         isActive ? 'bg-background text-navy' : '',
         className
       )}
@@ -97,7 +97,7 @@ function AsideDrawer({ loc }: SidebarProps) {
               <DrawerHeader>
                 <DrawerTitle className='text-abu-2'>Menu</DrawerTitle>
               </DrawerHeader>
-              <div className='flex flex-col gap-3'>
+              <div className='flex flex-col gap-3 pb-4'>
                 {sideBarTabs.map((tab, index) => (
                   <CusLink
                     key={index}

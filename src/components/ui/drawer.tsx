@@ -16,6 +16,8 @@ const Drawer = ({
 )
 Drawer.displayName = "Drawer"
 
+const DrawerHandle = DrawerPrimitive.Handle
+
 const DrawerTrigger = DrawerPrimitive.Trigger
 
 const DrawerPortal = DrawerPrimitive.Portal
@@ -115,4 +117,5 @@ export {
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
+  DrawerHandle,
 }

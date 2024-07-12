@@ -20,7 +20,7 @@ const ProfilePage = () => {
             />
           </div>
         </div>
-        <div className='flex gap-6 md:gap-8 flex-col md:px-16 px-8 md:py-8 py-8'>
+        <div className='flex gap-6 md:gap-8 flex-col md:px-16 px-8 md:py-8 py-8 shadow-md'>
           <div className=''>
             <h1 className='text-xl font-bold'>William Nathan Thomas</h1>
             <h3 className='text-sm'>13121000</h3>

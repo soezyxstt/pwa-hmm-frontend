@@ -13,7 +13,7 @@ const AssingmentPage = () => {
   const data = [
     {
       status: true,
-      course: 'MS2111 KINDIN',
+      course: 'MS2111 K01 KINDIN',
       class: 'K01',
       name: 'Tugas Besar',
       deadline: '2022-01-01',
@@ -21,7 +21,7 @@ const AssingmentPage = () => {
     },
     {
       status: false,
-      course: 'MS2111 KINDIN',
+      course: 'MS2111 K01 KINDIN',
       class: 'K01',
       name: 'Tugas Besar',
       deadline: '2022-01-01',
@@ -29,7 +29,7 @@ const AssingmentPage = () => {
     },
     {
       status: true,
-      course: 'MS2111 KINDIN',
+      course: 'MS2111 K01 KINDIN',
       class: 'K01',
       name: 'Tugas Besar',
       deadline: '2022-01-01',
@@ -37,7 +37,7 @@ const AssingmentPage = () => {
     },
     {
       status: false,
-      course: 'MS2111 KINDIN',
+      course: 'MS2111 K01 KINDIN',
       class: 'K01',
       name: 'Tugas Besar',
       deadline: '2022-01-01',
@@ -45,7 +45,7 @@ const AssingmentPage = () => {
     },
     {
       status: true,
-      course: 'MS2111 KINDIN',
+      course: 'MS2111 K01 KINDIN',
       class: 'K01',
       name: 'Tugas Besar',
       deadline: '2022-01-01',
@@ -63,13 +63,12 @@ const AssingmentPage = () => {
             <TableHead className='text-center'>Name</TableHead>
             <TableHead className='text-center'>Deadline</TableHead>
             <TableHead className='text-center'>Submission</TableHead>
-            <TableHead className='text-center'>Class</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item, index) => (
             <TableRow key={index}>
-              <TableCell>
+              <TableCell className='px-0'>
                 <Checkbox
                   id={item.name + item.course}
                   checked={item.status}
@@ -79,7 +78,6 @@ const AssingmentPage = () => {
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.deadline}</TableCell>
               <TableCell>{item.submission}</TableCell>
-              <TableCell>{item.class}</TableCell>
             </TableRow>
           ))}
         </TableBody>

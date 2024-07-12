@@ -40,8 +40,8 @@ function Sidebar({ className, loc, ...props }: SidebarProps) {
         {sideBarTabs.map((tab, index) => (
           <CusLink
             key={index}
-            href={index === 0 ? '/' : '/' + pathFormatter(tab)}
-            isActive={loc === pathFormatter(tab)}
+            href={'/' + pathFormatter(tab)}
+            isActive={loc.toLowerCase() === pathFormatter(tab)}
             icon={sideBarIcons[index]}
           >
             {tab}
@@ -67,14 +67,26 @@ function CusLink({
   return (
     <Link
       className={cn(
-        'py-2.5 pl-4 rounded-l-full md:hover:bg-background hover:text-navy flex gap-4 items-center transition-all duration-150 ease-in-out',
-        isActive ? 'bg-background text-navy' : '',
+        'relative py-2.5 pl-4 rounded-l-full flex gap-4 items-center transition-all duration-150 ease-in-out before:absolute before:bottom-0 before:left-4 before:h-0.5 before:rounded-full before:w-0 before:transition-all before:bg-background before:translate-y-full',
+        isActive
+          ? 'bg-background text-navy '
+          : 'md:hover:pl-6 md:hover:before:w-3/4',
         className
       )}
       href={href}
     >
       {icon}
       <h5 className='text-inherit'>{children}</h5>
+      {isActive && (
+        <>
+          <div className='hidden md:block aspect-square h-2 absolute right-0 top-0 -translate-y-full bg-background'>
+            <div className='absolute right-0 top-0 bg-navy rounded-br-full h-full w-full'></div>
+          </div>
+          <div className='hidden md:block aspect-square h-2 absolute right-0 bottom-0 translate-y-full bg-background'>
+            <div className='absolute right-0 top-0 bg-navy rounded-tr-full h-full w-full'></div>
+          </div>
+        </>
+      )}
     </Link>
   );
 }
@@ -101,7 +113,7 @@ function AsideDrawer({ loc }: SidebarProps) {
                 {sideBarTabs.map((tab, index) => (
                   <CusLink
                     key={index}
-                    href={index === 0 ? '/' : '/' + pathFormatter(tab)}
+                    href={'/' + pathFormatter(tab)}
                     isActive={false}
                     icon={sideBarIcons[index]}
                   >

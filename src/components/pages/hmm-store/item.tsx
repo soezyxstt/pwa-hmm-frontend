@@ -20,7 +20,7 @@ const Item = ({
 
   return (
     <Link href={`?id=${itemId}&size=M`}
-      className='rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300 ease-in-out'
+      className='rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform ease-in-out'
     >
       <Image
         src={`/images/store.png`}

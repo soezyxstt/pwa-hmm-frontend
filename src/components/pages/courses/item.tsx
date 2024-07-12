@@ -28,7 +28,7 @@ export default function CoursesItem({
     <Link
       href={`/courses/${id}`}
       className={cn(
-        'rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform duration-300 ease-in-out',
+        'rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform ease-in-out',
         className
       )}
     >

@@ -17,7 +17,7 @@ const Main = ({
 
   return (
     <div
-      className={cn('flex-1 h-full flex flex-col gap-5', className)}
+      className={cn('flex-1 h-full flex flex-col gap-5 mt-5', className)}
       {...props}
     >
       <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 flex-1 grid-rows-2'>
@@ -32,10 +32,10 @@ const Main = ({
           />
         ))}
       </div>
-      <Dialog open={Number(id) <= 7}>
+      <Dialog open={Number(id) >= 0}>
         <DialogContent className='p-0 max-w-[90vw] w-[440px] rounded-xl'>
           <Link
-            href='?id=undefined&size=undefined'
+            href='?'
             className='absolute top-2 right-4 z-50 text-2xl text-stone-800'
           >
             &times;

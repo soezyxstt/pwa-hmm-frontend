@@ -10,6 +10,8 @@ export default function Berita() {
   const ref = useRef(<div />) as unknown as RefObject<HTMLDivElement>;
   const [desc, setDesc] = useState('This is image 1');
   const [index, setIndex] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [pos, setPos] = useState({ startX: 0, scrollLeft: 0 });
 
   function handleNext() {
     if (ref.current) {
@@ -17,11 +19,13 @@ export default function Berita() {
         ref.current.scrollLeft + ref.current.clientWidth <
         ref.current.scrollWidth - 10
       ) {
+        const i = Math.floor(
+          (ref.current.scrollLeft + 25) / ref.current.clientWidth
+        ) + 1;
         ref.current.scrollTo({
-          left: ref.current.scrollLeft + ref.current.clientWidth,
+          left: i * ref.current.clientWidth,
           behavior: 'smooth',
         });
-        const i = Math.floor((ref.current.scrollLeft + 25) / ref.current.clientWidth) + 1;
         setDesc(`This is image ${i + 1}`);
         setIndex(i);
       } else {
@@ -31,6 +35,29 @@ export default function Berita() {
         });
         setDesc(`This is image 1`);
         setIndex(0);
+      }
+    }
+  }
+
+  function handlePrev() {
+    if (ref.current) {
+      if (ref.current.scrollLeft > 10) {
+        const i = Math.floor(
+          (ref.current.scrollLeft + 25) / ref.current.clientWidth
+        ) - 1;
+        ref.current.scrollTo({
+          left: i * ref.current.clientWidth,
+          behavior: 'smooth',
+        });
+        setDesc(`This is image ${i + 1}`);
+        setIndex(i);
+      } else {
+        ref.current.scrollTo({
+          left: ref.current.scrollWidth - ref.current.clientWidth,
+          behavior: 'smooth',
+        });
+        setDesc(`This is image ${images.length}`);
+        setIndex(images.length - 1);
       }
     }
   }
@@ -53,7 +80,56 @@ export default function Berita() {
   }, 4000);
 
   return (
-    <div className='w-full md:w-auto md:h-[50vh] aspect-[16/14] relative overflow-hidden rounded-xl'>
+    <div
+      className='w-full md:w-auto md:h-[50vh] aspect-[16/14] relative overflow-hidden rounded-xl hover:cursor-grab shadow-md'
+      onMouseDown={(e) => {
+        e.currentTarget.style.cursor = 'grabbing';
+        setDragging(true);
+        setPos({
+          startX: e.pageX - ref.current!.offsetLeft,
+          scrollLeft: ref.current!.scrollLeft,
+        });
+      }}
+      onMouseUp={(e) => {
+        e.currentTarget.style.cursor = 'grab';
+        setDragging(false);
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.cursor = 'grab';
+        setDragging(false);
+      }}
+      onMouseMove={(e) => {
+        if (dragging) {
+          e.preventDefault();
+          const x = e.pageX - ref.current?.offsetLeft!;
+          const walk = x - pos.startX;
+          if (walk > ref.current!.clientWidth / 2) {
+            handlePrev();
+            setPos({ ...pos, startX: x });
+          } else if (walk < -ref.current!.clientWidth / 2) {
+            handleNext();
+            setPos({ ...pos, startX: x });
+          }
+        }
+      }}
+      onTouchStart={(e) => {
+        setPos({
+          startX: e.touches[0].pageX - ref.current!.offsetLeft,
+          scrollLeft: ref.current!.scrollLeft,
+        });
+      }}
+      onTouchMove={(e) => {
+        const x = e.touches[0].pageX - ref.current?.offsetLeft!;
+        const walk = x - pos.startX;
+        if (walk > ref.current!.clientWidth / 2) {
+          handlePrev();
+          setPos({ ...pos, startX: x });
+        } else if (walk < -ref.current!.clientWidth / 2) {
+          handleNext();
+          setPos({ ...pos, startX: x });
+        }
+      }}
+    >
       <div
         ref={ref}
         className='overflow-hidden flex w-full h-full aspect-[16/14] snap-center scroll-smooth'
@@ -66,6 +142,7 @@ export default function Berita() {
             <Image
               src={`/images/${image}`}
               alt='Berita'
+              draggable={false}
               width={1000}
               height={1000}
               className='rounded-xl max-h-[50vh] md:h-[50vh] md:max-w-[calc(16/14*50vh)] max-w-[calc(100vw-2rem)] aspect-[16/14] object-cover'
@@ -73,11 +150,9 @@ export default function Berita() {
           </div>
         ))}
       </div>
-      <div className='flex flex-col gap-4 justify-end absolute px-6 w-full h-full bg-gradient-to-t from-black/40 via-black/25 to-black/5 top-0 left-0 py-4 md:py-6 md:px-8'>
-        <div className='text-white md:text-md font-semibold'>
-          {desc}
-        </div>
-        <div className='flex gap-4 items-center justify-center'>
+      <div className='flex flex-col gap-4 justify-end absolute px-6 w-full h-full bg-gradient-to-t from-black/40 via-black/25 to-black/5 top-0 left-0 py-4 md:py-6 md:px-8 pointer-events-none'>
+        <div className='text-white md:text-md font-semibold'>{desc}</div>
+        <div className='flex gap-4 items-center justify-center pointer-events-auto'>
           {images.map((_, i) => (
             <Dot
               key={i}

@@ -13,10 +13,10 @@ const items: { id: number; title: string }[] = [
 
 const CoursesPage = () => {
   return (
-    <div className='w-full h-full '>
-      <Header title='Courses' />
+    <div className='w-full h-full'>
+      <Header title='Courses' className='md:mb-5' />
       <Search />
-      <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 flex-1 grid-rows-2 mt-6'>
+      <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 flex-1 grid-rows-2 mt-5'>
         {Array(6)
           .fill(1)
           .map((_, i) => (

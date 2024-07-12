@@ -1,5 +1,6 @@
 import Button from '@/components/button/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import Link from 'next/link';
 
 export const beforeColors = [
   'before:bg-oren',
@@ -55,7 +56,9 @@ export const Assignments = () => {
           />
         </div>
       </ScrollArea>
-      <Button className='mt-4 text-xs py-1.5 mx-6'>See All Assignments</Button>
+      <Link href='/assignments' className='w-full pt-4 px-6'>
+        <Button className=' text-xs py-1.5 w-full'>See All Assignments</Button>
+      </Link>
     </div>
   );
 };

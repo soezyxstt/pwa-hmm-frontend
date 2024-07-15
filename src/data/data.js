@@ -19,13 +19,13 @@ export const sideBarTabs = [
 ]
 
 export const sideBarIcons = [
-  <FiHome size={20} key={1}/>,
-  <MdAddTask size={20} key={2} />,
-  <MdSchool size={20} key={3} />,
-  <LiaMoneyCheckAltSolid size={20} key={4} />,
-  <RiCommunityLine size={20} key={5} />,
-  <SiFuturelearn size={20} key={6} />,
-  <MdOutlineAddShoppingCart size={20} key={7} />,
-  <LuUser2 size={20} key={8} />,
-  <CiLogout size={20} key={9} />
+  <FiHome size={16} key={1}/>,
+  <MdAddTask size={16} key={2} />,
+  <MdSchool size={16} key={3} />,
+  <LiaMoneyCheckAltSolid size={16} key={4} />,
+  <RiCommunityLine size={16} key={5} />,
+  <SiFuturelearn size={16} key={6} />,
+  <MdOutlineAddShoppingCart size={16} key={7} />,
+  <LuUser2 size={16} key={8} />,
+  <CiLogout size={16} key={9} />
 ]

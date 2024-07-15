@@ -9,15 +9,6 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: 'HMM ITB',
-    template: '%s | HMM ITB',
-    absolute: 'HMM ITB',
-  },
-  description: 'PWA for HMM ITB',
-};
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -31,3 +22,11 @@ export default async function RootLayout({
     </html>
   );
 }
+
+export const metadata: Metadata = {
+  title: {
+    default: 'HMM ITB',
+    absolute: 'HMM ITB',
+  },
+  description: 'Progressive Web Apps for HMM ITB',
+};

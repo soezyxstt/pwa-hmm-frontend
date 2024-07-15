@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/button/button';
+import Button from '@/components/ui/button/button';
 import {
   Form,
   FormControl,
@@ -46,14 +46,14 @@ export default function SignIn() {
       {/* Add images for background */}
       <Image
         src='/hmm-vstock/bp-black-transparent.png'
-        className=' opacity-20 absolute left-0 bottom-0 w-2/5'
+        className=' opacity-20 absolute left-0 bottom-0 w-2/5 md:w-1/6'
         alt='bp-black-transparent'
         width={2000}
         height={2000}
       />
       <Image
         src='/hmm-vstock/bp-black-transparent.png'
-        className=' opacity-20 absolute right-0 top-0 w-1/3'
+        className=' opacity-20 absolute right-0 top-0 w-1/3 md:w-1/6'
         alt='bp-black-transparent'
         width={2000}
         height={2000}
@@ -80,7 +80,9 @@ export default function SignIn() {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription className='text-xs'>131*****@mahasiswa.itb.ac.id</FormDescription>
+                <FormDescription className='text-xs'>
+                  131*****@mahasiswa.itb.ac.id
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -121,14 +123,11 @@ export default function SignIn() {
           <Button
             type='submit'
             className=' rounded-md w-full shadow-md'
-            disabled={
-              form.formState.isSubmitting ||
-              !form.formState.isDirty
-            }
+            disabled={form.formState.isSubmitting || !form.formState.isDirty}
           >
             Sign In
           </Button>
-          
+
           <span className='flex gap-1'>
             <h6>{"Don't have account?"}</h6>
             <Link href='/sign-up'>

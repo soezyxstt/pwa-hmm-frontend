@@ -12,13 +12,12 @@ import {
   DrawerTrigger,
 } from '../ui/drawer';
 import { EllipsisVertical } from 'lucide-react';
-import { Button } from '../ui/button';
 
 type SidebarProps = {
   loc: string;
 } & HTMLAttributes<HTMLDivElement>;
 
-function Sidebar({ className, loc, ...props }: SidebarProps) {
+function Sidebar({ className, loc, children, ...props }: SidebarProps) {
   return (
     <aside
       className={cn(
@@ -91,7 +90,7 @@ function CusLink({
   );
 }
 
-function AsideDrawer({ loc }: SidebarProps) {
+function AsideDrawer({ loc, children }: SidebarProps) {
   return (
     <aside className='md:hidden w-full flex justify-between items-center py-5 px-4'>
       <div className='flex gap-4 items-center'>
@@ -121,18 +120,9 @@ function AsideDrawer({ loc }: SidebarProps) {
         </Drawer>
         <h1 className='text-xl font-bold capitalize'>{loc}</h1>
       </div>
-      <ProfileMenu />
+      {children}
     </aside>
   );
 }
 
-function Aside({ loc }: SidebarProps) {
-  return (
-    <>
-      <Sidebar loc={loc} />
-      <AsideDrawer loc={loc} />
-    </>
-  );
-}
-
-export { Sidebar, AsideDrawer as Drawer, Aside };
+export { Sidebar, AsideDrawer as Drawer };

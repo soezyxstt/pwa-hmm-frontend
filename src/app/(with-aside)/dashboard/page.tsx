@@ -5,8 +5,11 @@ import Calendar, {
 import UpcomingSchedule from '@/components/client/pages/dashboard/upcomingSched';
 import Header from '@/components/client/header';
 import Berita from '@/components/client/pages/dashboard/berita';
+import { getUser } from '@/lib/dal';
 
-export default function Home() {
+export default async function Home() {
+  const user = await getUser()
+  console.log(user);
   const events: EventMap[] = [
     {
       '2024-03-08': [
@@ -41,5 +44,5 @@ export default function Home() {
 }
 
 export const metadata = {
-  title: 'Dashborad | HMM ITB',
+  title: 'Dashborad',
 };

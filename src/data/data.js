@@ -15,7 +15,7 @@ export const sideBarTabs = [
   "MyCareer",
   "HMM Store",
   "Profile",
-  "Log Out"
+  "Sign Out"
 ]
 
 export const sideBarIcons = [

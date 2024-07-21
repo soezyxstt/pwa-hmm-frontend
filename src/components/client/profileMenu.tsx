@@ -1,27 +1,28 @@
+import 'server-only';
+
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { getUser } from '@/lib/dal';
 
-const ProfileMenu = () => {
+const ProfileMenu = async () => {
+  const { data: {name, avatar, role} } = await getUser();
+
   return (
     <div className='flex gap-3 items-center'>
       <Tooltip>
-        <TooltipTrigger>
-          <button className='bg-white p-2 rounded-full text-lg'>
-            <IoMdNotificationsOutline />
-          </button>
+        <TooltipTrigger className='bg-white p-2 rounded-full text-lg'>
+          <IoMdNotificationsOutline />
         </TooltipTrigger>
         <TooltipContent className='hidden md:block'>
           <p>Notifications</p>
         </TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger>
-          <button className='bg-white p-2 rounded-full text-lg'>
+        <TooltipTrigger className='bg-white p-2 rounded-full text-lg'>
             <IoSettingsOutline />
-          </button>
         </TooltipTrigger>
         <TooltipContent className='hidden md:block'>
           <p>Settings</p>
@@ -32,15 +33,15 @@ const ProfileMenu = () => {
           <Link href='/profile'>
             <div className='flex items-center gap-2 ml-2'>
               <div className='*:text-[0.625rem]'>
-                <p className='font-semibold'>Nama</p>
-                <p className='text-abu-3'>Role</p>
+                <p className='font-semibold'>{name}</p>
+                <p className='text-abu-3'>{role}</p>
               </div>
               <Avatar>
                 <AvatarImage
-                  src='/images/logo.png'
+                  src={avatar}
                   alt='avatar'
                 />
-                <AvatarFallback className='bg-white'>HM</AvatarFallback>
+                <AvatarFallback className='bg-white'>{name.split(' ').map((t: string) => t[0])}</AvatarFallback>
               </Avatar>
             </div>
           </Link>

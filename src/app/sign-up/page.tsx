@@ -1,43 +1,64 @@
+'use client';
+
+import { signUp } from '@/actions/user-action';
 import Button from '@/components/ui/button/button';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type BaseSyntheticEvent } from 'react';
+import { type BaseSyntheticEvent, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { z } from 'zod';
+import { useAction } from 'next-safe-action/hooks';
+import { toast } from 'sonner';
+import { signUpSchema } from '@/lib/schema';
+import { useRouter } from 'next/navigation';
 
-const formSchema = z
-  .object({
-    fullname: z
-      .string()
-      .min(3, { message: 'Fullname must be at least 3 characters' }),
-    email: z
-      .string()
-      .email()
-      .regex(/[0-9]{8}@mahasiswa.itb.ac.id$/, {
-        message: 'Email must be ITB student email',
-      }),
-    password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters' }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+export default function SignUp() {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { executeAsync, isExecuting } = useAction(signUp, {
+    onSuccess: (data) => {
+      toast.success(data.data?.message || 'Sign in success');
+      router.push('/sign-in');
+    },
+    onError: (err) => {
+      toast.error(err.error.serverError || 'Sign in failed');
+    },
+  });
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
-export default function SignUp({
-  searchParams,
-}: {
-  searchParams: Record<string, string>;
-}) {
-  const showPassword = searchParams['show'] === 'true';
-  const showConfirmPassword = searchParams['showc'] === 'true';
+  const onSubmit = async (
+    data: z.infer<typeof signUpSchema>,
+    e: BaseSyntheticEvent | undefined
+  ) => {
+    e?.preventDefault();
+    await executeAsync(data);
+    form.reset();
+  };
 
   return (
     <div className='relative w-full min-h-dvh flex items-center justify-center'>
+      {/* Add images for background */}
       <Image
         src='/hmm-vstock/bp-black-transparent.png'
         className=' opacity-20 absolute left-0 bottom-0 w-2/5 md:w-1/6'
@@ -52,68 +73,137 @@ export default function SignUp({
         width={2000}
         height={2000}
       />
-      <form className='flex flex-col items-center max-w-64 gap-3'>
-        <h1 className=''>Sign Up</h1>
-        <h4 className='text-center font-semibold'>
-          Enter your details below to create an account
-        </h4>
-        <Label className='self-start text-navy font-semibold'>Fullname</Label>
-        <Input
-          className=''
-          placeholder=''
-        />
-        <Label className='self-start text-navy font-semibold'>Email</Label>
-        <Input
-          className=''
-          type='email'
-        />
-        <Label className='self-start text-navy font-semibold'>Password</Label>
-        <div className='relative flex items-center'>
-          <Input
-            className=''
-            type={showPassword ? 'text' : 'password'}
-          />
-          {showPassword ? (
-            <Link href='?show=false'>
-              <FiEye className='absolute right-3 cursor-pointer text-navy' />
-            </Link>
-          ) : (
-            <Link href='?show=true'>
-              <FiEyeOff className='absolute right-3 cursor-pointer text-navy' />
-            </Link>
-          )}
-        </div>
-        <Label className='self-start text-navy font-semibold'>
-          Confirm Password
-        </Label>
-        <div className='relative flex items-center'>
-          <Input
-            className=''
-            type={showConfirmPassword ? 'text' : 'password'}
-          />
-          {showConfirmPassword ? (
-            <Link href='?showc=false'>
-              <FiEye className='absolute right-3 cursor-pointer text-navy' />
-            </Link>
-          ) : (
-            <Link href='?showc=true'>
-              <FiEyeOff className='absolute right-3 cursor-pointer text-navy' />
-            </Link>
-          )}
-        </div>
-        <Button
-          type='submit'
-          className=' rounded-md w-full shadow-md'
+      <Form {...form}>
+        <form
+          onSubmit={(e) => form.handleSubmit(onSubmit)(e)}
+          className='flex flex-col items-center max-w-64 gap-4'
         >
-          Sign Up
-        </Button>
-        <span className='flex gap-1'>
-          <h6>{'Already have an account?'}</h6>
-          <Link href='/sign-in'>
-            <h6 className='font-bold'>Sign in</h6>
-          </Link>
-        </span>
-      </form>
+          <h1 className=''>Sign In</h1>
+          <h4 className='text-center font-semibold'>
+            Enter your email below to login to your account
+          </h4>
+          <FormField
+            control={form.control}
+            name='name'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='self-start text-navy font-semibold'>
+                  Full Name
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className=''
+                    type='text'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='email'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='self-start text-navy font-semibold'>
+                  Email
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className=''
+                    type='email'
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className='text-xs'>
+                  131*****@mahasiswa.itb.ac.id
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='password'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='self-start text-navy font-semibold'>
+                  Password
+                </FormLabel>
+                <FormControl>
+                  <div className='relative items-center flex'>
+                    <Input
+                      className=''
+                      type={showPassword ? 'text' : 'password'}
+                      {...field}
+                    />
+                    {showPassword ? (
+                      <FiEye
+                        className='absolute right-3 cursor-pointer text-navy'
+                        onClick={() => setShowPassword(false)}
+                      />
+                    ) : (
+                      <FiEyeOff
+                        className='absolute right-3 cursor-pointer text-navy'
+                        onClick={() => setShowPassword(true)}
+                      />
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='confirmPassword'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormLabel className='self-start text-navy font-semibold'>
+                  Confirm Password
+                </FormLabel>
+                <FormControl>
+                  <div className='relative items-center flex'>
+                    <Input
+                      className=''
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      {...field}
+                    />
+                    {showConfirmPassword ? (
+                      <FiEye
+                        className='absolute right-3 cursor-pointer text-navy'
+                        onClick={() => setShowConfirmPassword(false)}
+                      />
+                    ) : (
+                      <FiEyeOff
+                        className='absolute right-3 cursor-pointer text-navy'
+                        onClick={() => setShowConfirmPassword(true)}
+                      />
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type='submit'
+            className=' rounded-md w-full shadow-md'
+            disabled={
+              isExecuting || !form.formState.isDirty || !form.formState.isValid
+            }
+          >
+            {isExecuting ? 'Signing in...' : 'Sign In'}
+          </Button>
+          <span className='flex gap-1'>
+            <h6>{"Don't have account?"}</h6>
+            <Link href='/sign-up'>
+              <h6 className='font-bold'>Sign up</h6>
+            </Link>
+          </span>
+        </form>
+      </Form>
     </div>
   );
 }

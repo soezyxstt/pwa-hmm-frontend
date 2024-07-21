@@ -3,9 +3,20 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   // Add a new header x-current-path which passes the path to downstream components
-  const headers = new Headers(request.headers);
-  headers.set('x-current-path', request.nextUrl.pathname);
-  return NextResponse.next({ headers });
+  const protectedPaths = ['dashboard', 'profile', 'assignments', 'courses', 'hmm-store', 'myhmm', 'mycareer', 'scholarships']
+  const session = request.cookies.get('session')
+
+  if (protectedPaths.includes(request.nextUrl.pathname.split('/')[1]) && !session) {
+    return NextResponse.redirect(new URL('/sign-in', request.url));
+  }
+
+  if (request.nextUrl.pathname === '/sign-out' && !session) {
+    return NextResponse.redirect(new URL('/sign-in', request.url));
+  }
+
+  if (request.nextUrl.pathname === '/sign-in' && session) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 }
 
 export const config = {

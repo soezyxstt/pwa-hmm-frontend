@@ -1,17 +1,17 @@
 'use client';
 
-import { extractFirstSegment } from '@/lib/utils';
-import { Aside } from '@/components/client/aside';
+import { Drawer, Sidebar } from '@/components/client/aside';
 import { usePathname } from 'next/navigation';
-export default function Navbar() {
+export default function Navbar({children}: {children: React.ReactNode}) {
   const pathName = usePathname();
-  const firstPath = extractFirstSegment(pathName as string);
+  const firstPath = pathName.split('/')[1];
 
   return (
-    <Aside
-      loc={
-        firstPath.includes('hmm') ? firstPath.replace('hmm', 'HMM') : firstPath
-      }
-    />
+    <>
+      <Drawer loc={firstPath}>
+        {children}
+      </Drawer>
+      <Sidebar loc={firstPath} />
+    </>
   );
 }

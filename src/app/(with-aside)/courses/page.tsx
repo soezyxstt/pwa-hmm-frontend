@@ -1,6 +1,7 @@
 import Search from '@/components/client/search';
 import Header from '@/components/client/header';
 import CoursesItem from '@/components/client/pages/courses/item';
+import { courses as courses_action} from '@/actions/courses-action';
 
 const items: { id: number; title: string }[] = [
   { id: 0, title: 'Analisis Numerik' },
@@ -11,7 +12,9 @@ const items: { id: number; title: string }[] = [
   { id: 5, title: 'Elemen Mesin Dasar' },
 ];
 
-const CoursesPage = () => {
+const CoursesPage = async () => {
+  const courses = await courses_action();
+  // console.log(courses);
   return (
     <div className='w-full h-full'>
       <Header
@@ -20,18 +23,17 @@ const CoursesPage = () => {
       />
       <Search />
       <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 flex-1 grid-rows-2 mt-5'>
-        {Array(6)
-          .fill(1)
-          .map((_, i) => (
+        {courses
+          .map((course: {title: string, image: string, material: string, totalVideos: number, totalLessons: number}, i: number) => (
             <CoursesItem
               href=''
               key={i}
               id='13212312'
-              title='Analisis Numerik'
-              image='/images/berita.png'
+              title={course.title}
+              image='/images/logo.png'
               subject='MS2111'
-              numberOfMaterials={10}
-              numberOfVideos={5}
+              numberOfMaterials={course.totalLessons}
+              numberOfVideos={course.totalVideos}
             />
           ))}
       </div>

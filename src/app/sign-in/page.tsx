@@ -1,5 +1,6 @@
 'use client';
 
+import { signIn } from '@/actions/user-action';
 import Button from '@/components/ui/button/button';
 import {
   Form,
@@ -14,32 +15,43 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { type BaseSyntheticEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { z } from 'zod';
-
-const formSchema = z.object({
-  email: z
-    .string()
-    .email()
-    .regex(/[0-9]{8}@mahasiswa.itb.ac.id$/, {
-      message: 'Email must be ITB student email',
-    }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters' }),
-});
+import { useAction } from 'next-safe-action/hooks';
+import { toast } from 'sonner';
+import { signInSchema } from '@/lib/schema';
+import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { executeAsync, isExecuting } = useAction(signIn, {
+    onSuccess: (data) => {
+      toast.success('Sign in success');
+      router.push('/dashboard')
+    },
+    onError: (err) => {
+      toast.error(err.error.serverError || 'Sign in failed');
+    },
+  });
+  const form = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
+
+  const onSubmit = async (
+    data: z.infer<typeof signInSchema>,
+    e: BaseSyntheticEvent | undefined
+  ) => {
+    e?.preventDefault();
+    await executeAsync(data);
+    form.reset();
+  };
 
   return (
     <div className='relative w-full min-h-dvh flex items-center justify-center'>
@@ -58,9 +70,11 @@ export default function SignIn() {
         width={2000}
         height={2000}
       />
-
       <Form {...form}>
-        <form className='flex flex-col items-center max-w-64 gap-4'>
+        <form
+          onSubmit={(e) => form.handleSubmit(onSubmit)(e)}
+          className='flex flex-col items-center max-w-64 gap-4'
+        >
           <h1 className=''>Sign In</h1>
           <h4 className='text-center font-semibold'>
             Enter your email below to login to your account
@@ -119,15 +133,13 @@ export default function SignIn() {
               </FormItem>
             )}
           />
-
           <Button
             type='submit'
             className=' rounded-md w-full shadow-md'
-            disabled={form.formState.isSubmitting || !form.formState.isDirty}
+            disabled={isExecuting || !form.formState.isDirty || !form.formState.isValid}
           >
-            Sign In
+            {isExecuting ? 'Signing in...' : 'Sign In'}
           </Button>
-
           <span className='flex gap-1'>
             <h6>{"Don't have account?"}</h6>
             <Link href='/sign-up'>

@@ -1,17 +1,13 @@
-'use client';
-
 import { signOut } from '@/actions/user-action';
-import { useAction } from 'next-safe-action/hooks';
 
-export default function SignOut() {
-  const { execute } = useAction(signOut, {
-    onSuccess: (data) => {
+export const dynamic = 'force-dynamic';
 
-    },
-    onError: () => {
-      throw new Error('Failed to sign out');
-    }
-  });
-  execute({});
+export default async function SignOut() {
+  await signOut({})
+  return (
+    <div className='min-h-dvh w-full justify-center items-center flex bg-background text-navy'>
+      Signing you out...
+    </div>
+  );
 }
   

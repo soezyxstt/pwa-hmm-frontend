@@ -1,5 +1,4 @@
 import Icon from '@/components/ui/button/icon';
-import Image from 'next/image';
 import { IoLocationOutline, IoMailOutline } from 'react-icons/io5';
 import { BsTelephone } from 'react-icons/bs';
 import Header from '@/components/client/header';

@@ -12,6 +12,8 @@ const items: { id: number; title: string }[] = [
   { id: 5, title: 'Elemen Mesin Dasar' },
 ];
 
+export const dynamic = 'force-dynamic';
+
 const CoursesPage = async () => {
   const courses = await courses_action();
   // console.log(courses);

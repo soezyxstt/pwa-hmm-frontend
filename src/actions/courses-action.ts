@@ -1,7 +1,6 @@
 'use server';
 
 import { env } from '@/env';
-import { actionClient } from '@/lib/action-client';
 import { verifySession } from '@/lib/session';
 
 export async function courses() {

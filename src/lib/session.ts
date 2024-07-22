@@ -3,6 +3,7 @@ import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { env } from '@/env';
 import { cache } from 'react';
+import { NextResponse, type NextRequest } from 'next/server';
 
 const key = new TextEncoder().encode(env.AUTH_SECRET);
 
@@ -28,11 +29,11 @@ export async function decrypt(session: string | undefined = '') {
 
 export async function createSession(id: string, access_token: string, refresh_token: string) {
   const expires = new Date(Date.now() + env.SESSION_MAX_AGE);
-  const session = await encrypt({ userId: id, access_token, refresh_token, expires: expires.toISOString() });
+  const session = await encrypt({ userId: id, access_token, refresh_token, expires: expires });
 
   cookies().set('session', session, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: env.NODE_ENV === 'production',
     expires: expires,
     sameSite: 'lax',
     path: '/',
@@ -55,24 +56,31 @@ export const verifySession = cache(async () => {
   return {isAuth: true, userId: session.userId, access_token: session.access_token, refresh_token: session.refresh_token};
 })
 
-export async function updateSession() {
+export async function updateSession(request: NextRequest) {
   const session = cookies().get('session')?.value;
   const payload = await decrypt(session);
 
   if (!session || !payload) {
-    return null;
+    return;
   }
 
   const expires = new Date(Date.now() + env.SESSION_MAX_AGE);
-  cookies().set('session', session, {
+  
+  const res = NextResponse.next();
+  res.cookies.set({
+    name: 'session',
+    value: await encrypt({ ...payload, expires: expires }),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: env.NODE_ENV === 'production',
     expires: expires,
     sameSite: 'lax',
-    path: '/',
-  });
+  })
+
+  return res;
 }
 
-export function deleteSession() {
-  cookies().delete('session');
+export async function deleteSession() {
+  cookies().set('session', '', {
+    expires: new Date(0),
+  });
 }

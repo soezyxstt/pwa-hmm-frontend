@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Add a new header x-current-path which passes the path to downstream components
   const protectedPaths = ['dashboard', 'profile', 'assignments', 'courses', 'hmm-store', 'myhmm', 'mycareer', 'scholarships']
   const session = request.cookies.get('session')

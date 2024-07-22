@@ -30,11 +30,11 @@ export default function SignUp() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { executeAsync, isExecuting } = useAction(signUp, {
     onSuccess: (data) => {
-      toast.success(data.data?.message || 'Sign in success');
+      toast.success(data.data?.message || 'Sign up success');
       router.push('/sign-in');
     },
     onError: (err) => {
-      toast.error(err.error.serverError || 'Sign in failed');
+      toast.error(err.error.serverError || 'Sign up failed');
     },
   });
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -78,9 +78,9 @@ export default function SignUp() {
           onSubmit={(e) => form.handleSubmit(onSubmit)(e)}
           className='flex flex-col items-center max-w-64 gap-4'
         >
-          <h1 className=''>Sign In</h1>
+          <h1 className=''>Sign Up</h1>
           <h4 className='text-center font-semibold'>
-            Enter your email below to login to your account
+            Enter your details below to sign up a new account
           </h4>
           <FormField
             control={form.control}
@@ -194,12 +194,12 @@ export default function SignUp() {
               isExecuting || !form.formState.isDirty || !form.formState.isValid
             }
           >
-            {isExecuting ? 'Signing in...' : 'Sign In'}
+            {isExecuting ? 'Signing up...' : 'Sign Up'}
           </Button>
           <span className='flex gap-1'>
-            <h6>{"Don't have account?"}</h6>
-            <Link href='/sign-up'>
-              <h6 className='font-bold'>Sign up</h6>
+            <h6>{"Already have account?"}</h6>
+            <Link href='/sign-in'>
+              <h6 className='font-bold'>Sign in</h6>
             </Link>
           </span>
         </form>

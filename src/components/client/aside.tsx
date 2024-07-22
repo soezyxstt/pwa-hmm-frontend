@@ -3,7 +3,6 @@ import Link, { type LinkProps } from 'next/link';
 import { type ReactNode, type HTMLAttributes } from 'react';
 import { sideBarTabs, sideBarIcons } from '../../data/data';
 import Image from 'next/image';
-import ProfileMenu from './profileMenu';
 import {
   Drawer,
   DrawerContent,
@@ -11,7 +10,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '../ui/drawer';
-import { EllipsisVertical } from 'lucide-react';
+import BurgerX from './burger-x';
 
 type SidebarProps = {
   loc: string;
@@ -93,10 +92,10 @@ function CusLink({
 function AsideDrawer({ loc, children }: SidebarProps) {
   return (
     <aside className='md:hidden w-full flex justify-between items-center py-5 px-4'>
-      <div className='flex gap-4 items-center'>
+      <div className='flex gap-4 items-center min-w-[50%]'>
         <Drawer>
-          <DrawerTrigger asChild>
-            <EllipsisVertical size={24} />
+          <DrawerTrigger className='group/drawer'>
+            <BurgerX />
           </DrawerTrigger>
           <DrawerContent className='bg-navy'>
             <div className=' text-abu-2 text-sm font-medium bg-navy px-4'>

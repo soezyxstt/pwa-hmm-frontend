@@ -121,10 +121,10 @@ export default function Berita() {
       onTouchMove={(e) => {
         const x = e.touches[0].pageX - ref.current?.offsetLeft!;
         const walk = x - pos.startX;
-        if (walk > ref.current!.clientWidth / 2) {
+        if (walk > ref.current!.clientWidth / 4) {
           handlePrev();
           setPos({ ...pos, startX: x });
-        } else if (walk < -ref.current!.clientWidth / 2) {
+        } else if (walk < -ref.current!.clientWidth / 4) {
           handleNext();
           setPos({ ...pos, startX: x });
         }

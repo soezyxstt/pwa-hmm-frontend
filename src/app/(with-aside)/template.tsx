@@ -11,7 +11,7 @@ export default function Template({
       <Navbar >
         <ProfileMenu />
       </Navbar>
-      <main className='flex flex-col flex-1 h-max px-4 pb-6 md:px-6 md:py-8'>
+      <main className='flex flex-col flex-1 h-max px-4 pb-6 md:px-6 md:py-8 lg:px-10'>
         {children}
       </main>
     </>

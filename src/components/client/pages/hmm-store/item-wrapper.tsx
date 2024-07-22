@@ -20,7 +20,7 @@ const Main = ({
       className={cn('flex-1 h-full flex flex-col gap-5 mt-5', className)}
       {...props}
     >
-      <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 flex-1 grid-rows-2'>
+      <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 md:gap-x-8 lg:gap-x-10 md:gap-y-10 flex-1 grid-rows-2 mt-5'>
         {[...Array(12).fill(1)].map((_, i) => (
           <Item
             title='Goodie Bag'

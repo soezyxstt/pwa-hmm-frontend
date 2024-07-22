@@ -45,13 +45,14 @@ export default async function CoursesPage({
 
   const materials = await Promise.all(
     videoIds.map(async (videoId) => {
-      const { title, thumbnail_url } = await getVideoData(videoId);
-      return { videoId, title, thumbnail_url };
+      const { title, thumbnail_url, author_name } = await getVideoData(videoId);
+      return { videoId, title, thumbnail_url, author_name };
     })
   );
 
   const query = searchParams['q'] || materials[0].videoId;
   const title = materials.find(({ videoId }) => videoId === query)?.title;
+  const author = materials.find(({ videoId }) => videoId === query)?.author_name;
   const isExpanded = searchParams['expanded'] === 'true';
   const Description = () => (
     <div className='space-y-3 bg-slate-200 rounded-md p-1.5 h-full'>
@@ -115,8 +116,14 @@ export default async function CoursesPage({
             collapsible
           >
             <AccordionItem value='desc'>
-              <AccordionTrigger className='py-2 text-sm flex justify-between font-normal text-black'>
-                {title}
+              <AccordionTrigger className='py-2 text-sm flex justify-between font-normal text-black group/ancestor'>
+                <div className={`text-left group/parent`}>
+                  <p>{title}</p>
+                  <p className='text-muted-foreground text-3xs group-data-[state=open]/ancestor:hidden'>
+                    author: {author}{' '}
+                    <span className='ml-2 text-black'>...more</span>
+                  </p>
+                </div>
               </AccordionTrigger>
               <AccordionContent>
                 <Description />

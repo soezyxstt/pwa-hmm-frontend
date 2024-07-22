@@ -6,14 +6,26 @@ import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { getUser } from '@/lib/dal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Bell, Settings, User } from 'lucide-react';
 
 const ProfileMenu = async () => {
-  const { data: {name, avatar, role} } = await getUser();
+  const {
+    data: { name, avatar, role },
+  } = await getUser();
 
   return (
     <div className='flex gap-3 items-center'>
       <Tooltip>
-        <TooltipTrigger className='bg-white p-2 rounded-full text-lg'>
+        <TooltipTrigger className='bg-white p-2 rounded-full text-lg hidden md:block'>
           <IoMdNotificationsOutline />
         </TooltipTrigger>
         <TooltipContent className='hidden md:block'>
@@ -21,35 +33,75 @@ const ProfileMenu = async () => {
         </TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger className='bg-white p-2 rounded-full text-lg'>
-            <IoSettingsOutline />
+        <TooltipTrigger className='bg-white p-2 rounded-full text-lg hidden md:block'>
+          <IoSettingsOutline />
         </TooltipTrigger>
         <TooltipContent className='hidden md:block'>
           <p>Settings</p>
         </TooltipContent>
       </Tooltip>
       <Tooltip>
-        <TooltipTrigger>
-          <Link href='/profile'>
-            <div className='flex items-center gap-2 ml-2'>
-              <div className='*:text-[0.625rem]'>
-                <p className='font-semibold'>{name}</p>
-                <p className='text-abu-3'>{role}</p>
-              </div>
-              <Avatar>
-                <AvatarImage
-                  src={avatar}
-                  alt='avatar'
-                />
-                <AvatarFallback className='bg-white'>{name.split(' ').map((t: string) => t[0])}</AvatarFallback>
-              </Avatar>
+        <TooltipTrigger className='hidden md:block'>
+          <Link
+            href='/profile'
+            className='flex items-center gap-2 ml-2'
+          >
+            <div className='*:text-[0.625rem]'>
+              <p className='font-semibold'>{name}</p>
+              <p className='text-abu-3'>{role}</p>
             </div>
+            <Avatar>
+              <AvatarImage
+                src={avatar}
+                alt='avatar'
+              />
+              <AvatarFallback className='bg-white'>
+                {name.split(' ').map((t: string) => t[0])}
+              </AvatarFallback>
+            </Avatar>
           </Link>
         </TooltipTrigger>
         <TooltipContent className='hidden md:block'>
           <p>Profile</p>
         </TooltipContent>
       </Tooltip>
+      <DropdownMenu>
+        <DropdownMenuTrigger className='flex items-center gap-2 ml-2 md:hidden'>
+          <div className='*:text-[0.625rem]'>
+            <p className='font-semibold'>{name}</p>
+            <p className='text-abu-3'>{role}</p>
+          </div>
+          <Avatar>
+            <AvatarImage
+              src={avatar}
+              alt='avatar'
+            />
+            <AvatarFallback className='bg-white'>
+              {name.split(' ').map((t: string) => t[0])}
+            </AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className='w-48 border border-navy/30'>
+          <DropdownMenuLabel>Menu</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Link href='/profile' className='flex'>
+                <User className='mr-2 w-4 h-4' />
+                <span>Profile</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Bell className='mr-2 w-4 h-4' />
+              <span>Notifications</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className='mr-2 w-4 h-4' />
+              <span>Settings</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

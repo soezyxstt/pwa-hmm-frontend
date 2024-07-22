@@ -20,16 +20,16 @@ const Item = ({
 
   return (
     <Link href={`?id=${itemId}&size=M`}
-      className='rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform ease-in-out'
+      className='rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer'
     >
       <Image
         src={`/images/store.png`}
         alt='item'
         width={300}
         height={300}
-        className='object-cover aspect-[16/10]'
+        className='object-cover h-3/5'
       />
-      <div className='bg-white py-4 px-7 relative overflow-hidden space-y-2'>
+      <div className='bg-white py-2 px-7 relative overflow-hidden space-y-2 h-2/5'>
         <div
           className={cn(
             'absolute left-0 top-0 h-full w-4',

@@ -2,11 +2,7 @@ import Main from '@/components/client/pages/hmm-store/item-wrapper';
 import Search from '@/components/client/search';
 import Header from '@/components/client/header';
 
-const HMMStorePage = ({
-  searchParams,
-}: {
-  searchParams: Record<string, string>;
-}) => {
+const HMMStorePage = () => {
   return (
     <main className='flex flex-col items-stretch w-full h-full relative'>
       <Header
@@ -14,7 +10,7 @@ const HMMStorePage = ({
         className='md:mb-5'
       />
       <Search />
-      <Main searchParams={searchParams} />
+      <Main  />
     </main>
   );
 };

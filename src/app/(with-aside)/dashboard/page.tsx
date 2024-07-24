@@ -12,13 +12,14 @@ export default async function Home() {
   console.log(user);
   const events: EventMap[] = [
     {
-      '2024-03-08': [
-        { title: 'Tubes' },
-        { title: 'Tubes' },
-        { title: 'Tubes' },
+      '2024-07-28': [
+        { title: 'Ngaso Bareng Dosen' },
+        { title: 'Kinematika dan Dinamika Permesinan' },
+        { title: 'Tugas Besar - MS2200 Termodinamika' },
       ],
     },
-    { '2024-03-09': [{ title: 'Tubes' }, { title: 'Tubes' }] },
+    { '2024-07-25': [{ title: 'Homework 4 - MS2101 Analisis Numerik' }, { title: 'Hearing Machining' }] },
+    { '2024-07-31': [{ title: 'Pre-Machining' }, { title: 'FRS' }] },
   ];
   return (
     <div className='flex flex-col items-stretch flex-1 h-max gap-6 relative'>

@@ -1,93 +1,15 @@
 import Header from '@/components/client/header';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import AssingmentPage from './assignment';
 
-const AssingmentPage = () => {
-  const data = [
-    {
-      status: true,
-      course: 'MS2111 K01 KINDIN',
-      class: 'K01',
-      name: 'Tugas Besar',
-      deadline: '2022-01-01',
-      submission: 'Edunex',
-    },
-    {
-      status: false,
-      course: 'MS2111 K01 KINDIN',
-      class: 'K01',
-      name: 'Tugas Besar',
-      deadline: '2022-01-01',
-      submission: 'Edunex',
-    },
-    {
-      status: true,
-      course: 'MS2111 K01 KINDIN',
-      class: 'K01',
-      name: 'Tugas Besar',
-      deadline: '2022-01-01',
-      submission: 'Edunex',
-    },
-    {
-      status: false,
-      course: 'MS2111 K01 KINDIN',
-      class: 'K01',
-      name: 'Tugas Besar',
-      deadline: '2022-01-01',
-      submission: 'Edunex',
-    },
-    {
-      status: true,
-      course: 'MS2111 K01 KINDIN',
-      class: 'K01',
-      name: 'Tugas Besar',
-      deadline: '2022-01-01',
-      submission: 'Edunex',
-    },
-  ];
+export default function Page() {
   return (
     <>
       <Header title='Assignments' />
-      <Table className='text-sm md:text-base text-center'>
-        <TableHeader>
-          <TableRow>
-            <TableHead className='text-center'>Status</TableHead>
-            <TableHead className='text-center'>Course</TableHead>
-            <TableHead className='text-center'>Name</TableHead>
-            <TableHead className='text-center'>Deadline</TableHead>
-            <TableHead className='text-center'>Submission</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell className='px-0'>
-                <Checkbox
-                  id={item.name + item.course}
-                  checked={item.status}
-                />
-              </TableCell>
-              <TableCell>{item.course}</TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.deadline}</TableCell>
-              <TableCell>{item.submission}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <AssingmentPage />
     </>
   );
-};
+}
 
 export const metadata = {
   title: 'Assignments',
 };
-
-export default AssingmentPage;

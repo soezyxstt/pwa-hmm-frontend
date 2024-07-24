@@ -120,31 +120,60 @@ const Calendar = ({ events }: { events?: EventMap[] }) => {
             </div>
           ))}
         {days.map((day) => (
-          <div
-            key={day.getTime()}
-            className={cn(
-              ' flex items-center relative justify-center min-w-10 min-h-6 md:min-w-15 md:min-h-11 border border-abu-1'
-            )}
-          >
-            <div
-              className={cn(
-                'text-center rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center',
-                compareDate(day, today) && 'bg-navy/90 text-white'
-              )}
-            >
-              {format(day, 'd')}
-            </div>
-            <div className='absolute top-0 right-0 w-2'>
+          <Popover key={day.getTime()}>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  ' flex items-center group relative justify-center min-w-10 min-h-6 md:min-w-15 md:min-h-11 border border-abu-1'
+                )}
+              >
+                <div
+                  className={cn(
+                    'text-center rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center group-data-[state=open]:bg-gray-700/50',
+                    compareDate(day, today) && 'bg-navy/90 text-white'
+                  )}
+                >
+                  {format(day, 'd')}
+                </div>
+                <div className='absolute top-0 right-0 w-2'>
+                  {events
+                    ?.find(
+                      (e) => Object.keys(e)[0] === format(day, 'yyyy-MM-dd')
+                    )
+                    ?.[format(day, 'yyyy-MM-dd')].map((e, index) => (
+                      <div
+                        key={index}
+                        className={cn(
+                          'w-1 h-1.5',
+                          e.color || colors[index % 4]
+                        )}
+                      />
+                    ))}
+                </div>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className='px-0 rounded-xl shadow-md text-xs py-2 border border-navy'>
               {events
                 ?.find((e) => Object.keys(e)[0] === format(day, 'yyyy-MM-dd'))
                 ?.[format(day, 'yyyy-MM-dd')].map((e, index) => (
                   <div
                     key={index}
-                    className={cn('w-1 h-1.5', e.color || colors[index % 4])}
-                  />
-                ))}
-            </div>
-          </div>
+                    className={cn(
+                      'flex items-center h-8 px-4 bg-white relative text-black'
+                    )}
+                  >
+                    {e.title}
+                    <div
+                      className={`h-full ${
+                        colors[index % 4]
+                      } w-1.5 rounded-[1px] left-0 top-0 absolute`}
+                    ></div>
+                  </div>
+                )) || (
+                <div className='p-1.5 bg-white text-black'>No events</div>
+              )}
+            </PopoverContent>
+          </Popover>
         ))}
         {daysAfter
           .filter(

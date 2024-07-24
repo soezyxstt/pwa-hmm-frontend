@@ -27,9 +27,11 @@ export async function decrypt(session: string | undefined = '') {
   }
 }
 
-export async function createSession(id: string, access_token: string, refresh_token: string) {
-  const expires = new Date(Date.now() + env.SESSION_MAX_AGE);
+export async function createSession(id: string, access_token: string, refresh_token: string, max_age: string) {
+  const expires = new Date(Date.now() + parseInt(max_age, 10) * 1000);
   const session = await encrypt({ userId: id, access_token, refresh_token, expires: expires });
+
+  console.log(expires);
 
   cookies().set('session', session, {
     httpOnly: true,

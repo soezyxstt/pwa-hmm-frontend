@@ -67,8 +67,12 @@ export const signIn = actionClient
       console.log(res);
 
       const set_cookies = res.headers.get('set-cookie')?.split('=');
+
+      console.log(set_cookies);
+
       const access_token = set_cookies?.[1].split(';')[0];
       const refresh_token = set_cookies?.[5].split(';')[0];
+      const max_age = set_cookies?.[2].split(';')[0];
 
       const data = await fetch(env.API_URL + '/users/me', {
         headers: {
@@ -84,7 +88,7 @@ export const signIn = actionClient
         throw new Error('Failed to sign in');
       }
 
-      createSession(id, access_token, refresh_token);
+      createSession(id, access_token, refresh_token, max_age ?? '3600');
       return {
         message: 'User signed in successfully',
         status: 'success',

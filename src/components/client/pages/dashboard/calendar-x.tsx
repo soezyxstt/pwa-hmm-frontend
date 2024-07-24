@@ -124,12 +124,12 @@ const Calendar = ({ events }: { events?: EventMap[] }) => {
             <PopoverTrigger asChild>
               <button
                 className={cn(
-                  ' flex items-center group relative justify-center min-w-10 min-h-6 md:min-w-15 md:min-h-11 border border-abu-1'
+                  ' flex items-center group relative hover:bg-gray-500/20 justify-center min-w-10 min-h-6 md:min-w-15 md:min-h-11 border border-abu-1'
                 )}
               >
                 <div
                   className={cn(
-                    'text-center rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center group-data-[state=open]:bg-gray-700/50',
+                    'text-center rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center group-data-[state=open]:bg-gray-700/50 group-data-[state=open]:text-white',
                     compareDate(day, today) && 'bg-navy/90 text-white'
                   )}
                 >
@@ -152,7 +152,7 @@ const Calendar = ({ events }: { events?: EventMap[] }) => {
                 </div>
               </button>
             </PopoverTrigger>
-            <PopoverContent className='px-0 rounded-xl shadow-md text-xs py-2 border border-navy'>
+            <PopoverContent className='px-0 rounded-xl shadow-md text-xs py-2 border border-navy divide-y-[1px]'>
               {events
                 ?.find((e) => Object.keys(e)[0] === format(day, 'yyyy-MM-dd'))
                 ?.[format(day, 'yyyy-MM-dd')].map((e, index) => (

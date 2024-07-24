@@ -4,14 +4,31 @@ import { BsTelephone } from 'react-icons/bs';
 import Header from '@/components/client/header';
 import { getFullUser } from '@/lib/dal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 const ProfilePage = async () => {
-  const { data: {name, avatar, email, about, role, phoneNumber, NIM} } = await getFullUser();
+  const user = await getFullUser();
+
+  if (user.error) {
+    redirect('/sign-in');
+  }
+
+  const {
+    data: { name, avatar, email, about, role, phoneNumber, NIM },
+  } = user;
+
   return (
     <main className='flex flex-col items-stretch w-full h-max gap-6 relative'>
       <Header title='Profile' />
       <div className='rounded-xl flex flex-col flex-1 bg-white'>
-        <div className='bg-navy min-h-[15vh] w-full z-0 relative md:mb-20 mb-16 rounded-t-xl'>
+        <div className='bg-navy min-h-[15vh] w-full z-0 relative md:mb-20 mb-16 rounded-t-xl flex justify-end items-center pr-6'>
+          <Link
+            href='/profile/edit'
+            className='md:px-4 px-2.5 py-1.5 rounded-xl border text-white font-medium bg-navy border-white hover:bg-white/20 transition-all text-sm md:text-base'
+          >
+            Edit Profile
+          </Link>
           <div className='flex items-center justify-center p-1.5 bg-white w-fit rounded-full absolute left-[7.5%] bottom-0 translate-y-1/2'>
             <Avatar className='md:w-40 md:h-40 h-32 w-32'>
               <AvatarImage

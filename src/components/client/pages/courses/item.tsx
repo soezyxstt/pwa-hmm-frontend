@@ -29,7 +29,7 @@ export default function CoursesItem({
     <Link
       href={`/courses/${id}`}
       className={cn(
-        'rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer',
+        'rounded-xl shadow-md flex flex-col justify-end overflow-hidden cursor-pointer aspect-[4/5] md:aspect-[9/10] lg:aspect-square',
         className
       )}
     >
@@ -40,16 +40,16 @@ export default function CoursesItem({
         height={200}
         className='object-cover h-3/5'
       />
-      <div className='bg-white py-2 md:pt-4 px-7 relative overflow-hidden flex flex-col justify-between h-2/5'>
+      <div className='bg-white py-2 md:pt-4 px-5 md:px-7 relative overflow-hidden flex flex-col justify-between h-2/5'>
         <div
           className={cn(
-            'absolute left-0 top-0 h-full w-4',
+            'absolute left-0 top-0 h-full w-2.5 md:w-4',
             COLORS[Math.floor(Math.random() * 4)]
           )}
         ></div>
         <div className='space-y-2'>
-          <h6 className='text-abu-3 text-2xs md:text-xs'>{subject}</h6>
-          <h4 className='text-xs md:text-sm font-medium text-ellipsis line-clamp-1'>{title}</h4>
+          <h6 className='text-muted-foreground text-2xs md:text-xs'>{subject}</h6>
+          <h4 className='text-xs md:text-sm font-medium text-ellipsis line-clamp-1' title={title}>{title}</h4>
         </div>
         <div className='space-y-1'>
           <Separator />

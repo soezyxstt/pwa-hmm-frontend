@@ -24,7 +24,7 @@ const CoursesPage = async () => {
         className='md:mb-5'
       />
       <Search />
-      <div className='grid md:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 md:gap-x-8 lg:gap-x-10 md:gap-y-10 flex-1 grid-rows-2 mt-5'>
+      <div className='grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 md:gap-x-8 lg:gap-x-10 md:gap-y-10 flex-1 grid-rows-2 mt-5'>
         {courses
           .map((course: {title: string, image: string, material: string, totalVideos: number, totalLessons: number}, i: number) => (
             <CoursesItem

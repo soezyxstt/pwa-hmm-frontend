@@ -9,7 +9,6 @@ import { getUser } from '@/lib/dal';
 
 export default async function Home() {
   const user = await getUser()
-  console.log(user);
   const events: EventMap[] = [
     {
       '2024-07-28': [

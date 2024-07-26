@@ -3,7 +3,7 @@ import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { env } from '@/env';
 import { cache } from 'react';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 const key = new TextEncoder().encode(env.AUTH_SECRET);
 
@@ -33,7 +33,7 @@ export async function createSession(id: string, access_token: string, refresh_to
 
   console.log(expires);
 
-  cookies().set('session', session, {
+  cookies().set('session-hmm', session, {
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
     expires: expires,
@@ -42,8 +42,37 @@ export async function createSession(id: string, access_token: string, refresh_to
   });
 }
 
+
+export async function updateSession(
+  access_token: string,
+  refresh_token: string,
+  max_age: string
+) {
+  const session = cookies().get('session-hmm')?.value;
+  const payload = await decrypt(session);
+
+  if (!session || !payload) {
+    return;
+  }
+
+  const expires = new Date(Date.now() + parseInt(max_age) * 1000);
+
+  const res = NextResponse.next();
+  res.cookies.set({
+    name: 'session-hmm',
+    value: await encrypt({...payload, expires: expires, access_token, refresh_token}),
+    httpOnly: true,
+    secure: env.NODE_ENV === 'production',
+    expires: expires,
+    sameSite: 'lax',
+  });
+
+  return res;
+}
+
+
 export const verifySession = cache(async () => {
-  const cookie = cookies().get('session')?.value;
+  const cookie = cookies().get('session-hmm')?.value;
 
   if (!cookie) {
     return {isAuth: false, userId: '', access_token: '', refresh_token: ''};
@@ -58,31 +87,8 @@ export const verifySession = cache(async () => {
   return {isAuth: true, userId: session.userId, access_token: session.access_token, refresh_token: session.refresh_token};
 })
 
-export async function updateSession(request: NextRequest) {
-  const session = cookies().get('session')?.value;
-  const payload = await decrypt(session);
-
-  if (!session || !payload) {
-    return;
-  }
-
-  const expires = new Date(Date.now() + env.SESSION_MAX_AGE);
-  
-  const res = NextResponse.next();
-  res.cookies.set({
-    name: 'session',
-    value: await encrypt({ ...payload, expires: expires }),
-    httpOnly: true,
-    secure: env.NODE_ENV === 'production',
-    expires: expires,
-    sameSite: 'lax',
-  })
-
-  return res;
-}
-
 export async function deleteSession() {
-  cookies().set('session', '', {
+  cookies().set('session-hmm', '', {
     expires: new Date(0),
   });
 }

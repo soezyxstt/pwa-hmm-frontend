@@ -88,7 +88,7 @@ const Calendar = ({ events }: { events?: EventMap[] }) => {
   const daysInMonth = getDaysInMonth(date);
 
   return (
-    <div className='min-w-fit flex-1 bg-white rounded-2xl w-full md:w-auto shadow-md gap-4 p-6 flex flex-col md:min-h-[50vh] min-h-[40vh]'>
+    <div className='min-w-fit flex-1 bg-white rounded-2xl w-full md:w-auto shadow-md gap-4 p-6 flex flex-col md:min-h-[50vh] min-h-[30vh]'>
       <div className='flex justify-between px-2'>
         <h3 className=''>Calendar</h3>
         <SelectMonth
@@ -124,7 +124,7 @@ const Calendar = ({ events }: { events?: EventMap[] }) => {
             <PopoverTrigger asChild>
               <button
                 className={cn(
-                  ' flex items-center group relative hover:bg-gray-500/20 justify-center min-w-10 min-h-6 md:min-w-15 md:min-h-11 border border-abu-1'
+                  ' flex items-center group relative hover:bg-gray-500/20 justify-center aspect-square md:aspect-auto min-w-10 min-h-6 md:min-w-15 md:min-h-11 border border-abu-1'
                 )}
               >
                 <div

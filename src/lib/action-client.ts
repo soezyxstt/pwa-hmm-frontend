@@ -2,6 +2,6 @@ import { createSafeActionClient } from 'next-safe-action';
 
 export const actionClient = createSafeActionClient({
   handleReturnedServerError: (error) => {
-    return "There was an error occurred!";
+    return error.name === "PWAError" ? error.message : "An error occurred";
   }
 });

@@ -11,7 +11,7 @@ const ProfilePage = async () => {
   const user = await getFullUser();
 
   if (user.error) {
-    redirect('/sign-in');
+    redirect('/sign-out');
   }
 
   const {

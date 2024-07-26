@@ -4,13 +4,13 @@ import Item from './item';
 import { useEffect, useId, useState, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
+import MotionFramer from '@/components/client/modal-framer';
 
 const Main = ({ className, ...props }: {} & HTMLAttributes<HTMLDivElement>) => {
-  const [active, setActive] = useState<
-    (typeof data)[number] | boolean | null
-    >(null);
+  const [active, setActive] = useState<(typeof data)[number] | boolean | null>(
+    null
+  );
   const [size, setSize] = useState<string | null>('M');
   const id = useId();
 
@@ -43,99 +43,97 @@ const Main = ({ className, ...props }: {} & HTMLAttributes<HTMLDivElement>) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='fixed inset-0 bg-black/40 h-full w-full z-10'
+            className='fixed inset-0 bg-black/20 backdrop-blur-sm h-full w-full z-10'
             onClick={() => setActive(null)}
           />
         )}
       </AnimatePresence>
       <AnimatePresence>
         {active && typeof active === 'object' && (
-          <div className='fixed inset-0 grid place-items-center z-50 pointer-events-none'>
+          <MotionFramer
+            id={`item-${
+              active.title + active.price + active.stars
+              }-${id}`}
+            className='p-0.5 rounded-xl'
+          >
+            <button
+              className='absolute top-2 right-4 text-2xl text-black'
+              onClick={() => setActive(null)}
+            >
+              &times;
+            </button>
             <motion.div
-              layoutId={`item-${
+              layoutId={`image-${
                 active.title + active.price + active.stars
               }-${id}`}
-              className='w-full max-w-[min(32rem,90vw)] bg-white p-0.5 rounded-xl shadow-lg overflow-hidden flex relative flex-col pointer-events-auto'
             >
-              <button
-                className='absolute top-2 right-4 text-2xl text-black'
-                onClick={() => setActive(null)}
-              >
-                &times;
-              </button>
-              <motion.div
-                layoutId={`image-${
-                  active.title + active.price + active.stars
-                }-${id}`}
-              >
-                <Image
-                  src={active.src ?? `/images/store.png`}
-                  alt='item'
-                  width={1000}
-                  height={1000}
-                  className='w-full max-h-96 rounded-t-xl object-cover'
-                />
-              </motion.div>
-              <div className='flex p-4'>
-                <div className='w-1/2'>
-                  <motion.h5
-                    layoutId={`title-${
+              <Image
+                src={active.src ?? `/images/store.png`}
+                alt='item'
+                width={1000}
+                height={1000}
+                className='w-full max-h-96 rounded-t-xl object-cover'
+              />
+            </motion.div>
+            <div className='flex p-4'>
+              <div className='w-1/2'>
+                <motion.h5
+                  layoutId={`title-${
+                    active.title + active.price + active.stars
+                  }-${id}`}
+                  className='font-bold'
+                >
+                  {active.title}
+                </motion.h5>
+                <h6 className='font-semibold'>T-shirt</h6>
+                <div className='flex mt-6'>
+                  <motion.div
+                    layoutId={`price-${
                       active.title + active.price + active.stars
                     }-${id}`}
-                    className='font-bold'
+                    className='w-1/2'
                   >
-                    {active.title}
-                  </motion.h5>
-                  <h6 className='font-semibold'>T-shirt</h6>
-                  <div className='flex mt-6'>
-                    <motion.div
-                      layoutId={`price-${
-                        active.title + active.price + active.stars
-                      }-${id}`}
-                      className='w-1/2'
-                    >
-                      <p className='text-abu-3 text-3xs'>Price (IDR)</p>
-                      <h6>{active.price}</h6>
-                    </motion.div>
-                    <motion.div
-                      layoutId={`rating-${
-                        active.title + active.price + active.stars
-                      }-${id}`}
-                      className='w-1/2'
-                    >
-                      <p className='text-abu-3 text-3xs'>Rating</p>
-                      <h6>
-                        <span className='text-kuning'>&#9733;</span>
-                        {active.stars}
-                      </h6>
-                    </motion.div>
-                  </div>
-                </div>
-                <div className='w-1/2 h-full flex flex-col justify-between gap-4'>
-                  <div className=''>
-                    <p className='text-abu-3 text-3xs'>Size</p>
-                    <div className='flex gap-4 mt-2'>
-                      {['S', 'M', 'L', 'XL'].map((s, i) => (
-                        <button
-                          key={i}
-                          className={cn(
-                            'rounded text-2xs px-2 py-1 hover:bg-yellow-200',
-                            size === s && 'bg-yellow-400 hover:bg-yellow-400'
-                          )}
-                          onClick={() => setSize(s)}
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <button className='px-4 py-1 text-xs font-semibold bg-navy text-white rounded-full'>
-                    Order
-                  </button>
+                    <p className='text-abu-3 text-3xs'>Price (IDR)</p>
+                    <h6>{active.price}</h6>
+                  </motion.div>
+                  <motion.div
+                    layoutId={`rating-${
+                      active.title + active.price + active.stars
+                    }-${id}`}
+                    className='w-1/2'
+                  >
+                    <p className='text-abu-3 text-3xs'>Rating</p>
+                    <h6>
+                      <span className='text-kuning'>&#9733;</span>
+                      {active.stars}
+                    </h6>
+                  </motion.div>
                 </div>
               </div>
-            </motion.div>
-          </div>
+              <div className='w-1/2 h-full flex flex-col justify-between gap-4'>
+                <div className=''>
+                  <p className='text-abu-3 text-3xs'>Size</p>
+                  <div className='flex gap-4 mt-2'>
+                    {['S', 'M', 'L', 'XL'].map((s, i) => (
+                      <button
+                        key={i}
+                        className={cn(
+                          'rounded text-2xs px-2 py-1 hover:bg-yellow-200',
+                          size === s && 'bg-yellow-400 hover:bg-yellow-400'
+                        )}
+                        onClick={() => setSize(s)}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <button className='px-4 py-1 text-xs font-semibold bg-navy text-white rounded-full'>
+                  Order
+                </button>
+              </div>
+            </div>
+          </MotionFramer>
         )}
       </AnimatePresence>
       <div className='grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 md:gap-x-8 lg:gap-x-10 md:gap-y-10 flex-1 grid-rows-2 mt-5'>

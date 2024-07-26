@@ -2,8 +2,10 @@
 
 import { env } from '@/env';
 import { actionClient } from '@/lib/action-client';
+import { PWAError } from '@/lib/error';
 import { signInSchema, signOutSchema, signUpSchema } from '@/lib/schema';
 import { createSession, deleteSession, verifySession } from '@/lib/session';
+import { getTokenFromResponse } from '@/lib/utils';
 import { flattenValidationErrors } from 'next-safe-action';
 
 export const signUp = actionClient
@@ -29,7 +31,7 @@ export const signUp = actionClient
       console.log(res);
 
       if (!res.ok) {
-        throw new Error('Failed to sign up');
+        throw new PWAError('Failed to sign up');
       }
 
       return {
@@ -42,7 +44,7 @@ export const signUp = actionClient
         throw new Error(err.message);
       }
 
-      throw new Error('Failed to sign up');
+      throw new PWAError('Failed to sign up');
     }
   });
 
@@ -66,13 +68,9 @@ export const signIn = actionClient
 
       console.log(res);
 
-      const set_cookies = res.headers.get('set-cookie')?.split('=');
-
-      console.log(set_cookies);
-
-      const access_token = set_cookies?.[1].split(';')[0];
-      const refresh_token = set_cookies?.[5].split(';')[0];
-      const max_age = set_cookies?.[2].split(';')[0];
+      const { access_token, refresh_token, max_age } = await getTokenFromResponse(
+        res
+      );
 
       const data = await fetch(env.API_URL + '/users/me', {
         headers: {
@@ -80,12 +78,18 @@ export const signIn = actionClient
         },
       });
 
+      console.log(data);
+
+      if (!data.ok) {
+        throw new PWAError('Failed to sign in');
+      }
+
       const {
         data: { id },
       } = await data.json();
 
       if (!res.ok || !access_token || !refresh_token) {
-        throw new Error('Failed to sign in');
+        throw new PWAError('Failed to sign in');
       }
 
       createSession(id, access_token, refresh_token, max_age ?? '3600');
@@ -100,7 +104,7 @@ export const signIn = actionClient
         throw new Error(err.message);
       }
 
-      throw new Error('Failed to sign in');
+      throw new PWAError('Failed to sign in');
     }
   });
 
@@ -120,14 +124,12 @@ export async function signOut() {
       method: 'POST',
       credentials: 'include',
       headers: {
-        Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
+        Cookie: `accessToken=${session.access_token}`,
       },
     });
 
-    console.log(res);
-
     if (!res.ok) {
-      throw new Error('Failed to sign out');
+      throw new PWAError('Failed to sign out');
     }
 
     return {
@@ -139,6 +141,6 @@ export async function signOut() {
       throw new Error(err.message);
     }
 
-    throw new Error('Failed to sign out');
+    throw new PWAError('Failed to sign out');
   }
 }

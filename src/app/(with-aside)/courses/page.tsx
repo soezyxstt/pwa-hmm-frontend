@@ -1,16 +1,7 @@
 import Search from '@/components/client/search';
 import Header from '@/components/client/header';
 import CoursesItem from '@/components/client/pages/courses/item';
-import { courses as courses_action} from '@/actions/courses-action';
-
-const items: { id: number; title: string }[] = [
-  { id: 0, title: 'Analisis Numerik' },
-  { id: 1, title: 'Dinamika Sistem' },
-  { id: 2, title: 'Mekatronika' },
-  { id: 3, title: 'Sistem Penggerak Elektrik' },
-  { id: 4, title: 'Statistika Turu' },
-  { id: 5, title: 'Elemen Mesin Dasar' },
-];
+import { courses as courses_action } from '@/actions/courses-action';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,19 +16,18 @@ const CoursesPage = async () => {
       />
       <Search />
       <div className='grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2 gap-x-6 gap-y-8 md:gap-x-8 lg:gap-x-10 md:gap-y-10 flex-1 grid-rows-2 mt-5'>
-        {courses
-          .map((course: {title: string, image: string, material: string, totalVideos: number, totalLessons: number}, i: number) => (
-            <CoursesItem
-              href=''
-              key={i}
-              id='13212312'
-              title={course.title}
-              image='/images/store.png'
-              subject='MS2111'
-              numberOfMaterials={course.totalLessons}
-              numberOfVideos={course.totalVideos}
-            />
-          ))}
+        {courses.map(({ course }: any, i: number) => (
+          <CoursesItem
+            href=''
+            key={i}
+            id={course.id}
+            title={course.title}
+            image='/images/store.png'
+            subject={'MS2021'}
+            numberOfMaterials={course.totalLessons}
+            numberOfVideos={course.totalVideos}
+          />
+        ))}
       </div>
     </div>
     // <CourseContent />

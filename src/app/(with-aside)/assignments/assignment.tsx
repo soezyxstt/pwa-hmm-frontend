@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useInterval } from '@/hooks/useInterval';
+import MotionFramer from '@/components/client/modal-framer';
 
 const AssingmentPage = () => {
   const [active, setActive] = useState<
@@ -46,9 +47,7 @@ const AssingmentPage = () => {
     if (diff < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
     return { days, hours, minutes, seconds };
@@ -76,133 +75,128 @@ const AssingmentPage = () => {
       </div>
       <AnimatePresence>
         {active === 'add' && (
-          <div className='fixed inset-0 grid place-items-center z-50 pointer-events-none'>
-            <motion.div
-              layoutId={'add' + id}
-              className='w-full max-w-[min(32rem,90vw)] bg-white rounded-lg shadow-lg p-4 overflow-hidden flex flex-col pointer-events-auto'
-            >
-              <div className='flex items-center gap-4 justify-between'>
-                <div className='flex items-center gap-4'>
-                  <Notebook size={32} />
-                  <motion.p
-                    layoutId={'add-button' + id}
-                    className='font-medium text-lg'
-                  >
-                    Add Assignment
-                  </motion.p>
-                </div>
-                <button
-                  className='text-sm font-semibold px-4 py-2.5'
-                  onClick={() => setActive(null)}
+          <MotionFramer id={'add' + id}>
+            <div className='flex items-center gap-4 justify-between'>
+              <div className='flex items-center gap-4'>
+                <Notebook size={32} />
+                <motion.p
+                  layoutId={'add-button' + id}
+                  className='font-medium text-lg'
                 >
-                  <CloseIcon />
-                </button>
+                  Add Assignment
+                </motion.p>
               </div>
-              <Separator className='my-2' />
-              <div className='flex flex-col gap-4'>
-                <div className='flex flex-col gap-2'>
-                  <label
-                    htmlFor='name'
-                    className='text-sm font-semibold'
-                  >
-                    Name
-                  </label>
+              <button
+                className='text-sm font-semibold px-4 py-2.5'
+                onClick={() => setActive(null)}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <Separator className='my-2' />
+            <div className='flex flex-col gap-4'>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='name'
+                  className='text-sm font-semibold'
+                >
+                  Name
+                </label>
+                <Input
+                  type='text'
+                  id='name'
+                  className='Input'
+                />
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='class'
+                  className='text-sm font-semibold'
+                >
+                  Class
+                </label>
+                <Input
+                  type='text'
+                  id='class'
+                  className='Input'
+                />
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='course'
+                  className='text-sm font-semibold'
+                >
+                  Course
+                </label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select Course' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Course</SelectLabel>
+                      <SelectItem value='analisis-numerik'>
+                        MS2110 Analisis Numerik
+                      </SelectItem>
+                      <SelectItem value='kinematika-dan-dinamika'>
+                        MS2111 Kinematika dan Dinamika
+                      </SelectItem>
+                      <SelectItem value='mekanika-dan-kekuatan-material'>
+                        MS2111 Mekanika dan Kekuatan Material
+                      </SelectItem>
+                      <SelectItem value='termodinamika'>
+                        MS2211 Termodinamika
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='deadline'
+                  className='text-sm font-semibold'
+                >
+                  Deadline
+                </label>
+                <div className='flex gap-2'>
                   <Input
-                    type='text'
-                    id='name'
+                    type='date'
+                    id='deadline'
                     className='Input'
                   />
+                  <Input type='time' />
                 </div>
-                <div className='flex flex-col gap-2'>
-                  <label
-                    htmlFor='class'
-                    className='text-sm font-semibold'
-                  >
-                    Class
-                  </label>
-                  <Input
-                    type='text'
-                    id='class'
-                    className='Input'
-                  />
-                </div>
-                <div className='flex flex-col gap-2'>
-                  <label
-                    htmlFor='course'
-                    className='text-sm font-semibold'
-                  >
-                    Course
-                  </label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select Course' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Course</SelectLabel>
-                        <SelectItem value='analisis-numerik'>
-                          MS2110 Analisis Numerik
-                        </SelectItem>
-                        <SelectItem value='kinematika-dan-dinamika'>
-                          MS2111 Kinematika dan Dinamika
-                        </SelectItem>
-                        <SelectItem value='mekanika-dan-kekuatan-material'>
-                          MS2111 Mekanika dan Kekuatan Material
-                        </SelectItem>
-                        <SelectItem value='termodinamika'>
-                          MS2211 Termodinamika
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className='flex flex-col gap-2'>
-                  <label
-                    htmlFor='deadline'
-                    className='text-sm font-semibold'
-                  >
-                    Deadline
-                  </label>
-                  <div className='flex gap-2'>
-                    <Input
-                      type='date'
-                      id='deadline'
-                      className='Input'
-                    />
-                    <Input type='time' />
-                  </div>
-                </div>
-                <div className='flex flex-col gap-2'>
-                  <label
-                    htmlFor='submission'
-                    className='text-sm font-semibold'
-                  >
-                    Submission
-                  </label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select Submission' />
-                    </SelectTrigger>
-                    <SelectContent className='pointer-events-auto'>
-                      <SelectGroup>
-                        <SelectLabel>Submission</SelectLabel>
-                        <SelectItem value='ms-teams'>MS Teams</SelectItem>
-                        <SelectItem value='edunex'>Edunex</SelectItem>
-                        <SelectItem value='on-site'>On Site</SelectItem>
-                        <SelectItem value='g-drive'>G-Drive</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button
-                  className='text-sm font-semibold px-4 py-2.5'
-                  onClick={() => setActive(null)}
-                >
-                  Add
-                </Button>
               </div>
-            </motion.div>
-          </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='submission'
+                  className='text-sm font-semibold'
+                >
+                  Submission
+                </label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select Submission' />
+                  </SelectTrigger>
+                  <SelectContent className='pointer-events-auto'>
+                    <SelectGroup>
+                      <SelectLabel>Submission</SelectLabel>
+                      <SelectItem value='ms-teams'>MS Teams</SelectItem>
+                      <SelectItem value='edunex'>Edunex</SelectItem>
+                      <SelectItem value='on-site'>On Site</SelectItem>
+                      <SelectItem value='g-drive'>G-Drive</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                className='text-sm font-semibold px-4 py-2.5'
+                onClick={() => setActive(null)}
+              >
+                Add
+              </Button>
+            </div>
+          </MotionFramer>
         )}
       </AnimatePresence>
       <AnimatePresence>
@@ -211,7 +205,7 @@ const AssingmentPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='fixed inset-0 bg-black/20 h-full w-full z-10'
+            className='fixed inset-0 bg-black/20 backdrop-blur-sm h-full w-full z-10'
             onClick={() => setActive(null)}
           />
         )}
@@ -285,7 +279,9 @@ const AssingmentPage = () => {
                     </motion.p>
                   </tr>
                   <tr className=''>
-                    <td className='text-sm text-muted-foreground pr-4'>Submission</td>
+                    <td className='text-sm text-muted-foreground pr-4'>
+                      Submission
+                    </td>
                     <td className='text-sm pr-2'>:</td>
                     <motion.p
                       layoutId={`submission-${

@@ -59,9 +59,12 @@ export const getFullUser = cache(async () => {
   try {
     const data = await fetch(env.API_URL + `/users/me`, {
       headers: {
-        Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
+        Cookie: `accessToken=${session.access_token}`,
       }
     });
+
+    console.log(data);
+
     const user = await data.json();
 
     return user;

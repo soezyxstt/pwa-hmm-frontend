@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import YoutubeEmbed from '@/components/client/youtubeEmbed';
 import Link from 'next/link';
-import { Suspense } from 'react';
+import { cache, Suspense } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -10,8 +10,11 @@ import {
 } from '@/components/ui/accordion';
 import VideoList from '@/components/client/pages/courses/videoList';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { verifySession } from '@/lib/session';
+import { env } from '@/env';
+import Lesson from './lesson';
 
-async function getVideoData(videoId: string) {
+export const getVideoData = cache(async (videoId: string) => {
   const res = await fetch(
     `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
     { cache: 'force-cache' }
@@ -22,13 +25,56 @@ async function getVideoData(videoId: string) {
   }
 
   return res.json();
-}
+});
+
+export const getLessons = cache(async (id: string) => {
+  if (!id) {
+    return null;
+  }
+
+  const session = await verifySession();
+
+  if (!session.isAuth) {
+    throw new Error('Unauthorized');
+  }
+
+  try {
+    const res = await fetch(env.API_URL + `/courses/${id}/lessons`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch lessons');
+    }
+
+    const { data } = await res.json();
+
+    return data;
+  } catch (err) {
+    console.log(err);
+
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+
+    throw new Error('Failed to fetch lessons');
+  }
+});
 
 export default async function CoursesPage({
   searchParams,
+  params: { id },
 }: {
   searchParams: Record<string, string>;
+  params: { id: string };
 }) {
+  const isExpanded = searchParams['expanded'] === 'true';
+  const lessons = await getLessons(id);
+  const lessonId = searchParams['lessonId'] ?? lessons[0].id;
   const videoIds = [
     '9bZkp7q19f0',
     'Gb58wGb_Uc4',
@@ -52,10 +98,13 @@ export default async function CoursesPage({
 
   const query = searchParams['q'] || materials[0].videoId;
   const title = materials.find(({ videoId }) => videoId === query)?.title;
-  const author = materials.find(({ videoId }) => videoId === query)?.author_name;
-  const isExpanded = searchParams['expanded'] === 'true';
+  const author = materials.find(
+    ({ videoId }) => videoId === query
+  )?.author_name;
+  const params = `?q=${query}&expanded=${isExpanded}`;
+
   const Description = () => (
-    <div className='space-y-3 bg-slate-200 rounded-md p-1.5 h-full'>
+    <div className='bg-slate-200 rounded-md p-1.5 h-full flex flex-col gap-3'>
       <div className=''>
         <h4 className='text-sm md:text-base'>Ebook Link:</h4>
         <Link
@@ -100,6 +149,11 @@ export default async function CoursesPage({
 
   return (
     <div className='flex gap-6'>
+      <Lesson
+        lessonId={lessonId}
+        params={params}
+        lessons={lessons}
+      />
       <ScrollArea className='w-full bg-white shadow-md rounded-xl md:relative border-t-0 md:h-[calc(100vh-4rem)]'>
         <Suspense
           fallback={<Skeleton className='w-full aspect-video rounded-xl' />}
@@ -142,7 +196,7 @@ export default async function CoursesPage({
         </div>
       </ScrollArea>
       <ScrollArea className='hidden md:block w-[450px] relative h-[calc(100vh-4rem)]'>
-        <p className='pb-4 sticky top-0 z-10 bg-background'>All Materials</p>
+        <p className='pb-4 sticky top-0 z-[2] bg-background'>All Videos</p>
         <VideoList
           materials={materials}
           isExpanded={true}

@@ -14,7 +14,8 @@ import { verifySession } from '@/lib/session';
 import { env } from '@/env';
 import Lesson from './lesson';
 
-export const getVideoData = cache(async (videoId: string) => {
+const getVideoData = cache(async (videoId: string) => {
+  'use server';
   const res = await fetch(
     `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
     { cache: 'force-cache' }
@@ -27,7 +28,8 @@ export const getVideoData = cache(async (videoId: string) => {
   return res.json();
 });
 
-export const getLessons = cache(async (id: string) => {
+const getLessons = cache(async (id: string) => {
+  'use server';
   if (!id) {
     return null;
   }

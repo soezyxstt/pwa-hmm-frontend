@@ -131,7 +131,7 @@ export default async function CoursesPage({
           href='/ebook'
           className='text-xs md:text-sm text-blue-500 underline hover:text-blue-700'
         >
-          {videos.find(({ youtubeLink }) => youtubeLink.split('v=')[1].split('&')[0] === query).attachment}
+          {"Click here to download the ebook"}
         </Link>
       </div>
       <div className='text-justify'>

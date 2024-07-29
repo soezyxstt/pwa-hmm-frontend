@@ -13,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { verifySession } from '@/lib/session';
 import { env } from '@/env';
 import Lesson from './lesson';
+import type { CourseLessonModel, CourseLessonVideoModel } from 'lms-types';
 
 const getVideoData = cache(async (videoId: string) => {
   'use server';
@@ -67,6 +68,34 @@ const getLessons = cache(async (id: string) => {
   }
 });
 
+const getVideos = cache(
+  async (courseId: string | number, lessonId: string | number) => {
+    'use server';
+    const session = await verifySession();
+
+    const res = await fetch(
+      env.API_URL + `/courses/${courseId}/lessons/${lessonId}/videos`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
+        },
+      }
+    );
+
+    console.log(res, courseId, lessonId);
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch videos');
+    }
+
+    const { data } = await res.json();
+
+    return data;
+  }
+);
+
 export default async function CoursesPage({
   searchParams,
   params: { id },
@@ -75,21 +104,10 @@ export default async function CoursesPage({
   params: { id: string };
 }) {
   const isExpanded = searchParams['expanded'] === 'true';
-  const lessons = await getLessons(id);
+  const lessons: CourseLessonModel[] = await getLessons(id);
   const lessonId = searchParams['lessonId'] ?? lessons[0].id;
-  const videoIds = [
-    '9bZkp7q19f0',
-    'Gb58wGb_Uc4',
-    'kffacxfA7G4',
-    'CevxZvSJLk8',
-    'TWfph3iNC-k',
-    'Zs2IpqHzchw',
-    'FF50H2RWaEY',
-    'Ks-_Mh1QhMc',
-    'J---aiyznGQ',
-    'dQw4w9WgXcQ',
-    'o_l4Ab5FRwM',
-  ];
+  const videos: CourseLessonVideoModel[] = await getVideos(id, lessonId);
+  const videoIds = videos.map((video => video.youtubeLink.split('v=')[1].split('&')[0]));
 
   const materials = await Promise.all(
     videoIds.map(async (videoId) => {
@@ -113,37 +131,13 @@ export default async function CoursesPage({
           href='/ebook'
           className='text-xs md:text-sm text-blue-500 underline hover:text-blue-700'
         >
-          {query}
+          {videos.find(({ youtubeLink }) => youtubeLink.split('v=')[1].split('&')[0] === query).attachment}
         </Link>
       </div>
       <div className='text-justify'>
         <h4 className='text-sm md:text-base'>Summary:</h4>
         <p className='text-xs md:text-sm'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-          facilisi. Donec nec
-          <strong> {title}</strong> velit. Nullam sit amet metus nec risus. In
-          the tranquil shade of the ancient oak tree, she found solace amidst
-          the gentle rustling of leaves in the breeze. The sunlight filtered
-          through the canopy above, casting dappled patterns on the soft moss
-          below. It was a moment of quiet reflection, where time seemed to slow
-          and thoughts drifted like wisps of cloud across a clear blue sky. The
-          world around her hummed with the symphony of nature — the distant call
-          of a songbird, the faint rustle of small creatures in the underbrush.
-          Here, in this hidden sanctuary, she felt a deep sense of peace, as if
-          the secrets of the forest whispered their ancient wisdom to her soul.
-        </p>
-        <p className='text-xs md:text-sm'>
-          The city streets bustled with the energy of a thousand stories
-          unfolding simultaneously. Neon lights flickered overhead, painting the
-          pavement with a kaleidoscope of colors. Pedestrians hurried along,
-          their footsteps echoing against the concrete, each person lost in
-          their own world of thoughts and ambitions. Cars hummed past, their
-          headlights cutting through the evening dusk. Above it all, the skyline
-          glittered with towering skyscrapers that seemed to reach for the
-          stars, a testament to human ingenuity and ambition. In this urban
-          labyrinth, amidst the cacophony of life, every corner held a promise
-          of adventure, every alleyway whispered secrets waiting to be
-          discovered.
+          {videos.find(({ youtubeLink }) => youtubeLink.split('v=')[1].split('&')[0] === query)?.description}
         </p>
       </div>
     </div>

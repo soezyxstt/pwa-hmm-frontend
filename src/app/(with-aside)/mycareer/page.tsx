@@ -1,9 +1,7 @@
-import Header from '@/components/client/header';
 
 const MyCareerPage = () => {
   return (
     <>
-      <Header title='My Career' />
     </>
   );
 };

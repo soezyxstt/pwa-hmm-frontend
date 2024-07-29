@@ -56,10 +56,8 @@ const schema = z.object({
 
 export default async function EditProfile({
   searchParams,
-  withHeader = true,
 }: {
-    searchParams: Record<string, string>;
-  withHeader?: boolean;
+  searchParams: Record<string, string>;
 }) {
   const user = await getFullUser();
 
@@ -178,7 +176,6 @@ export default async function EditProfile({
 
   return (
     <main className='w-full h-full space-y-4 md:space-y-6'>
-      {withHeader && <Header title='Edit Profile' />}
       <div className='rounded-xl flex flex-col flex-1 bg-white'>
         <div className='bg-navy min-h-[15vh] w-full z-0 relative md:mb-20 mb-16 rounded-t-xl flex justify-end items-center pr-6'>
           <div className='flex items-center justify-center p-1.5 bg-white w-fit rounded-full absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2'>
@@ -253,8 +250,4 @@ export default async function EditProfile({
       </div>
     </main>
   );
-}
-
-function FirstPage() {
-  return <></>;
 }

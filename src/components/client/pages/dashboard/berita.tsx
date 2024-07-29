@@ -81,7 +81,7 @@ export default function Berita() {
 
   return (
     <div
-      className='w-full md:w-auto md:h-[50vh] aspect-[16/14] relative overflow-hidden rounded-xl hover:cursor-grab shadow-md'
+      className='w-full md:w-auto md:h-[50vh] aspect-[18/14] relative overflow-hidden rounded-xl hover:cursor-grab shadow-md'
       onMouseDown={(e) => {
         e.currentTarget.style.cursor = 'grabbing';
         setDragging(true);
@@ -145,7 +145,7 @@ export default function Berita() {
               draggable={false}
               width={1000}
               height={1000}
-              className='rounded-xl max-h-[50vh] md:h-[50vh] md:max-w-[calc(16/14*50vh)] max-w-[calc(100vw-2rem)] aspect-[16/14] object-cover'
+              className='rounded-xl max-h-[50vh] md:h-[50vh] md:max-w-[calc(18/14*50vh)] max-w-[calc(100vw-2rem)] aspect-[18/14] object-cover'
             />
           </div>
         ))}

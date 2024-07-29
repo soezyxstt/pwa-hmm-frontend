@@ -3,12 +3,9 @@ import Calendar, {
   type EventMap,
 } from '@/components/client/pages/dashboard/calendar-x';
 import UpcomingSchedule from '@/components/client/pages/dashboard/upcomingSched';
-import Header from '@/components/client/header';
 import Berita from '@/components/client/pages/dashboard/berita';
-import { getUser } from '@/lib/dal';
 
 export default async function Home() {
-  const user = await getUser()
   const events: EventMap[] = [
     {
       '2024-07-28': [
@@ -22,8 +19,7 @@ export default async function Home() {
   ];
   return (
     <div className='flex flex-col items-stretch flex-1 h-max gap-6 relative'>
-      <Header title='Dashboard' />
-      <div className='flex flex-col md:flex-row gap-6 md:mt-4'>
+      <div className='flex flex-col md:flex-row gap-6'>
         <UpcomingSchedule />
         <Assignments />
       </div>

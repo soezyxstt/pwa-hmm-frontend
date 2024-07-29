@@ -66,8 +66,6 @@ export const signIn = actionClient
         }),
       });
 
-      console.log(res);
-
       const { access_token, refresh_token, max_age } = await getTokenFromResponse(
         res
       );
@@ -77,8 +75,6 @@ export const signIn = actionClient
           Cookie: `accessToken=${access_token}; refreshToken=${refresh_token}`,
         },
       });
-
-      console.log(data);
 
       if (!data.ok) {
         throw new PWAError('Failed to sign in');

@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Notebook } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -17,8 +17,22 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { useInterval } from '@/hooks/useInterval';
 import MotionFramer from '@/components/client/modal-framer';
+import { CourseClassAssignmentModel } from 'lms-types';
 
-const AssingmentPage = () => {
+const AssingmentPage = ({
+  assignments,
+}: {
+  assignments: CourseClassAssignmentModel[];
+}) => {
+  const data = assignments.map((assignment) => ({
+    status: true,
+    course: 'MS2110 Analisis Numerik',
+    class: 'K01',
+    name: assignment.title,
+    deadline: new Date(assignment.deadline),
+    submission: assignment.submission,
+  }));
+
   const [active, setActive] = useState<
     (typeof data)[number] | 'add' | boolean | null
   >(null);
@@ -58,15 +72,23 @@ const AssingmentPage = () => {
   );
 
   useInterval(() => {
-    setTimeToDeadline(timeLeft(new Date('2024-07-27T00:00:00')));
+    setTimeToDeadline(
+      timeLeft(
+        new Date(
+          active && typeof active === 'object'
+            ? active.deadline
+            : '2024-07-27T00:00:00'
+        )
+      )
+    );
   }, 1000);
 
   return (
     <>
-      <div className='flex justify-end md:my-6 mb-6'>
+      <div className='flex justify-end'>
         <motion.div layoutId={'add' + id}>
           <Button
-            className='text-sm font-semibold px-4 py-2.5'
+            className='text-sm font-semibold px-4 py-2 md:py-2.5'
             onClick={() => setActive('add')}
           >
             <motion.p layoutId={'add-button' + id}>Add Assignment</motion.p>
@@ -275,7 +297,7 @@ const AssingmentPage = () => {
                       }-${id}`}
                       className='text-sm'
                     >
-                      {active.deadline}
+                      {active.deadline.toDateString()}
                     </motion.p>
                   </tr>
                   <tr className=''>
@@ -350,14 +372,14 @@ const AssingmentPage = () => {
                   }-${id}`}
                   className='text-navy'
                 >
-                  <Notebook size={40} />
+                  <Notebook className='w-7 h-7 md:w-10 md:h-10' />
                 </motion.div>
                 <div className=''>
                   <motion.h2
                     layoutId={`name-${
                       card.name + card.class + card.course
                     }-${id}`}
-                    className='font-medium text-lg'
+                    className='font-medium md:text-lg text-sm'
                   >
                     {card.name}
                   </motion.h2>
@@ -366,20 +388,20 @@ const AssingmentPage = () => {
                       layoutId={`class-${
                         card.name + card.class + card.course
                       }-${id}`}
-                      className='text-sm text-muted-foreground'
+                      className='text-xs md:text-sm text-muted-foreground'
                     >{`${card.class}`}</motion.span>
                     -
                     <motion.span
                       layoutId={`course-${
                         card.name + card.class + card.course
                       }-${id}`}
-                      className='text-sm text-muted-foreground'
+                      className='text-xs md:text-sm text-muted-foreground'
                     >
                       {card.course}
                     </motion.span>
                   </p>
                   <div
-                    className={`text-sm flex gap-2 ${
+                    className={`text-xs md:text-sm flex gap-2 ${
                       card.status ? 'text-green-600' : 'text-red-500'
                     }`}
                   >
@@ -388,7 +410,7 @@ const AssingmentPage = () => {
                         card.name + card.class + card.course
                       }-${id}`}
                     >
-                      {card.deadline}
+                      {card.deadline.toDateString()}
                     </motion.p>
                     <motion.p
                       layoutId={`submission-${
@@ -445,47 +467,47 @@ export const CloseIcon = () => {
   );
 };
 
-const data = [
-  {
-    status: true,
-    course: 'MS2110 Analisis Numerik',
-    class: 'K01',
-    name: 'Tugas Besar',
-    deadline: '2022-01-01',
-    submission: 'Edunex',
-  },
-  {
-    status: false,
-    course: 'MS2111 Kinematika dan Dinamika',
-    class: 'K01',
-    name: 'Tugas Besar',
-    deadline: '2022-01-01',
-    submission: 'Edunex',
-  },
-  {
-    status: true,
-    course: 'MS2111 Mekanika dan Kekuatan Material',
-    class: 'K02',
-    name: 'Homework 4',
-    deadline: '2022-01-01',
-    submission: 'MS Teams',
-  },
-  {
-    status: false,
-    course: 'MS2111 Kinematika dan Dinamika',
-    class: 'K01',
-    name: 'Homework',
-    deadline: '2022-01-01',
-    submission: 'Edunex',
-  },
-  {
-    status: true,
-    course: 'MS2211 Termodinamika',
-    class: 'K01',
-    name: 'Laporan Praktikum',
-    deadline: '2022-01-01',
-    submission: 'MS Teams',
-  },
-];
+// const data = [
+//   {
+//     status: true,
+//     course: 'MS2110 Analisis Numerik',
+//     class: 'K01',
+//     name: 'Tugas Besar',
+//     deadline: '2022-01-01',
+//     submission: 'Edunex',
+//   },
+//   {
+//     status: false,
+//     course: 'MS2111 Kinematika dan Dinamika',
+//     class: 'K01',
+//     name: 'Tugas Besar',
+//     deadline: '2022-01-01',
+//     submission: 'Edunex',
+//   },
+//   {
+//     status: true,
+//     course: 'MS2111 Mekanika dan Kekuatan Material',
+//     class: 'K02',
+//     name: 'Homework 4',
+//     deadline: '2022-01-01',
+//     submission: 'MS Teams',
+//   },
+//   {
+//     status: false,
+//     course: 'MS2111 Kinematika dan Dinamika',
+//     class: 'K01',
+//     name: 'Homework',
+//     deadline: '2022-01-01',
+//     submission: 'Edunex',
+//   },
+//   {
+//     status: true,
+//     course: 'MS2211 Termodinamika',
+//     class: 'K01',
+//     name: 'Laporan Praktikum',
+//     deadline: '2022-01-01',
+//     submission: 'MS Teams',
+//   },
+// ];
 
 export default AssingmentPage;

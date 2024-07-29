@@ -1,9 +1,7 @@
-import Header from '@/components/client/header';
 
 const ScholarshipPage = () => {
   return (
     <>
-      <Header title='Scholarships' />
     </>
   );
 };

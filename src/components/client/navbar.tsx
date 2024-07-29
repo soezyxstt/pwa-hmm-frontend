@@ -7,11 +7,9 @@ export default function Navbar({children}: {children: React.ReactNode}) {
   const firstPath = pathName.split('/')[1];
 
   return (
-    <>
-      <Drawer loc={firstPath}>
-        {children}
-      </Drawer>
+    <nav className=''>
+      <Drawer loc={firstPath}>{children}</Drawer>
       <Sidebar loc={firstPath} />
-    </>
+    </nav>
   );
 }

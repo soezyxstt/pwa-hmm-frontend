@@ -20,7 +20,7 @@ function Sidebar({ className, loc, children, ...props }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'w-64 bg-navy pl-10 py-12 sticky top-0 h-dvh hidden md:block',
+        'min-w-56 bg-navy md:pl-6 lg:pl-10 py-12 sticky top-0 h-screen hidden md:block',
         className
       )}
       {...props}
@@ -32,7 +32,7 @@ function Sidebar({ className, loc, children, ...props }: SidebarProps) {
           height={40}
           alt='logo'
         />
-        <h1 className='text-white text-2xl font-bold'>HMM ITB</h1>
+        <h1 className='text-white text-2xl font-bold text-nowrap'>HMM ITB</h1>
       </div>
       <div className='flex flex-col gap-3 text-abu-2 text-sm font-medium'>
         {sideBarTabs.map((tab, index) => (
@@ -65,10 +65,10 @@ function CusLink({
   return (
     <Link
       className={cn(
-        'relative py-2.5 pl-2 md:pl-4 md:rounded-l-full rounded-md md:rounded-r-none flex md:gap-4 gap-3 items-center transition-all duration-150 ease-in-out before:absolute before:bottom-0 before:left-4 before:h-0.5 before:rounded-full before:w-0 before:transition-all before:bg-background before:translate-y-full',
+        'relative py-2.5 pl-2 md:pl-4 pr-4 md:rounded-l-full rounded-md md:rounded-r-none flex md:gap-4 gap-3 items-center transition-all duration-150 ease-in-out before:absolute before:bottom-0 before:left-4 before:h-0.5 before:rounded-full before:w-0 before:transition-all before:bg-background before:translate-y-full',
         isActive
           ? 'md:bg-background md:text-navy text-white bg-blue-200/40 pl-4 md:pl-6'
-          : 'md:hover:pl-6 md:hover:before:w-3/4',
+          : 'md:hover:pl-6 md:hover:before:w-3/4 md:hover:pr-2',
         className
       )}
       href={href}
@@ -91,7 +91,7 @@ function CusLink({
 
 function AsideDrawer({ loc, children }: SidebarProps) {
   return (
-    <aside className='md:hidden w-full flex justify-between items-center py-5 px-4'>
+    <aside className='md:hidden w-full flex justify-between items-center h-16 px-[max(1.5rem,2vw)] border-b'>
       <div className='flex gap-4 items-center min-w-[50%]'>
         <Drawer>
           <DrawerTrigger className='group/drawer'>
@@ -109,6 +109,7 @@ function AsideDrawer({ loc, children }: SidebarProps) {
                     href={'/' + pathFormatter(tab)}
                     isActive={loc.toLowerCase() === pathFormatter(tab)}
                     icon={sideBarIcons[index]}
+                    className='hover:bg-blue-200/20'
                   >
                     {tab}
                   </CusLink>
@@ -117,7 +118,9 @@ function AsideDrawer({ loc, children }: SidebarProps) {
             </div>
           </DrawerContent>
         </Drawer>
-        <h1 className='text-xl font-bold capitalize'>{loc}</h1>
+        <h1 className='text-xl font-bold capitalize'>
+          {loc === 'mycareer' ? 'MyCareer' : loc.replace('hmm', 'HMM')}
+        </h1>
       </div>
       {children}
     </aside>

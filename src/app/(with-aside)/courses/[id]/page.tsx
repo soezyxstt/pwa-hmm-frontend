@@ -184,6 +184,7 @@ export default async function CoursesPage({
             materials={materials}
             isExpanded={isExpanded}
             query={query}
+            lessonId={lessonId}
           />
         </div>
         <div className='px-4 py-4 space-y-4 h-full hidden md:block'>
@@ -197,6 +198,7 @@ export default async function CoursesPage({
           materials={materials}
           isExpanded={true}
           query={query}
+          lessonId={lessonId}
         />
       </ScrollArea>
     </div>

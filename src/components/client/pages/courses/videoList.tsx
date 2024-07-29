@@ -6,10 +6,12 @@ export default function VideoList({
   materials,
   isExpanded,
   query,
+  lessonId,
 }: {
   materials: { title: string; videoId: string, thumbnail_url: string }[];
   isExpanded?: boolean;
-  query: string;
+    query: string;
+  lessonId: string;
 }) {
   return (
     <div className='w-full'>
@@ -20,7 +22,7 @@ export default function VideoList({
           <>
             <Link
               key={videoId}
-              href={`?q=${videoId}&expanded=${isExpanded}`}
+              href={`?q=${videoId}&expanded=${isExpanded}&lessonId=${lessonId}`}
               className='px-2 py-2.5 flex gap-4 items-center text-sm'
             >
               <Image

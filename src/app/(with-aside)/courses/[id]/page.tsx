@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import YoutubeEmbed from '@/components/client/youtubeEmbed';
 import Link from 'next/link';
-import { cache, Suspense } from 'react';
+import { Suspense } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -10,91 +10,9 @@ import {
 } from '@/components/ui/accordion';
 import VideoList from '@/components/client/pages/courses/videoList';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { verifySession } from '@/lib/session';
-import { env } from '@/env';
 import Lesson from './lesson';
 import type { CourseLessonModel, CourseLessonVideoModel } from 'lms-types';
-
-const getVideoData = cache(async (videoId: string) => {
-  'use server';
-  const res = await fetch(
-    `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
-    { cache: 'force-cache' }
-  );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch video data');
-  }
-
-  return res.json();
-});
-
-const getLessons = cache(async (id: string) => {
-  'use server';
-  if (!id) {
-    return null;
-  }
-
-  const session = await verifySession();
-
-  if (!session.isAuth) {
-    throw new Error('Unauthorized');
-  }
-
-  try {
-    const res = await fetch(env.API_URL + `/courses/${id}/lessons`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch lessons');
-    }
-
-    const { data } = await res.json();
-
-    return data;
-  } catch (err) {
-    console.log(err);
-
-    if (err instanceof Error) {
-      throw new Error(err.message);
-    }
-
-    throw new Error('Failed to fetch lessons');
-  }
-});
-
-const getVideos = cache(
-  async (courseId: string | number, lessonId: string | number) => {
-    'use server';
-    const session = await verifySession();
-
-    const res = await fetch(
-      env.API_URL + `/courses/${courseId}/lessons/${lessonId}/videos`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
-        },
-      }
-    );
-
-    console.log(res, courseId, lessonId);
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch videos');
-    }
-
-    const { data } = await res.json();
-
-    return data;
-  }
-);
+import { getLessons, getVideoData, getVideos } from '@/actions/courses-action';
 
 export default async function CoursesPage({
   searchParams,

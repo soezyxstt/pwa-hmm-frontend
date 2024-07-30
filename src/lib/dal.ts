@@ -1,6 +1,7 @@
 import { cache } from 'react';
-import { verifySession } from './session';
+import { updateSession, verifySession } from './session';
 import { env } from '@/env';
+import { handleError } from './error';
 
 export const getAccessToken = cache(async () => {
   const session = await verifySession();
@@ -22,33 +23,20 @@ export const getUser = cache(async () => {
 
   try {
     const data = await fetch(env.API_URL + `/users/${session.userId}/public`);
+
+    if (!data.ok) {
+      throw new Error('Error fetching user data');
+    }
+
     const user = await data.json();
+
+    if (user.error) {
+      throw new Error(user.error);
+    }
 
     return user;
   } catch (err) {
-    console.log("Error fetching user data");
-    return null;
-  }
-});
-
-export const getUserId = cache(async () => {
-  const session = await verifySession();
-  if (!session.isAuth) return null
-
-  try {
-    const data = await fetch(env.API_URL + '/users/me', {
-      headers: {
-        Cookie: `accessToken=${session.access_token}; refreshToken=${session.refresh_token}`,
-      }
-    })
-
-    return (await data.json()).data.id;
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error(err.message);
-    }
-
-    return null
+    throw new Error('Error fetching user data');
   }
 });
 
@@ -57,19 +45,21 @@ export const getFullUser = cache(async () => {
   if (!session.isAuth) return null;
 
   try {
-    const data = await fetch(env.API_URL + `/users/me`, {
+    const res = await fetch(env.API_URL + `/users/me`, {
       headers: {
         Cookie: `accessToken=${session.access_token}`,
-      }
+      },
     });
 
-    console.log(data);
+    const { error, data } = await res.json();
+    if (!res.ok || error) {
+      return handleError(error);
+    }
 
-    const user = await data.json();
+    void updateSession(res);
 
-    return user;
+    return data;
   } catch (err) {
-    console.log("Error fetching user data");
-    return null;
+    throw new Error('Error fetching user data');
   }
 });

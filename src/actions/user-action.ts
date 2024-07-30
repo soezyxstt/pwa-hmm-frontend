@@ -3,7 +3,7 @@
 import { env } from '@/env';
 import { actionClient } from '@/lib/action-client';
 import { PWAError } from '@/lib/error';
-import { signInSchema, signOutSchema, signUpSchema } from '@/lib/schema';
+import { signInSchema, signUpSchema } from '@/lib/schema';
 import { createSession, deleteSession, verifySession } from '@/lib/session';
 import { getTokenFromResponse } from '@/lib/utils';
 import { flattenValidationErrors } from 'next-safe-action';
@@ -28,8 +28,6 @@ export const signUp = actionClient
         }),
       });
 
-      console.log(res);
-
       if (!res.ok) {
         throw new PWAError('Failed to sign up');
       }
@@ -40,7 +38,6 @@ export const signUp = actionClient
       };
     } catch (err) {
       if (err instanceof Error) {
-        console.log(err.message);
         throw new Error(err.message);
       }
 
@@ -66,7 +63,7 @@ export const signIn = actionClient
         }),
       });
 
-      const { access_token, refresh_token, max_age } = await getTokenFromResponse(
+      const { access_token, refresh_token, expire } = await getTokenFromResponse(
         res
       );
 
@@ -88,7 +85,7 @@ export const signIn = actionClient
         throw new PWAError('Failed to sign in');
       }
 
-      createSession(id, access_token, refresh_token, max_age ?? '3600');
+      createSession(id, access_token, refresh_token, expire ?? '0');
       return {
         message: 'User signed in successfully',
         status: 'success',
@@ -96,7 +93,6 @@ export const signIn = actionClient
       };
     } catch (err) {
       if (err instanceof Error) {
-        console.log(err.message);
         throw new Error(err.message);
       }
 
@@ -114,8 +110,6 @@ export async function signOut() {
       };
     }
 
-    deleteSession();
-
     const res = await fetch(env.API_URL + '/users/signout', {
       method: 'POST',
       credentials: 'include',
@@ -123,17 +117,14 @@ export async function signOut() {
         Cookie: `accessToken=${session.access_token}`,
       },
     });
-
-    if (!res.ok) {
-      throw new PWAError('Failed to sign out');
-    }
+    
+    void deleteSession();
 
     return {
       status: 'success',
     };
   } catch (err) {
     if (err instanceof Error) {
-      console.log(err.message);
       throw new Error(err.message);
     }
 

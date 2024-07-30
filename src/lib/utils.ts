@@ -28,7 +28,7 @@ export const getTokenFromResponse = (res: Response) => {
   const set_cookies = res.headers.get('set-cookie')?.split('=');
   const access_token = set_cookies?.[1].split(';')[0];
   const refresh_token = set_cookies?.[5].split(';')[0];
-  const max_age = set_cookies?.[6].split(';')[0];
+  const expire = new Date(Date.parse(set_cookies?.[8].split(';')[0]!));
 
-  return { access_token, refresh_token, max_age };
+  return { access_token, refresh_token, expire };
 };

@@ -1,6 +1,6 @@
 import Search from '@/components/client/search';
 import CoursesItem from '@/components/client/pages/courses/item';
-import { courses as courses_action } from '@/actions/courses-action';
+import { getCourses as courses_action } from '@/actions/courses-action';
 
 export const dynamic = 'force-dynamic';
 

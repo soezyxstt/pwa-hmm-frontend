@@ -5,7 +5,6 @@ import { env } from '@/env';
 import { cache } from 'react';
 import { NextResponse } from 'next/server';
 import { getTokenFromResponse } from './utils';
-import { redirect } from 'next/navigation';
 
 const key = new TextEncoder().encode(env.AUTH_SECRET);
 

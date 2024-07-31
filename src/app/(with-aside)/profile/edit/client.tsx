@@ -1,11 +1,10 @@
-import Header from '@/components/client/header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Button from '@/components/ui/button/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getFullUser } from '@/lib/dal';
+import { type UserModel } from 'lms-types';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -59,14 +58,25 @@ export default async function EditProfile({
 }: {
   searchParams: Record<string, string>;
 }) {
-  const user = await getFullUser();
-
-  if (user.error) {
-    redirect('/sign-in');
-  }
+  const user: UserModel = await getFullUser();
 
   const {
-    data: { name, avatar, email, about, role, phoneNumber, NIM },
+    name,
+    avatar,
+    email,
+    about,
+    role,
+    phoneNumber,
+    NIM,
+    medicalHistories,
+    hobbies,
+    emergencyNumber,
+    lineId,
+    UKM,
+    HMM,
+    dateOfBirth,
+    address,
+    bloodType,
   } = user;
 
   const page = parseInt(searchParams['page'] ?? '1');
@@ -97,13 +107,14 @@ export default async function EditProfile({
       type: 'text',
       name: 'location',
       id: 'location',
+      defaultValue: address,
     },
     {
       label: 'Phone Number',
       type: 'number',
       name: 'phoneNumber',
       id: 'phoneNumber',
-      defaultValue: phoneNumber,
+      defaultValue: phoneNumber!,
     },
     {
       label: 'Email',
@@ -117,60 +128,70 @@ export default async function EditProfile({
       type: 'date',
       name: 'born',
       id: 'born',
+      defaultValue: new Date(dateOfBirth).toDateString(),
     },
     {
       label: 'Adress',
       type: 'text',
       name: 'adress',
       id: 'adress',
+      defaultValue: address,
     },
     {
       label: 'City',
       type: 'text',
       name: 'city',
       id: 'city',
+      defaultValue: address,
     },
     {
       label: 'Blood Type',
       type: 'text',
       name: 'bloodType',
       id: 'bloodType',
+      defaultValue: bloodType,
     },
     {
       label: 'Medical History',
       type: 'text',
       name: 'illness',
       id: 'illness',
+      defaultValue: medicalHistories.join(', '),
     },
     {
       label: 'Line ID',
       type: 'text',
       name: 'lineId',
       id: 'lineId',
+      defaultValue: lineId,
     },
     {
       label: 'Emergency Number',
       type: 'number',
       name: 'emergencyNumber',
       id: 'emergencyNumber',
+      defaultValue: emergencyNumber,
     },
     {
       label: 'HMM Division',
       type: 'text',
       name: 'hmmPos',
       id: 'hmmPos',
+      defaultValue: HMM.join(', '),
     },
     {
       label: 'UKM',
       type: 'text',
       name: 'ukm',
       id: 'ukm',
+      defaultValue: UKM.join(', '),
     },
     {
       label: 'Hobby',
       type: 'text',
       name: 'hobby',
       id: 'hobby',
+      defaultValue: hobbies.join(', '),
     },
   ];
 

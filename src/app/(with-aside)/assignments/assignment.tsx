@@ -361,7 +361,7 @@ const AssingmentPage = ({
           <>
             <motion.div
               layoutId={`card-${card.name + card.class + card.course}-${id}`}
-              key={`${card.name + card.class}-${id}`}
+              key={`${card.name + card.class}-${id + i}`}
               onClick={() => setActive(card)}
               className='py-3 px-4 flex w-full cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
             >

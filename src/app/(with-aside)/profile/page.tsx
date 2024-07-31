@@ -3,18 +3,29 @@ import { IoLocationOutline, IoMailOutline } from 'react-icons/io5';
 import { BsTelephone } from 'react-icons/bs';
 import { getFullUser } from '@/lib/dal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { redirect } from 'next/navigation';
 import EditProfile from './edit-profile-button';
+import { UserModel } from 'lms-types';
 
 const ProfilePage = async () => {
-  const user = await getFullUser();
-
-  if (user.error) {
-    redirect('/sign-out');
-  }
+  const user: UserModel = await getFullUser();
 
   const {
-    data: { name, avatar, email, about, role, phoneNumber, NIM },
+    name,
+    avatar,
+    email,
+    about,
+    role,
+    phoneNumber,
+    NIM,
+    medicalHistories,
+    hobbies,
+    emergencyNumber,
+    lineId,
+    UKM,
+    HMM,
+    dateOfBirth,
+    address,
+    bloodType,
   } = user;
 
   return (
@@ -46,7 +57,7 @@ const ProfilePage = async () => {
                 icon={<IoLocationOutline />}
                 className='bg-oren p-1.5'
               />
-              <h6 className='font-2xs'>Jakarta, Indonesia</h6>
+              <h6 className='font-2xs'>{address ?? '-'}</h6>
             </div>
             <div className='flex gap-2'>
               <Icon
@@ -64,24 +75,45 @@ const ProfilePage = async () => {
             </div>
           </div>
           <div className='grid w-full grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-y-6 md:gap-y-10'>
-            <div className='[&_p]:text-xs [&_p]:font-semibold space-y-2'>
+            <div className='[&_p]:text-xs [&_p]:font-semibold [&_span]:font-normal space-y-2'>
               <h2 className='text-base'>Biodata</h2>
-              <p className=''>Tanggal lahir:</p>
-              <p className=''>Alamat:</p>
-              <p className=''>Golongan darah:</p>
-              <p className=''>Riwayat peyakit:</p>
+              <p className=''>
+                Tanggal lahir:{' '}
+                <span>{new Date(dateOfBirth).toDateString()}</span>
+              </p>
+              <p className=''>
+                Alamat: <span>{address}</span>
+              </p>
+              <p className=''>
+                Golongan darah: <span>{bloodType}</span>
+              </p>
+              <p className=''>
+                Riwayat peyakit: <span>{medicalHistories}</span>
+              </p>
             </div>
-            <div className='[&_p]:text-xs [&_p]:font-semibold space-y-2'>
+            <div className='[&_p]:text-xs [&_p]:font-semibold [&_span]:font-normal space-y-2'>
               <h2 className='text-base'>Personal Contact</h2>
-              <p className=''>ID Line:</p>
-              <p className=''>Phone Number:</p>
-              <p className=''>emergency Number:</p>
+              <p className=''>
+                ID Line: <span>{lineId}</span>
+              </p>
+              <p className=''>
+                Phone Number: <span>{phoneNumber}</span>
+              </p>
+              <p className=''>
+                emergency Number: <span>{emergencyNumber}</span>
+              </p>
             </div>
-            <div className='[&_p]:text-xs [&_p]:font-semibold space-y-2'>
+            <div className='[&_p]:text-xs [&_p]:font-semibold [&_span]:font-normal space-y-2'>
               <h2 className='text-base'>Kemahasiswaan</h2>
-              <p className=''>Badan HMM:</p>
-              <p className=''>Unit Kegiatan Mahasiswa:</p>
-              <p className=''>Hobby:</p>
+              <p className=''>
+                Badan HMM: <span>{HMM.join(", ")}</span>
+              </p>
+              <p className=''>
+                Unit Kegiatan Mahasiswa: <span>{UKM.join(", ")}</span>
+              </p>
+              <p className=''>
+                Hobby: <span>{hobbies.join(", ")}</span>
+              </p>
             </div>
           </div>
         </div>

@@ -1,9 +1,7 @@
-import Assignments from '@/components/client/pages/dashboard/assignments';
-import Calendar, {
-  type EventMap,
-} from '@/components/client/pages/dashboard/calendar-x';
-import UpcomingSchedule from '@/components/client/pages/dashboard/upcomingSched';
-import Berita from '@/components/client/pages/dashboard/berita';
+import Assignments from './assignments';
+import Calendar, { type EventMap } from './calendar-x';
+import UpcomingSchedule from './upcomingSched';
+import Berita from './berita';
 
 export default async function Home() {
   const events: EventMap[] = [
@@ -14,7 +12,12 @@ export default async function Home() {
         { title: 'Tugas Besar - MS2200 Termodinamika' },
       ],
     },
-    { '2024-07-25': [{ title: 'Homework 4 - MS2101 Analisis Numerik' }, { title: 'Hearing Machining' }] },
+    {
+      '2024-07-25': [
+        { title: 'Homework 4 - MS2101 Analisis Numerik' },
+        { title: 'Hearing Machining' },
+      ],
+    },
     { '2024-07-31': [{ title: 'Pre-Machining' }, { title: 'FRS' }] },
   ];
   return (

@@ -5,7 +5,7 @@ import { handleError } from '@/lib/error';
 import { updateSession, verifySession } from '@/lib/session';
 import { cache } from 'react';
 
-export const getCourses = cache(async () => {
+export const getEnrolledCourses = cache(async () => {
   try {
     const session = await verifySession();
     const res = await fetch(

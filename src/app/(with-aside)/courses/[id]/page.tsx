@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import VideoList from '@/components/client/pages/courses/videoList';
+import VideoList from '@/app/(with-aside)/courses/[id]/videoList';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Lesson from './lesson';
 import type { CourseLessonModel, CourseLessonVideoModel } from 'lms-types';

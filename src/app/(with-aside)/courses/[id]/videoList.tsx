@@ -8,9 +8,9 @@ export default function VideoList({
   query,
   lessonId,
 }: {
-  materials: { title: string; videoId: string, thumbnail_url: string }[];
+  materials: { title: string; videoId: string; thumbnail_url: string }[];
   isExpanded?: boolean;
-    query: string;
+  query: string;
   lessonId: string;
 }) {
   return (
@@ -41,7 +41,9 @@ export default function VideoList({
       {materials.length > 6 && (
         <div className='relative bg-gray-400 h-px w-full rounded-full md:hidden'>
           <Link
-            href={`?q=${query}&expanded=${isExpanded ? 'false' : 'true'}&lessonId=${lessonId}`}
+            href={`?q=${query}&expanded=${
+              isExpanded ? 'false' : 'true'
+            }&lessonId=${lessonId}`}
             className='bg-white text-2xs absolute left-1/2 top-1/2 px-0.5 py-px rounded-sm -translate-x-1/2 -translate-y-1/2'
             scroll={false}
           >

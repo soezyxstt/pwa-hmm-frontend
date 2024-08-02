@@ -1,4 +1,4 @@
-import Main from '@/components/client/pages/hmm-store/item-wrapper';
+import Main from '@/app/(with-aside)/hmm-store/item-wrapper';
 import Search from '@/components/client/search';
 
 const HMMStorePage = () => {

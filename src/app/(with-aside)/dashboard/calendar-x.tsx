@@ -1,5 +1,5 @@
 'use client';
-import { colors } from '@/components/client/pages/dashboard/assignments';
+import { colors } from './assignments';
 import {
   Command,
   CommandGroup,

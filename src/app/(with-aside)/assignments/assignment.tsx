@@ -228,131 +228,135 @@ const AssingmentPage = ({
         setTo={null}
         show={!!(active && (typeof active === 'object' || active === 'add'))}
       />
-      <MotionFramer
-        // @ts-ignore: Object is possibly 'null'
-        id={`card-${active.name + active.class + active.course}-${id}`}
-        show={typeof active === 'object'}
-      >
-        <div className='flex flex-col gap-3'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-4 text-navy'>
-              <motion.div
-                layoutId={`notebook-${
-                  // @ts-ignore: Object is possibly 'null'
-                  active.name + active.class + active.course
-                }-${id}`}
-              >
-                <Notebook size={32} />
-              </motion.div>
-              <motion.div
-                layoutId={`name-${
-                  // @ts-ignore: Object is possibly 'null'
-                  active.name + active.class + active.course
-                }-${id}`}
-                className='font-medium text-lg'
-              >
-                {/* @ts-ignore */}
-                {active.name}
-              </motion.div>
+      {active && (
+        <MotionFramer
+          // @ts-ignore
+          id={`card-${active.name + active.class + active.course}-${id}`}
+          show={typeof active === 'object'}
+        >
+          <div className='flex flex-col gap-3'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-4 text-navy'>
+                <motion.div
+                  layoutId={`notebook-${
+                    // @ts-ignore: Object is possibly 'null'
+                    active.name + active.class + active.course
+                  }-${id}`}
+                >
+                  <Notebook size={32} />
+                </motion.div>
+                <motion.div
+                  layoutId={`name-${
+                    // @ts-ignore: Object is possibly 'null'
+                    active.name + active.class + active.course
+                  }-${id}`}
+                  className='font-medium text-lg'
+                >
+                  {/* @ts-ignore */}
+                  {active.name}
+                </motion.div>
+              </div>
+              <div className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
             </div>
-            <div className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
+            <Separator className='' />
+            <table className='space-y-4 *:*:py-2'>
+              <tr className='gap-2'>
+                <td className='text-sm text-muted-foreground'>Course</td>
+                <td className='text-sm'>:</td>
+                <motion.p
+                  layoutId={`course-${
+                    // @ts-ignore: Object is possibly 'null'
+                    active.name + active.class + active.course
+                  }-${id}`}
+                  className='text-sm'
+                >
+                  {/* @ts-ignore */}
+                  {active.course}
+                </motion.p>
+              </tr>
+              <tr className=''>
+                <td className='text-sm text-muted-foreground'>Class</td>
+                <td className='text-sm'>:</td>
+                <motion.p
+                  layoutId={`class-${
+                    // @ts-ignore: Object is possibly 'null'
+                    active.name + active.class + active.course
+                  }-${id}`}
+                  className='text-sm'
+                >
+                  {/* @ts-ignore */}
+                  {active.class}
+                </motion.p>
+              </tr>
+              <tr className=''>
+                <td className='text-sm text-muted-foreground'>Deadline</td>
+                <td className='text-sm'>:</td>
+                <motion.p
+                  layoutId={`deadline-${
+                    // @ts-ignore: Object is possibly 'null'
+                    active.name + active.class + active.course
+                  }-${id}`}
+                  className='text-sm'
+                >
+                  {/* @ts-ignore */}
+                  {active.deadline.toDateString()}
+                </motion.p>
+              </tr>
+              <tr className=''>
+                <td className='text-sm text-muted-foreground pr-4'>
+                  Submission
+                </td>
+                <td className='text-sm pr-2'>:</td>
+                <motion.p
+                  layoutId={`submission-${
+                    // @ts-ignore: Object is possibly 'null'
+                    active.name + active.class + active.course
+                  }-${id}`}
+                  className='text-sm'
+                >
+                  {/* @ts-ignore */}
+                  {active.submission}
+                </motion.p>
+              </tr>
+              <tr className=''>
+                <td className='text-sm text-muted-foreground'>Done?</td>
+                <td className='text-sm'>:</td>
+                <td className='flex gap-6'>
+                  <div className='flex items-center gap-2'>
+                    <Checkbox
+                      id='done'
+                      className='data-[state=checked]:bg-green-600'
+                    />
+                    <label
+                      htmlFor='done'
+                      className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-green-600'
+                    >
+                      Yes
+                    </label>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <Checkbox
+                      id='not'
+                      className='data-[state=checked]:bg-red-600'
+                    />
+                    <label
+                      htmlFor='not'
+                      className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-red-600'
+                    >
+                      No
+                    </label>
+                  </div>
+                </td>
+              </tr>
+              <tr className=''>
+                <td className='text-sm text-muted-foreground'>Status</td>
+                <td className='text-sm'>:</td>
+                <td className='text-sm text-red-500'>Over Due Date</td>
+              </tr>
+            </table>
           </div>
-          <Separator className='' />
-          <table className='space-y-4 *:*:py-2'>
-            <tr className='gap-2'>
-              <td className='text-sm text-muted-foreground'>Course</td>
-              <td className='text-sm'>:</td>
-              <motion.p
-                layoutId={`course-${
-                  // @ts-ignore: Object is possibly 'null'
-                  active.name + active.class + active.course
-                }-${id}`}
-                className='text-sm'
-              >
-                {/* @ts-ignore */}
-                {active.course}
-              </motion.p>
-            </tr>
-            <tr className=''>
-              <td className='text-sm text-muted-foreground'>Class</td>
-              <td className='text-sm'>:</td>
-              <motion.p
-                layoutId={`class-${
-                  // @ts-ignore: Object is possibly 'null'
-                  active.name + active.class + active.course
-                }-${id}`}
-                className='text-sm'
-              >
-                {/* @ts-ignore */}
-                {active.class}
-              </motion.p>
-            </tr>
-            <tr className=''>
-              <td className='text-sm text-muted-foreground'>Deadline</td>
-              <td className='text-sm'>:</td>
-              <motion.p
-                layoutId={`deadline-${
-                  // @ts-ignore: Object is possibly 'null'
-                  active.name + active.class + active.course
-                }-${id}`}
-                className='text-sm'
-              >
-                {/* @ts-ignore */}
-                {active.deadline.toDateString()}
-              </motion.p>
-            </tr>
-            <tr className=''>
-              <td className='text-sm text-muted-foreground pr-4'>Submission</td>
-              <td className='text-sm pr-2'>:</td>
-              <motion.p
-                layoutId={`submission-${
-                  // @ts-ignore: Object is possibly 'null'
-                  active.name + active.class + active.course
-                }-${id}`}
-                className='text-sm'
-              >
-                {/* @ts-ignore */}
-                {active.submission}
-              </motion.p>
-            </tr>
-            <tr className=''>
-              <td className='text-sm text-muted-foreground'>Done?</td>
-              <td className='text-sm'>:</td>
-              <td className='flex gap-6'>
-                <div className='flex items-center gap-2'>
-                  <Checkbox
-                    id='done'
-                    className='data-[state=checked]:bg-green-600'
-                  />
-                  <label
-                    htmlFor='done'
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-green-600'
-                  >
-                    Yes
-                  </label>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <Checkbox
-                    id='not'
-                    className='data-[state=checked]:bg-red-600'
-                  />
-                  <label
-                    htmlFor='not'
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-red-600'
-                  >
-                    No
-                  </label>
-                </div>
-              </td>
-            </tr>
-            <tr className=''>
-              <td className='text-sm text-muted-foreground'>Status</td>
-              <td className='text-sm'>:</td>
-              <td className='text-sm text-red-500'>Over Due Date</td>
-            </tr>
-          </table>
-        </div>
-      </MotionFramer>
+        </MotionFramer>
+      )}
       <ul className='w-full p-2 rounded-2xl shadow-md bg-white'>
         <Separator />
         {data.map((card, i) => (

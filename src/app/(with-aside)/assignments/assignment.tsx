@@ -24,7 +24,7 @@ import type {
 } from 'lms-types';
 import MotionOverlay from '@/components/client/modal-overlay';
 
-const AssingmentPage = ({
+const Assignment = ({
   assignments,
   courses,
 }: {
@@ -102,261 +102,252 @@ const AssingmentPage = ({
           </Button>
         </motion.div>
       </div>
-      <MotionFramer
-        id={'add' + id}
-        show={active === 'add'}
-      >
-        <div className='flex items-center gap-4 justify-between'>
-          <div className='flex items-center gap-4'>
-            <Notebook size={32} />
-            <motion.p
-              layoutId={'add-button' + id}
-              className='font-medium text-lg'
-            >
-              Add Assignment
-            </motion.p>
-          </div>
-          <button
-            className='text-sm font-semibold px-4 py-2.5'
-            onClick={() => setActive(null)}
-          >
-            <CloseIcon />
-          </button>
-        </div>
-        <Separator className='my-2' />
-        <div className='flex flex-col gap-4'>
-          <div className='flex flex-col gap-2'>
-            <label
-              htmlFor='name'
-              className='text-sm font-semibold'
-            >
-              Name
-            </label>
-            <Input
-              type='text'
-              id='name'
-              className='Input'
-            />
-          </div>
-          <div className='flex flex-col gap-2'>
-            <label
-              htmlFor='class'
-              className='text-sm font-semibold'
-            >
-              Class
-            </label>
-            <Input
-              type='text'
-              id='class'
-              className='Input'
-            />
-          </div>
-          <div className='flex flex-col gap-2'>
-            <label
-              htmlFor='course'
-              className='text-sm font-semibold'
-            >
-              Course
-            </label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder='Select Course' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Course</SelectLabel>
-                  {courses.map(({ course }) => (
-                    <SelectItem
-                      key={course.id + course.title}
-                      value={course.title.toLowerCase()}
-                    >
-                      {course.title}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='flex flex-col gap-2'>
-            <label
-              htmlFor='deadline'
-              className='text-sm font-semibold'
-            >
-              Deadline
-            </label>
-            <div className='flex gap-2'>
-              <Input
-                type='date'
-                id='deadline'
-                className='Input'
-              />
-              <Input type='time' />
+      <AnimatePresence>
+        {active === 'add' && (
+          <MotionFramer id={'add' + id}>
+            <div className='flex items-center gap-4 justify-between'>
+              <div className='flex items-center gap-4'>
+                <Notebook size={32} />
+                <motion.p
+                  layoutId={'add-button' + id}
+                  className='font-medium text-lg'
+                >
+                  Add Assignment
+                </motion.p>
+              </div>
+              <button
+                className='text-sm font-semibold px-4 py-2.5'
+                onClick={() => setActive(null)}
+              >
+                <CloseIcon />
+              </button>
             </div>
-          </div>
-          <div className='flex flex-col gap-2'>
-            <label
-              htmlFor='submission'
-              className='text-sm font-semibold'
-            >
-              Submission
-            </label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder='Select Submission' />
-              </SelectTrigger>
-              <SelectContent className='pointer-events-auto'>
-                <SelectGroup>
-                  <SelectLabel>Submission</SelectLabel>
-                  <SelectItem value='ms-teams'>MS Teams</SelectItem>
-                  <SelectItem value='edunex'>Edunex</SelectItem>
-                  <SelectItem value='on-site'>On Site</SelectItem>
-                  <SelectItem value='g-drive'>G-Drive</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button
-            className='text-sm font-semibold px-4 py-2.5'
-            onClick={() => setActive(null)}
-          >
-            Add
-          </Button>
-        </div>
-      </MotionFramer>
+            <Separator className='my-2' />
+            <div className='flex flex-col gap-4'>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='name'
+                  className='text-sm font-semibold'
+                >
+                  Name
+                </label>
+                <Input
+                  type='text'
+                  id='name'
+                  className='Input'
+                />
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='class'
+                  className='text-sm font-semibold'
+                >
+                  Class
+                </label>
+                <Input
+                  type='text'
+                  id='class'
+                  className='Input'
+                />
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='course'
+                  className='text-sm font-semibold'
+                >
+                  Course
+                </label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select Course' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Course</SelectLabel>
+                      {courses.map(({ course }) => (
+                        <SelectItem
+                          key={course.id + course.title}
+                          value={course.title.toLowerCase()}
+                        >
+                          {course.title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='deadline'
+                  className='text-sm font-semibold'
+                >
+                  Deadline
+                </label>
+                <div className='flex gap-2'>
+                  <Input
+                    type='date'
+                    id='deadline'
+                    className='Input'
+                  />
+                  <Input type='time' />
+                </div>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='submission'
+                  className='text-sm font-semibold'
+                >
+                  Submission
+                </label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select Submission' />
+                  </SelectTrigger>
+                  <SelectContent className='pointer-events-auto'>
+                    <SelectGroup>
+                      <SelectLabel>Submission</SelectLabel>
+                      <SelectItem value='ms-teams'>MS Teams</SelectItem>
+                      <SelectItem value='edunex'>Edunex</SelectItem>
+                      <SelectItem value='on-site'>On Site</SelectItem>
+                      <SelectItem value='g-drive'>G-Drive</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                className='text-sm font-semibold px-4 py-2.5'
+                onClick={() => setActive(null)}
+              >
+                Add
+              </Button>
+            </div>
+          </MotionFramer>
+        )}
+      </AnimatePresence>
       <MotionOverlay
         setActive={setActive}
         setTo={null}
         show={!!(active && (typeof active === 'object' || active === 'add'))}
       />
-      {active && (
-        <MotionFramer
-          // @ts-ignore
-          id={`card-${active.name + active.class + active.course}-${id}`}
-          show={typeof active === 'object'}
-        >
-          <div className='flex flex-col gap-3'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-4 text-navy'>
-                <motion.div
-                  layoutId={`notebook-${
-                    // @ts-ignore: Object is possibly 'null'
-                    active.name + active.class + active.course
-                  }-${id}`}
-                >
-                  <Notebook size={32} />
-                </motion.div>
-                <motion.div
-                  layoutId={`name-${
-                    // @ts-ignore: Object is possibly 'null'
-                    active.name + active.class + active.course
-                  }-${id}`}
-                  className='font-medium text-lg'
-                >
-                  {/* @ts-ignore */}
-                  {active.name}
-                </motion.div>
+      <AnimatePresence>
+        {active && typeof active === 'object' && (
+          <MotionFramer
+            // @ts-ignore
+            id={`card-${active.name + active.class + active.course}-${id}`}
+          >
+            <div className='flex flex-col gap-3'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-4 text-navy'>
+                  <motion.div
+                    layoutId={`notebook-${
+                      active.name + active.class + active.course
+                    }-${id}`}
+                  >
+                    <Notebook size={32} />
+                  </motion.div>
+                  <motion.div
+                    layoutId={`name-${
+                      active.name + active.class + active.course
+                    }-${id}`}
+                    className='font-medium text-lg'
+                  >
+                    {active.name}
+                  </motion.div>
+                </div>
+                <div className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
               </div>
-              <div className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
+              <Separator className='' />
+              <table className='space-y-4 *:*:py-2'>
+                <tr className='gap-2'>
+                  <td className='text-sm text-muted-foreground'>Course</td>
+                  <td className='text-sm'>:</td>
+                  <motion.p
+                    layoutId={`course-${
+                      active.name + active.class + active.course
+                    }-${id}`}
+                    className='text-sm'
+                  >
+                    {active.course}
+                  </motion.p>
+                </tr>
+                <tr className=''>
+                  <td className='text-sm text-muted-foreground'>Class</td>
+                  <td className='text-sm'>:</td>
+                  <motion.p
+                    layoutId={`class-${
+                      active.name + active.class + active.course
+                    }-${id}`}
+                    className='text-sm'
+                  >
+                    {active.class}
+                  </motion.p>
+                </tr>
+                <tr className=''>
+                  <td className='text-sm text-muted-foreground'>Deadline</td>
+                  <td className='text-sm'>:</td>
+                  <motion.p
+                    layoutId={`deadline-${
+                      active.name + active.class + active.course
+                    }-${id}`}
+                    className='text-sm'
+                  >
+                    {active.deadline.toDateString()}
+                  </motion.p>
+                </tr>
+                <tr className=''>
+                  <td className='text-sm text-muted-foreground pr-4'>
+                    Submission
+                  </td>
+                  <td className='text-sm pr-2'>:</td>
+                  <motion.p
+                    layoutId={`submission-${
+                      active.name + active.class + active.course
+                    }-${id}`}
+                    className='text-sm'
+                  >
+                    {active.submission}
+                  </motion.p>
+                </tr>
+                <tr className=''>
+                  <td className='text-sm text-muted-foreground'>Done?</td>
+                  <td className='text-sm'>:</td>
+                  <td className='flex gap-6'>
+                    <div className='flex items-center gap-2'>
+                      <Checkbox
+                        id='done'
+                        className='data-[state=checked]:bg-green-600'
+                      />
+                      <label
+                        htmlFor='done'
+                        className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-green-600'
+                      >
+                        Yes
+                      </label>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Checkbox
+                        id='not'
+                        className='data-[state=checked]:bg-red-600'
+                      />
+                      <label
+                        htmlFor='not'
+                        className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-red-600'
+                      >
+                        No
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <tr className=''>
+                  <td className='text-sm text-muted-foreground'>Status</td>
+                  <td className='text-sm'>:</td>
+                  <td className='text-sm text-red-500'>Over Due Date</td>
+                </tr>
+              </table>
             </div>
-            <Separator className='' />
-            <table className='space-y-4 *:*:py-2'>
-              <tr className='gap-2'>
-                <td className='text-sm text-muted-foreground'>Course</td>
-                <td className='text-sm'>:</td>
-                <motion.p
-                  layoutId={`course-${
-                    // @ts-ignore: Object is possibly 'null'
-                    active.name + active.class + active.course
-                  }-${id}`}
-                  className='text-sm'
-                >
-                  {/* @ts-ignore */}
-                  {active.course}
-                </motion.p>
-              </tr>
-              <tr className=''>
-                <td className='text-sm text-muted-foreground'>Class</td>
-                <td className='text-sm'>:</td>
-                <motion.p
-                  layoutId={`class-${
-                    // @ts-ignore: Object is possibly 'null'
-                    active.name + active.class + active.course
-                  }-${id}`}
-                  className='text-sm'
-                >
-                  {/* @ts-ignore */}
-                  {active.class}
-                </motion.p>
-              </tr>
-              <tr className=''>
-                <td className='text-sm text-muted-foreground'>Deadline</td>
-                <td className='text-sm'>:</td>
-                <motion.p
-                  layoutId={`deadline-${
-                    // @ts-ignore: Object is possibly 'null'
-                    active.name + active.class + active.course
-                  }-${id}`}
-                  className='text-sm'
-                >
-                  {/* @ts-ignore */}
-                  {active.deadline.toDateString()}
-                </motion.p>
-              </tr>
-              <tr className=''>
-                <td className='text-sm text-muted-foreground pr-4'>
-                  Submission
-                </td>
-                <td className='text-sm pr-2'>:</td>
-                <motion.p
-                  layoutId={`submission-${
-                    // @ts-ignore: Object is possibly 'null'
-                    active.name + active.class + active.course
-                  }-${id}`}
-                  className='text-sm'
-                >
-                  {/* @ts-ignore */}
-                  {active.submission}
-                </motion.p>
-              </tr>
-              <tr className=''>
-                <td className='text-sm text-muted-foreground'>Done?</td>
-                <td className='text-sm'>:</td>
-                <td className='flex gap-6'>
-                  <div className='flex items-center gap-2'>
-                    <Checkbox
-                      id='done'
-                      className='data-[state=checked]:bg-green-600'
-                    />
-                    <label
-                      htmlFor='done'
-                      className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-green-600'
-                    >
-                      Yes
-                    </label>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <Checkbox
-                      id='not'
-                      className='data-[state=checked]:bg-red-600'
-                    />
-                    <label
-                      htmlFor='not'
-                      className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-red-600'
-                    >
-                      No
-                    </label>
-                  </div>
-                </td>
-              </tr>
-              <tr className=''>
-                <td className='text-sm text-muted-foreground'>Status</td>
-                <td className='text-sm'>:</td>
-                <td className='text-sm text-red-500'>Over Due Date</td>
-              </tr>
-            </table>
-          </div>
-        </MotionFramer>
-      )}
+          </MotionFramer>
+        )}
+      </AnimatePresence>
       <ul className='w-full p-2 rounded-2xl shadow-md bg-white'>
         <Separator />
         {data.map((card, i) => (
@@ -470,4 +461,4 @@ export const CloseIcon = () => {
   );
 };
 
-export default AssingmentPage;
+export default Assignment;

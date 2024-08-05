@@ -1,7 +1,5 @@
 'use client';
 
-import { Separator } from '@/components/ui/separator';
-import { FileWarning } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export default function Error({

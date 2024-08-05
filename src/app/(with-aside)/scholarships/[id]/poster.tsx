@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import Image, { type ImageProps } from 'next/image';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import MotionFramer from '@/components/client/modal-framer';
 import { useState } from 'react';
 import MotionOverlay from '@/components/client/modal-overlay';
@@ -41,19 +41,22 @@ export default function Poster({
         setTo={false}
         show={active}
       />
-      <MotionFramer
-        id={`poster-${src}-${mode}`}
-        className='p-0 rounded-sm'
-        show={active}
-      >
-        <Image
-          src={src}
-          alt={alt}
-          width={1000}
-          height={1000}
-          className='w-full h-full'
-        />
-      </MotionFramer>
+      <AnimatePresence>
+        {active && (
+          <MotionFramer
+            id={`poster-${src}-${mode}`}
+            className='p-0 rounded-sm'
+          >
+            <Image
+              src={src}
+              alt={alt}
+              width={1000}
+              height={1000}
+              className='w-full h-full'
+            />
+          </MotionFramer>
+        )}
+      </AnimatePresence>
     </>
   );
 }

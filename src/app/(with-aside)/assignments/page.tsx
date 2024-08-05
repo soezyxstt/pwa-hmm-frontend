@@ -1,5 +1,5 @@
 import { getEnrolledCourses } from '@/actions/courses-action';
-import AssingmentPage from './assignment';
+import Assignment from './assignment';
 import { getAssignments } from '@/actions/assignment-action';
 
 export const dynamic = 'force-dynamic';
@@ -9,7 +9,7 @@ export default async function Page() {
   const courses = await getEnrolledCourses();
   return (
     <>
-      <AssingmentPage assignments={assignments} courses={courses} />
+      <Assignment assignments={assignments} courses={courses} />
     </>
   );
 }

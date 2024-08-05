@@ -30,32 +30,37 @@ export default function Lesson({
         <Book className='w-4 h-4 md:w-6 md:h-6' />
         <motion.span layoutId='all-materials-lesson'>All Materials</motion.span>
       </motion.button>
-      <MotionFramer
-        id={'lesson-modal'}
-        className='border border-navy'
-        show={active}
-      >
-        <div className='flex flex-col gap-2'>
-          <motion.h3 layoutId='all-materials-lesson'>All Materials</motion.h3>
-          <Separator />
-          <ul className='flex flex-col gap-1'>
-            {lessons.map((lesson: any) => (
-              <Link
-                key={lesson.id}
-                onClick={() => setActive(false)}
-                href={`${params}&lessonId=${lesson.id}`}
-                className={cn(
-                  'rounded-md py-1.5 px-2 border border-navy hover:bg-navy/80 hover:text-white transition-all',
-                  lessonId.toString() === lesson.id.toString() &&
-                    'px-4 bg-navy text-white'
-                )}
-              >
-                {lesson.title}
-              </Link>
-            ))}
-          </ul>
-        </div>
-      </MotionFramer>
+      <AnimatePresence>
+        {active && (
+          <MotionFramer
+            id={'lesson-modal'}
+            className='border border-navy'
+          >
+            <div className='flex flex-col gap-2'>
+              <motion.h3 layoutId='all-materials-lesson'>
+                All Materials
+              </motion.h3>
+              <Separator />
+              <ul className='flex flex-col gap-1'>
+                {lessons.map((lesson: any) => (
+                  <Link
+                    key={lesson.id}
+                    onClick={() => setActive(false)}
+                    href={`${params}&lessonId=${lesson.id}`}
+                    className={cn(
+                      'rounded-md py-1.5 px-2 border border-navy hover:bg-navy/80 hover:text-white transition-all',
+                      lessonId.toString() === lesson.id.toString() &&
+                        'px-4 bg-navy text-white'
+                    )}
+                  >
+                    {lesson.title}
+                  </Link>
+                ))}
+              </ul>
+            </div>
+          </MotionFramer>
+        )}
+      </AnimatePresence>
       <MotionOverlay
         setActive={setActive}
         setTo={false}

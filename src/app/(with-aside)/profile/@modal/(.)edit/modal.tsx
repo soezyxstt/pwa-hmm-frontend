@@ -19,20 +19,20 @@ export default function Modal({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <dialog
-      ref={ref}
-      onClick={close}
-      onClose={router.back}
-      className='backdrop:bg-black/30 bg-transparent backdrop:backdrop-blur-sm fixed inset-0 z-50'
-    >
-      <AnimatePresence>
+    <AnimatePresence>
+      <dialog
+        ref={ref}
+        onClick={close}
+        onClose={router.back}
+        className='backdrop:bg-black/30 bg-transparent backdrop:backdrop-blur-sm fixed inset-0 z-50'
+      >
         <motion.div
           layoutId='modal-edit-profile'
           className='w-[min(90vw,32rem)]'
         >
           {children}
         </motion.div>
-      </AnimatePresence>
-    </dialog>
+      </dialog>
+    </AnimatePresence>
   );
 }

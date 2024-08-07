@@ -13,8 +13,6 @@ const ProfilePage = async () => {
     name,
     avatar,
     email,
-    about,
-    role,
     phoneNumber,
     NIM,
     medicalHistories,

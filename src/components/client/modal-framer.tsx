@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import {ReactNode} from "react";
 
 export default function ModalFramer({
   id,
@@ -8,7 +9,7 @@ export default function ModalFramer({
 }: {
   id: string;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <div className='fixed inset-0 grid place-items-center z-[99] pointer-events-none'>

@@ -11,7 +11,7 @@ import {
 import { EllipsisVertical } from 'lucide-react';
 
 const links = [
-  { title: 'Assigments', path: 'assignments' },
+  { title: 'Assignments', path: 'assignments' },
   { title: 'Courses', path: 'courses' },
   { title: 'HMM-Store', path: 'hmm-store' },
 ];

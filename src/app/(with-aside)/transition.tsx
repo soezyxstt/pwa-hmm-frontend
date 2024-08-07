@@ -1,12 +1,12 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import React from "react";
+import {ReactNode} from "react";
 
 export default function MainTransition({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <AnimatePresence mode='wait'>

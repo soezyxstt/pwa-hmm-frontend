@@ -1,7 +1,7 @@
 import { cn, pathFormatter } from '@/lib/utils';
 import Link, { type LinkProps } from 'next/link';
 import { type ReactNode, type HTMLAttributes } from 'react';
-import { sideBarTabs, sideBarIcons } from '../../data/data';
+import { sideBarTabs, sideBarIcons } from '@/data/data';
 import Image from 'next/image';
 import {
   Drawer,

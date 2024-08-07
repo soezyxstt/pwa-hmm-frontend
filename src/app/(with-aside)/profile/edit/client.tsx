@@ -30,9 +30,9 @@ const schema = z.object({
     .refine((born) => parseInt(born) <= 31, {
       message: 'Born year must be less than 31',
     }),
-  adress: z
+  address: z
     .string()
-    .min(4, { message: 'Adress must be at least 4 characters long' }),
+    .min(4, { message: 'Address must be at least 4 characters long' }),
   city: z
     .string()
     .min(4, { message: 'City must be at least 4 characters long' }),
@@ -64,8 +64,6 @@ export default async function EditProfile({
     name,
     avatar,
     email,
-    about,
-    role,
     phoneNumber,
     NIM,
     medicalHistories,
@@ -131,10 +129,10 @@ export default async function EditProfile({
       defaultValue: new Date(dateOfBirth).toDateString(),
     },
     {
-      label: 'Adress',
+      label: 'Address',
       type: 'text',
-      name: 'adress',
-      id: 'adress',
+      name: 'address',
+      id: 'address',
       defaultValue: address,
     },
     {

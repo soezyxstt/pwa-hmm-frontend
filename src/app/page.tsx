@@ -5,5 +5,5 @@ export default function Home() {
 }
 
 export const metadata = {
-  title: 'Dashborad | HMM ITB',
+  title: 'Dashboard | HMM ITB',
 };

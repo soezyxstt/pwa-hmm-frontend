@@ -11,8 +11,6 @@ export const signInSchema = z.object({
     .min(8, { message: 'Password must be at least 8 characters' }),
 });
 
-export const signOutSchema = z.object({});
-
 export const signUpSchema = z
   .object({
     name: z.string().min(3, { message: 'Input at least 3 characters' }),

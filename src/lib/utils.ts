@@ -15,5 +15,9 @@ export const getTokenFromResponse = (res: Response) => {
   const refresh_token = set_cookies?.[5].split(';')[0];
   const expire = new Date(Date.parse(set_cookies?.[8].split(';')[0]!));
 
-  return { access_token, refresh_token, expire };
+  return {access_token, refresh_token, expire};
 };
+
+export function cookieGenerator(access_token: string, refresh_token: string) {
+  return `accessToken=${access_token}; refreshToken=${refresh_token}`;
+}

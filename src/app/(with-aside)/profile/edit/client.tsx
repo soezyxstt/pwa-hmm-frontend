@@ -1,64 +1,67 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import Button from '@/components/ui/button/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { getFullUser } from '@/lib/dal';
-import { type UserModel } from 'lms-types';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {getFullUser} from '@/lib/dal';
 import Link from 'next/link';
-import { z } from 'zod';
+import {z} from 'zod';
 
 const schema = z.object({
   name: z
     .string()
-    .min(4, { message: 'Name must be at least 4 characters long' }),
+    .min(4, {message: 'Name must be at least 4 characters long'}),
   nim: z
     .string()
-    .length(10, { message: 'NIM must be 10 characters long' })
+    .length(10, {message: 'NIM must be 10 characters long'})
     .refine((nim) => nim.slice(0, 3) === '131', {
       message: 'NIM must start with 131',
     }),
   location: z
     .string()
-    .min(4, { message: 'Location must be at least 4 characters long' }),
+    .min(4, {message: 'Location must be at least 4 characters long'}),
   phoneNumber: z
     .string()
-    .min(10, { message: 'Phone number must be at least 10 characters long' }),
-  email: z.string().email({ message: 'Invalid email' }),
+    .min(10, {message: 'Phone number must be at least 10 characters long'}),
+  email: z.string().email({message: 'Invalid email'}),
   born: z
     .string()
-    .max(2, { message: 'Only 2 digits or less number is valid' })
+    .max(2, {message: 'Only 2 digits or less number is valid'})
     .refine((born) => parseInt(born) <= 31, {
       message: 'Born year must be less than 31',
     }),
   address: z
     .string()
-    .min(4, { message: 'Address must be at least 4 characters long' }),
+    .min(4, {message: 'Address must be at least 4 characters long'}),
   city: z
     .string()
-    .min(4, { message: 'City must be at least 4 characters long' }),
+    .min(4, {message: 'City must be at least 4 characters long'}),
   bloodType: z
     .string()
-    .max(2, { message: 'Blood type must be 1 or 2 characters long' }),
+    .max(2, {message: 'Blood type must be 1 or 2 characters long'}),
   illness: z
     .string()
-    .min(4, { message: 'Illness must be at least 4 characters long' }),
+    .min(4, {message: 'Illness must be at least 4 characters long'}),
   lineId: z
     .string()
-    .min(4, { message: 'Line ID must be at least 4 characters long' }),
+    .min(4, {message: 'Line ID must be at least 4 characters long'}),
   emergencyNumber: z.string().min(10, {
     message: 'Emergency number must be at least 10 characters long',
   }),
-  hmmPos: z.string().min(4, { message: 'Invalid' }),
+  hmmPos: z.string().min(4, {message: 'Invalid'}),
   ukm: z.string(),
-  hobby: z.string().min(4, { message: 'Invalid hobby' }),
+  hobby: z.string().min(4, {message: 'Invalid hobby'}),
 });
 
 export default async function EditProfile({
-  searchParams,
-}: {
+                                            searchParams,
+                                          }: {
   searchParams: Record<string, string>;
 }) {
-  const user: UserModel = await getFullUser();
+  const user = await getFullUser();
+
+  if (!user) {
+    return <div className='w-full h-full flex place-items-center'>Failed to fetch user data</div>;
+  }
 
   const {
     name,
@@ -196,8 +199,10 @@ export default async function EditProfile({
   return (
     <main className='w-full h-full space-y-4 md:space-y-6'>
       <div className='rounded-xl flex flex-col flex-1 bg-white'>
-        <div className='bg-navy min-h-[15vh] w-full z-0 relative md:mb-20 mb-16 rounded-t-xl flex justify-end items-center pr-6'>
-          <div className='flex items-center justify-center p-1.5 bg-white w-fit rounded-full absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2'>
+        <div
+          className='bg-navy min-h-[15vh] w-full z-0 relative md:mb-20 mb-16 rounded-t-xl flex justify-end items-center pr-6'>
+          <div
+            className='flex items-center justify-center p-1.5 bg-white w-fit rounded-full absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2'>
             <Avatar className='md:w-40 md:h-40 h-32 w-32'>
               <AvatarImage
                 src={avatar}

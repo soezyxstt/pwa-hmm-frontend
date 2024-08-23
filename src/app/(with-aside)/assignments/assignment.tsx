@@ -1,10 +1,10 @@
 'use client';
-import React, { useEffect, useId, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronRight, Notebook } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import React, {useEffect, useId, useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ChevronRight, Notebook} from 'lucide-react';
+import {Separator} from '@/components/ui/separator';
 import Button from '@/components/ui/button/button';
-import { Input } from '@/components/ui/input';
+import {Input} from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useInterval } from '@/hooks/useInterval';
+import {Checkbox} from '@/components/ui/checkbox';
+import {useInterval} from '@/hooks/useInterval';
 import MotionFramer from '@/components/client/modal-framer';
 import type {
   CourseClassAssignmentModel,
@@ -25,9 +25,9 @@ import type {
 import MotionOverlay from '@/components/client/modal-overlay';
 
 const Assignment = ({
-  assignments,
-  courses,
-}: {
+                      assignments,
+                      courses,
+                    }: {
   assignments: (CourseClassAssignmentModel & { class: CourseClassModel })[];
   courses: { course: CourseModel }[];
 }) => {
@@ -77,13 +77,13 @@ const Assignment = ({
     const deadline = date.getTime();
     const diff = deadline - now;
 
-    if (diff < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    if (diff < 0) return {days: 0, hours: 0, minutes: 0, seconds: 0};
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    return { days, hours, minutes, seconds };
+    return {days, hours, minutes, seconds};
   };
 
   const [timeToDeadline, setTimeToDeadline] = useState(
@@ -107,7 +107,7 @@ const Assignment = ({
           <MotionFramer id={'add' + id}>
             <div className='flex items-center gap-4 justify-between'>
               <div className='flex items-center gap-4'>
-                <Notebook size={32} />
+                <Notebook size={32}/>
                 <motion.p
                   layoutId={'add-button' + id}
                   className='font-medium text-lg'
@@ -119,10 +119,10 @@ const Assignment = ({
                 className='text-sm font-semibold px-4 py-2.5'
                 onClick={() => setActive(null)}
               >
-                <CloseIcon />
+                <CloseIcon/>
               </button>
             </div>
-            <Separator className='my-2' />
+            <Separator className='my-2'/>
             <div className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>
                 <label
@@ -159,12 +159,12 @@ const Assignment = ({
                 </label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select Course' />
+                    <SelectValue placeholder='Select Course'/>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Course</SelectLabel>
-                      {courses.map(({ course }) => (
+                      {courses.map(({course}) => (
                         <SelectItem
                           key={course.id + course.title}
                           value={course.title.toLowerCase()}
@@ -189,7 +189,7 @@ const Assignment = ({
                     id='deadline'
                     className='Input'
                   />
-                  <Input type='time' />
+                  <Input type='time'/>
                 </div>
               </div>
               <div className='flex flex-col gap-2'>
@@ -201,7 +201,7 @@ const Assignment = ({
                 </label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select Submission' />
+                    <SelectValue placeholder='Select Submission'/>
                   </SelectTrigger>
                   <SelectContent className='pointer-events-auto'>
                     <SelectGroup>
@@ -243,7 +243,7 @@ const Assignment = ({
                       active.name + active.class + active.course
                     }-${id}`}
                   >
-                    <Notebook size={32} />
+                    <Notebook size={32}/>
                   </motion.div>
                   <motion.div
                     layoutId={`name-${
@@ -254,9 +254,10 @@ const Assignment = ({
                     {active.name}
                   </motion.div>
                 </div>
-                <div className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
+                <div
+                  className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
               </div>
-              <Separator className='' />
+              <Separator className=''/>
               <table className='space-y-4 *:*:py-2'>
                 <tr className='gap-2'>
                   <td className='text-sm text-muted-foreground'>Course</td>
@@ -349,7 +350,7 @@ const Assignment = ({
         )}
       </AnimatePresence>
       <ul className='w-full p-2 rounded-2xl shadow-md bg-white'>
-        <Separator />
+        <Separator/>
         {data.map((card, i) => (
           <>
             <motion.div
@@ -365,7 +366,7 @@ const Assignment = ({
                   }-${id}`}
                   className='text-navy'
                 >
-                  <Notebook className='w-7 h-7 md:w-10 md:h-10' />
+                  <Notebook className='w-7 h-7 md:w-10 md:h-10'/>
                 </motion.div>
                 <div className=''>
                   <motion.h2
@@ -414,9 +415,9 @@ const Assignment = ({
                   </div>
                 </div>
               </div>
-              <ChevronRight />
+              <ChevronRight/>
             </motion.div>
-            <Separator />
+            <Separator/>
           </>
         ))}
       </ul>
@@ -455,8 +456,8 @@ export const CloseIcon = () => {
         d='M0 0h24v24H0z'
         fill='none'
       />
-      <path d='M18 6l-12 12' />
-      <path d='M6 6l12 12' />
+      <path d='M18 6l-12 12'/>
+      <path d='M6 6l12 12'/>
     </motion.svg>
   );
 };

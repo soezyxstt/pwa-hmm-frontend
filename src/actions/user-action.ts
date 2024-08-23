@@ -1,19 +1,20 @@
 'use server';
 
-import { env } from '@/env';
-import { actionClient } from '@/lib/action-client';
-import { PWAError } from '@/lib/error';
-import { signInSchema, signUpSchema } from '@/lib/schema';
-import { createSession, deleteSession, verifySession } from '@/lib/session';
-import { getTokenFromResponse } from '@/lib/utils';
-import { flattenValidationErrors } from 'next-safe-action';
+import {env} from '@/env';
+import {actionClient} from '@/lib/action-client';
+import {PWAError} from '@/lib/error';
+import {signInSchema, signUpSchema} from '@/lib/schema';
+import {createSession, deleteSession, verifySession} from '@/lib/session';
+import {getTokenFromResponse} from '@/lib/utils';
+import {flattenValidationErrors} from 'next-safe-action';
 
 export const signUp = actionClient
+  .metadata({actionName: 'signUp'})
   .schema(signUpSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: { name, email, password } }) => {
+  .action(async ({parsedInput: {name, email, password}}) => {
     try {
       const res = await fetch(env.API_URL + '/users', {
         method: 'POST',
@@ -46,11 +47,12 @@ export const signUp = actionClient
   });
 
 export const signIn = actionClient
+  .metadata({actionName: 'signIn'})
   .schema(signInSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: { email, password } }) => {
+  .action(async ({parsedInput: {email, password}}) => {
     try {
       const res = await fetch(env.API_URL + '/users/signin', {
         method: 'POST',
@@ -63,9 +65,15 @@ export const signIn = actionClient
         }),
       });
 
-      const { access_token, refresh_token, expire } = await getTokenFromResponse(
+      const {access_token, refresh_token, expire} = getTokenFromResponse(
         res
       );
+
+      const signInRes = await res.json();
+
+      if (signInRes.error) {
+        throw new PWAError(signInRes.error.message);
+      }
 
       const data = await fetch(env.API_URL + '/users/me', {
         headers: {
@@ -73,19 +81,19 @@ export const signIn = actionClient
         },
       });
 
-      if (!data.ok) {
-        throw new PWAError('Failed to sign in');
-      }
+      const dataRt = await data.json();
 
-      const {
-        data: { id },
-      } = await data.json();
+      if (!data.ok) {
+        throw new PWAError(dataRt.error.message);
+      }
 
       if (!res.ok || !access_token || !refresh_token) {
-        throw new PWAError('Failed to sign in');
+        throw new PWAError('Failed to retrieve tokens');
       }
 
-      createSession(id, access_token, refresh_token, expire ?? '0');
+      const {id, role} = dataRt;
+
+      void createSession(id, role, access_token, refresh_token, expire ?? '0');
       return {
         message: 'User signed in successfully',
         status: 'success',
@@ -110,14 +118,14 @@ export async function signOut() {
       };
     }
 
-    const res = await fetch(env.API_URL + '/users/signout', {
+    await fetch(env.API_URL + '/users/signout', {
       method: 'POST',
       credentials: 'include',
       headers: {
         Cookie: `accessToken=${session.access_token}`,
       },
     });
-    
+
     void deleteSession();
 
     return {

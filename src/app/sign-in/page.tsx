@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn } from '@/actions/user-action';
+import {signIn} from '@/actions/user-action';
 import Button from '@/components/ui/button/button';
 import {
   Form,
@@ -11,29 +11,29 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {Input} from '@/components/ui/input';
+import {zodResolver} from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type BaseSyntheticEvent, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
-import { z } from 'zod';
-import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'sonner';
-import { signInSchema } from '@/lib/schema';
-import { useRouter } from 'next/navigation';
+import {type BaseSyntheticEvent, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {FiEye, FiEyeOff} from 'react-icons/fi';
+import {z} from 'zod';
+import {useAction} from 'next-safe-action/hooks';
+import {toast} from 'sonner';
+import {signInSchema} from '@/lib/schema';
+import {useRouter} from 'next/navigation';
 
 export default function SignIn() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
-  const { executeAsync, isExecuting } = useAction(signIn, {
-    onSuccess: (data) => {
+  const {executeAsync, isExecuting} = useAction(signIn, {
+    onSuccess: () => {
       toast.success('Sign in success');
       router.push('/dashboard')
     },
-    onError: (err) => {
-      toast.error(err.error.serverError || 'Sign in failed');
+    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+      toast.error(serverError || fetchError || validationErrors?.toString() || 'Sign in failed');
     },
   });
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -82,7 +82,7 @@ export default function SignIn() {
           <FormField
             control={form.control}
             name='email'
-            render={({ field }) => (
+            render={({field: {onChange, value, ...props}}) => (
               <FormItem className='w-full'>
                 <FormLabel className='self-start text-navy font-semibold'>
                   Email
@@ -91,20 +91,30 @@ export default function SignIn() {
                   <Input
                     className=''
                     type='email'
-                    {...field}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v.includes('@')) {
+                        form.setValue('email', v.replace(/@.*/, '@mahasiswa.itb.ac.id'));
+                      } else {
+                        form.setValue('email', v.replace("mahasiswa.itb.ac.id", ""));
+                      }
+                      // onChange(value);
+                    }}
+                    value={value}
+                    {...props}
                   />
                 </FormControl>
                 <FormDescription className='text-xs'>
                   131*****@mahasiswa.itb.ac.id
                 </FormDescription>
-                <FormMessage />
+                <FormMessage/>
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name='password'
-            render={({ field }) => (
+            render={({field}) => (
               <FormItem className='w-full'>
                 <FormLabel className='self-start text-navy font-semibold'>
                   Password
@@ -129,7 +139,7 @@ export default function SignIn() {
                     )}
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage/>
               </FormItem>
             )}
           />

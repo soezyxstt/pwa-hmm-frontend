@@ -1,12 +1,12 @@
-import { cn } from '@/lib/utils';
-import type { HTMLAttributes } from 'react';
+import {cn} from '@/lib/utils';
+import type {HTMLAttributes} from 'react';
 
 export default function YoutubeEmbed({
-  embedId,
-  title,
-  className,
-  ...props
-}: { embedId: string; title: string } & HTMLAttributes<HTMLDivElement>) {
+                                       embedId,
+                                       title,
+                                       className,
+                                       ...props
+                                     }: { embedId: string; title: string } & HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={'aspect-video sticky top-0 z-10'}

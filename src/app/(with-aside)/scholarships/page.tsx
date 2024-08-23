@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const Scholarships = () => {
+  const pageId = "scholarships";
   return (
     <ul className='w-full py-2 rounded-2xl shadow-md bg-white'>
       <Separator />
@@ -10,7 +11,7 @@ const Scholarships = () => {
         <>
           <Link
             href={`/scholarships/${id}`}
-            key={`${title}-${i}`}
+            key={`${title}-${i}-${pageId}`}
             className='flex gap-6 md:gap-8 hover:bg-gray-300 transition-all items-center'
           >
             <Image
@@ -21,7 +22,7 @@ const Scholarships = () => {
               className='h-full max-h-24 md:max-h-32 max-w-32 w-64 md:max-w-40 object-cover'
             />
             <div className='py-4 md:space-y-2'>
-              <h3 className='md:text-lg text-base font-semibold line-clamp-1'>
+              <h3 className='md:text-lg text-base font-semibold line-clamp-1' title={title}>
                 {title}
               </h3>
               <div>

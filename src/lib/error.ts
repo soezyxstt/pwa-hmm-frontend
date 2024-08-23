@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation';
 
 export class PWAError extends Error {
   constructor(message: string) {
-    super(message);
-    this.name = 'PWAError';
+    super(message + '(PWAError)');
+    this.name = "PWAError";
   }
 }
 

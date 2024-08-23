@@ -11,7 +11,6 @@ import {
 import VideoList from '@/app/(with-aside)/courses/[id]/videoList';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Lesson from './lesson';
-import type { CourseLessonModel, CourseLessonVideoModel } from 'lms-types';
 import { getLessons, getVideoData, getVideos } from '@/actions/courses-action';
 
 export default async function CoursesPage({
@@ -22,9 +21,9 @@ export default async function CoursesPage({
   params: { id: string };
 }) {
   const isExpanded = searchParams['expanded'] === 'true';
-  const lessons: CourseLessonModel[] = await getLessons(id);
+  const lessons = await getLessons(id);
   const lessonId = searchParams['lessonId'] ?? lessons[0].id;
-  const videos: CourseLessonVideoModel[] = await getVideos(id, lessonId);
+  const videos = await getVideos(id, lessonId);
   const videoIds = videos.map((video => video.youtubeLink.split('v=')[1].split('&')[0]));
 
   const materials = await Promise.all(
@@ -46,7 +45,8 @@ export default async function CoursesPage({
       <div className=''>
         <h4 className='text-sm md:text-base'>Ebook Link:</h4>
         <Link
-          href='/ebook'
+          href='https://www.google.com'
+          target='_blank'
           className='text-xs md:text-sm text-blue-500 underline hover:text-blue-700'
         >
           {"Click here to download the ebook"}

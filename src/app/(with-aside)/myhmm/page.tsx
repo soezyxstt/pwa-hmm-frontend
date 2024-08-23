@@ -1,5 +1,5 @@
 
-const MyHMMPage: React.FC = () => {
+const MyHMMPage = () => {
   return (
     <>
     </>

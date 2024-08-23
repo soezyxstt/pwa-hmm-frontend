@@ -5,6 +5,7 @@ import { env } from '@/env';
 import { cache } from 'react';
 import { NextResponse } from 'next/server';
 import { getTokenFromResponse } from './utils';
+import type {UserRoleModel} from "lms-types";
 
 const key = new TextEncoder().encode(env.AUTH_SECRET);
 
@@ -23,6 +24,7 @@ export async function decrypt(session: string | undefined = '') {
     });
     return payload as JWTPayload & {
       userId: string;
+      role: UserRoleModel;
       access_token: string;
       refresh_token: string;
     };
@@ -34,12 +36,14 @@ export async function decrypt(session: string | undefined = '') {
 
 export async function createSession(
   id: string,
+  role: UserRoleModel,
   access_token: string,
   refresh_token: string,
-  expire: Date
+  expire: Date,
 ) {
   const session = await encrypt({
     userId: id,
+    role,
     access_token,
     refresh_token,
     expires: expire,
@@ -108,6 +112,7 @@ export const verifySession = cache(async () => {
     userId: session.userId,
     access_token: session.access_token,
     refresh_token: session.refresh_token,
+    role: session.role,
   };
 });
 

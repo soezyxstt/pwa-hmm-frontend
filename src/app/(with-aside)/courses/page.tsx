@@ -1,12 +1,11 @@
 import Search from '@/components/client/search';
 import CoursesItem from '@/app/(with-aside)/courses/item';
 import { getEnrolledCourses as courses_action } from '@/actions/courses-action';
-import type { CourseModel } from 'lms-types';
 
 export const dynamic = 'force-dynamic';
 
 const CoursesPage = async () => {
-  const courses: {course: CourseModel}[] = await courses_action();
+  const courses = await courses_action();
 
   return (
     <div className='w-full h-full'>

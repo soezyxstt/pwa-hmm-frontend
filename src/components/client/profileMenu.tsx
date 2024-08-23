@@ -18,9 +18,7 @@ import {
 import { Bell, Settings, User } from 'lucide-react';
 
 const ProfileMenu = async () => {
-  const {
-    data: { name, avatar, role },
-  } = await getUser();
+  const user = await getUser();
 
   return (
     <div className='flex gap-3 items-center'>
@@ -47,16 +45,16 @@ const ProfileMenu = async () => {
             className='flex items-center gap-2 ml-2'
           >
             <div className='*:text-[0.625rem]'>
-              <p className='font-semibold'>{name}</p>
-              <p className='text-abu-3'>{role}</p>
+              <p className='font-semibold'>{user?.name}</p>
+              <p className='text-abu-3'>{user?.role}</p>
             </div>
             <Avatar>
               <AvatarImage
-                src={avatar}
+                src={user?.avatar}
                 alt='avatar'
               />
               <AvatarFallback className='bg-white'>
-                {name.split(' ').map((t: string) => t[0])}
+                {user?.name.split(' ').map((t: string) => t[0])}
               </AvatarFallback>
             </Avatar>
           </Link>
@@ -68,16 +66,16 @@ const ProfileMenu = async () => {
       <DropdownMenu>
         <DropdownMenuTrigger className='flex items-center gap-2 ml-2 md:hidden'>
           <div className='*:text-[0.625rem]'>
-            <p className='font-semibold'>{name}</p>
-            <p className='text-abu-3'>{role}</p>
+            <p className='font-semibold'>{user?.name}</p>
+            <p className='text-abu-3'>{user?.role}</p>
           </div>
           <Avatar>
             <AvatarImage
-              src={avatar}
+              src={user?.avatar}
               alt='avatar'
             />
             <AvatarFallback className='bg-white'>
-              {name.split(' ').map((t: string) => t[0])}
+              {user?.name.split(' ').map((t: string) => t[0])}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

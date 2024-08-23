@@ -4,10 +4,13 @@ import { BsTelephone } from 'react-icons/bs';
 import { getFullUser } from '@/lib/dal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import EditProfile from './edit-profile-button';
-import { UserModel } from 'lms-types';
 
 const ProfilePage = async () => {
-  const user: UserModel = await getFullUser();
+  const user = await getFullUser();
+
+  if (!user) {
+    return <div className='w-full h-full flex place-items-center'>Failed to fetch user data</div>;
+  }
 
   const {
     name,

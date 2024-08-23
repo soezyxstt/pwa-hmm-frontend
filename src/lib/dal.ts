@@ -1,21 +1,8 @@
-import { cache } from 'react';
-import { updateSession, verifySession } from './session';
-import { env } from '@/env';
-import { handleError } from './error';
-
-export const getAccessToken = cache(async () => {
-  const session = await verifySession();
-  if (!session) return null;
-
-  return session.access_token;
-});
-
-export const getRefreshToken = cache(async () => {
-  const session = await verifySession();
-  if (!session) return null;
-
-  return session.refresh_token;
-});
+import {cache} from 'react';
+import {updateSession, verifySession} from './session';
+import {env} from '@/env';
+import {handleError} from './error';
+import type {PublicUserModel, UserModel} from "lms-types";
 
 export const getUser = cache(async () => {
   const session = await verifySession();
@@ -34,7 +21,7 @@ export const getUser = cache(async () => {
       throw new Error(user.error);
     }
 
-    return user;
+    return user.data as PublicUserModel;
   } catch (err) {
     throw new Error('Error fetching user data');
   }
@@ -51,14 +38,14 @@ export const getFullUser = cache(async () => {
       },
     });
 
-    const { error, data } = await res.json();
+    const {error, data} = await res.json();
     if (!res.ok || error) {
       return handleError(error);
     }
 
     void updateSession(res);
 
-    return data;
+    return data as UserModel;
   } catch (err) {
     throw new Error('Error fetching user data');
   }

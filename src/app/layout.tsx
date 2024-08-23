@@ -20,7 +20,7 @@ export default async function RootLayout({
     <html lang='en'>
     <body className={cn(poppins.className, 'md:flex')}>
     <TooltipProvider>{children}</TooltipProvider>
-    <Toaster/>
+    <Toaster richColors/>
     </body>
     </html>
   );

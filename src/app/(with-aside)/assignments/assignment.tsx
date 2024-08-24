@@ -19,7 +19,6 @@ import {useInterval} from '@/hooks/useInterval';
 import MotionFramer from '@/components/client/modal-framer';
 import type {
   $UserAPI,
-  CourseModel,
 } from 'lms-types';
 import MotionOverlay from '@/components/client/modal-overlay';
 
@@ -28,7 +27,7 @@ const Assignment = ({
                       courses,
                     }: {
   assignments: $UserAPI.GetUserAssignments.Response['data'];
-  courses: { course: CourseModel }[];
+  courses: $UserAPI.GetUserEnrolledAsStudentCourses.Response['data'];
 }) => {
   const data = assignments.map(({assignment, type}) => ({
     status: true,
@@ -163,7 +162,7 @@ const Assignment = ({
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Course</SelectLabel>
-                      {courses.map(({course}) => (
+                      {courses.map((course) => (
                         <SelectItem
                           key={course.id + course.title}
                           value={course.title.toLowerCase()}

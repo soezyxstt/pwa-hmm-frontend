@@ -7,6 +7,7 @@ import {signInSchema, signUpSchema} from '@/lib/schema';
 import {createSession, deleteSession, verifySession} from '@/lib/session';
 import {getTokenFromResponse} from '@/lib/utils';
 import {flattenValidationErrors} from 'next-safe-action';
+import {$UserAPI as userAPI} from "lms-types";
 
 export const signUp = actionClient
   .metadata({actionName: 'signUp'})
@@ -14,19 +15,20 @@ export const signUp = actionClient
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({parsedInput: {name, email, password}}) => {
+  .action(async ({parsedInput: {confirmPassword, dateOfBirth, email, ...input}}) => {
     try {
-      const res = await fetch(env.API_URL + '/users', {
+      const bodyInput: userAPI.CreateUser.Dto = {
+        dateOfBirth: new Date(dateOfBirth),
+        NIM: email.split('@')[0],
+        email,
+        ...input,
+      }
+      const res = await fetch(env.API_URL + userAPI.CreateUser.generateUrl(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          name: name,
-          NIM: email.split('@')[0],
-        }),
+        body: JSON.stringify(bodyInput),
       });
 
       if (!res.ok) {
@@ -39,7 +41,7 @@ export const signUp = actionClient
       };
     } catch (err) {
       if (err instanceof Error) {
-        throw new Error(err.message);
+        throw new PWAError(err.message);
       }
 
       throw new PWAError('Failed to sign up');
@@ -54,7 +56,7 @@ export const signIn = actionClient
   })
   .action(async ({parsedInput: {email, password}}) => {
     try {
-      const res = await fetch(env.API_URL + '/users/signin', {
+      const res = await fetch(env.API_URL + userAPI.SignIn.generateUrl(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +64,7 @@ export const signIn = actionClient
         body: JSON.stringify({
           email: email,
           password: password,
-        }),
+        } as userAPI.SignIn.Dto),
       });
 
       const {access_token, refresh_token, expire} = getTokenFromResponse(
@@ -75,7 +77,7 @@ export const signIn = actionClient
         throw new PWAError(signInRes.error.message);
       }
 
-      const data = await fetch(env.API_URL + '/users/me', {
+      const data = await fetch(env.API_URL + userAPI.GetMe.generateUrl(), {
         headers: {
           Cookie: `accessToken=${access_token}; refreshToken=${refresh_token}`,
         },
@@ -83,7 +85,7 @@ export const signIn = actionClient
 
       const dataRt = await data.json();
 
-      if (!data.ok) {
+      if (dataRt.error) {
         throw new PWAError(dataRt.error.message);
       }
 
@@ -91,7 +93,7 @@ export const signIn = actionClient
         throw new PWAError('Failed to retrieve tokens');
       }
 
-      const {id, role} = dataRt;
+      const {id, role} = dataRt.data;
 
       void createSession(id, role, access_token, refresh_token, expire ?? '0');
       return {
@@ -101,7 +103,7 @@ export const signIn = actionClient
       };
     } catch (err) {
       if (err instanceof Error) {
-        throw new Error(err.message);
+        throw new PWAError(err.message);
       }
 
       throw new PWAError('Failed to sign in');
@@ -118,7 +120,7 @@ export async function signOut() {
       };
     }
 
-    await fetch(env.API_URL + '/users/signout', {
+    await fetch(env.API_URL + userAPI.SignOut.generateUrl(), {
       method: 'POST',
       credentials: 'include',
       headers: {

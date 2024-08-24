@@ -3,7 +3,7 @@ import {cache} from "react";
 import {updateSession, verifySession} from "@/lib/session";
 import {env} from "@/env";
 import {cookieGenerator} from "@/lib/utils";
-import {handleError} from "@/lib/error";
+import {handleError, PWAError} from "@/lib/error";
 
 export function fetchAction<T>(url: string, errorMessage?: string, options?: {
   queryParams?: {
@@ -66,9 +66,9 @@ export function fetchAction<T>(url: string, errorMessage?: string, options?: {
       return data;
     } catch (err) {
       if (err instanceof Error) {
-        throw new Error(err.message);
+        throw new PWAError(err.message);
       }
-      throw new Error(errorMessage ?? 'Failed to fetch data');
+      throw new PWAError(errorMessage ?? 'Failed to fetch data');
     }
   })
 };

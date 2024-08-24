@@ -107,13 +107,13 @@ const ProfilePage = async () => {
             <div className='[&_p]:text-xs [&_p]:font-semibold [&_span]:font-normal space-y-2'>
               <h2 className='text-base'>Kemahasiswaan</h2>
               <p className=''>
-                Badan HMM: <span>{HMM.join(", ")}</span>
+                Badan HMM: <span>{HMM}</span>
               </p>
               <p className=''>
-                Unit Kegiatan Mahasiswa: <span>{UKM.join(", ")}</span>
+                Unit Kegiatan Mahasiswa: <span>{UKM}</span>
               </p>
               <p className=''>
-                Hobby: <span>{hobbies.join(", ")}</span>
+                Hobby: <span>{hobbies}</span>
               </p>
             </div>
           </div>

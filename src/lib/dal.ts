@@ -1,18 +1,28 @@
 import {cache} from 'react';
 import {updateSession, verifySession} from './session';
 import {env} from '@/env';
-import {handleError} from './error';
-import type {PublicUserModel, UserModel} from "lms-types";
+import {handleError, PWAError} from './error';
+import {$UserAPI} from "lms-types";
+import {cookieGenerator} from "@/lib/utils";
 
 export const getUser = cache(async () => {
   const session = await verifySession();
   if (!session.isAuth) return null;
 
   try {
-    const data = await fetch(env.API_URL + `/users/${session.userId}/public`);
+    const {refresh_token, access_token, userId} = await verifySession();
+
+    const data = await fetch(env.API_URL + $UserAPI.GetUserById.generateUrl(Number(session.userId)),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: cookieGenerator(access_token, refresh_token),
+        },
+      }
+    );
 
     if (!data.ok) {
-      throw new Error('Error fetching user data');
+      throw new PWAError('Error fetching user data');
     }
 
     const user = await data.json();
@@ -21,20 +31,20 @@ export const getUser = cache(async () => {
       throw new Error(user.error);
     }
 
-    return user.data as PublicUserModel;
+    return user.data as $UserAPI.GetUserById.Response["data"];
   } catch (err) {
-    throw new Error('Error fetching user data');
+    throw new PWAError('Error fetching user data');
   }
 });
 
 export const getFullUser = cache(async () => {
-  const session = await verifySession();
-  if (!session.isAuth) return null;
+  const {refresh_token, access_token, isAuth, userId} = await verifySession();
+  if (!isAuth) return null;
 
   try {
-    const res = await fetch(env.API_URL + `/users/me`, {
+    const res = await fetch(env.API_URL + $UserAPI.GetMe.generateUrl(), {
       headers: {
-        Cookie: `accessToken=${session.access_token}`,
+        Cookie: cookieGenerator(access_token, refresh_token),
       },
     });
 
@@ -45,8 +55,8 @@ export const getFullUser = cache(async () => {
 
     void updateSession(res);
 
-    return data as UserModel;
+    return data as $UserAPI.GetMe.Response["data"];
   } catch (err) {
-    throw new Error('Error fetching user data');
+    throw new PWAError('Error fetching user data');
   }
 });

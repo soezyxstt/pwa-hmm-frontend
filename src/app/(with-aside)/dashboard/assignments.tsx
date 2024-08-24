@@ -15,12 +15,12 @@ export const colors = ['bg-oren', 'bg-navy', 'bg-hijau', 'bg-kuning'];
 export const Assignments = async () => {
   const assignments = await getAssignments();
   const today = new Date();
-  const todayAssignments = assignments.filter(({deadline}) => {
+  const todayAssignments = assignments.filter(({assignment: {deadline}}) => {
     const deadlineDate = new Date(deadline);
     return deadlineDate.getDate() === today.getDate() && deadlineDate.getMonth() === today.getMonth();
   })
 
-  const tomorrowAssignments = assignments.filter(({deadline}) => {
+  const tomorrowAssignments = assignments.filter(({assignment: {deadline}}) => {
     const deadlineDate = new Date(deadline);
     return deadlineDate.getDate() === today.getDate() + 1 && deadlineDate.getMonth() === today.getMonth();
   })
@@ -33,11 +33,11 @@ export const Assignments = async () => {
       <ScrollArea className='h-64'>
         <div className='flex flex-col text-center font-medium'>
           <h5 className='font-semibold my-2'>Today</h5>
-          {todayAssignments.map((assignment, index) => (
+          {todayAssignments.map(({assignment, type}, index) => (
             <AssignmentCard
               key={index + assignment.title + pageId}
               title={assignment.title}
-              desc={assignment.class.title}
+              desc={type === "personal" ? "Personal" : assignment.class.title}
               time={new Date(assignment.deadline)}
               index={index}
             />
@@ -47,7 +47,7 @@ export const Assignments = async () => {
             <p className='text-xs text-muted-foreground border-y border-y-abu-1 py-3'>No Assignments</p>
           )}
           <h5 className='font-semibold my-2'>Tomorrow</h5>
-          {tomorrowAssignments.map((assignment, index) => (
+          {tomorrowAssignments.map(({assignment}, index) => (
             <AssignmentCard
               key={index + assignment.title + pageId}
               title={assignment.title}
@@ -90,9 +90,9 @@ const AssignmentCard = ({
       className={` before:absolute text-black relative ${randomColor} before:left-0 before:w-1.5 before:h-full before:top-0 flex justify-between items-center border-y-[1px] border-y-abu-1 px-10 py-3`}
     >
       <div className='flex text-xs gap-2 *:text-left items-center'>
-        <p className='line-clamp-1' title={title}>{title}</p>
+        <p className='capitalize' title={title}>{title}</p>
         <p className=''>-</p>
-        <p className='font-normal line-clamp-1' title={desc}>{desc?.toUpperCase()}</p>
+        <p className='font-normal capitalize' title={desc}>{desc}</p>
       </div>
       <div
         className='text-2xs font-semibold w-max min-w-16 text-right'>

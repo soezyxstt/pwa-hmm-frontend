@@ -17,21 +17,26 @@ export const signUpSchema = z
     email: z
       .string()
       .email()
-      .regex(/[0-9]{8}@mahasiswa.itb.ac.id$/, {
+      .regex(/131[0-9]{5}@mahasiswa.itb.ac.id$/, {
         message: 'Must be ITB student email',
       }),
     password: z.string().min(8, { message: 'Input at least 8 characters' }),
     confirmPassword: z.string(),
-    address: z.string(),
-    phone: z.string().refine((value) => value.startsWith('08'), {message: 'Must start with 08'}),
+    address: z.string().min(3, { message: 'Input at least 3 characters' }),
+    phoneNumber: z.string().min(9, {message: "Input at least 9 characters"}).refine((value) => value.startsWith('08'), {message: 'Must start with 08'}),
     dateOfBirth: z.string(),
     lineId: z.string(),
     bloodType: z.enum(['A', 'B', 'AB', 'O'], { message: 'Invalid blood type' }),
-    medicalHistory: z.string(),
-    emergencyNumber: z.string().refine((value) => value.startsWith('08'), {message: 'Must start with 08'}),
-    hobby: z.string(),
+    medicalHistories: z.string(),
+    emergencyNumber: z.string().min(9, {message: "Input at least 9 characters"}).refine((value) => value.startsWith('08'), {message: 'Must start with 08'}),
+    hobbies: z.string().min(3, { message: 'Input at least 3 characters' }),
+    HMM: z.string(),
+    UKM: z.string().min(3, { message: 'Input at least 3 characters' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
+  }).refine((data) => data.emergencyNumber !== data.phoneNumber, {
+    message: 'Emergency number must be different from phone number',
+    path: ['emergencyNumber'],
   });

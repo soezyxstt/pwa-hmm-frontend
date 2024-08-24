@@ -1,6 +1,9 @@
 'use server';
 
 import {fetchAction} from "@/lib/fetch";
-import {$CourseClassAssignmentAPI as assignmentAPI} from "lms-types";
+import {$UserAPI as userAPI} from "lms-types";
 
-export const getAssignments = fetchAction<assignmentAPI.GetAssignments>('/users/:userId/assignments', 'Failed to fetch assignments');
+type getUserAssignmentsRT = userAPI.GetUserAssignments.Response["data"];
+
+export const getAssignments = fetchAction<getUserAssignmentsRT>
+  ('/users/:userId/assignments', 'Failed to fetch assignments');

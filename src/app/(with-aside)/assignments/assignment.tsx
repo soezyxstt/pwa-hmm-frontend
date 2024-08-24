@@ -18,8 +18,7 @@ import {Checkbox} from '@/components/ui/checkbox';
 import {useInterval} from '@/hooks/useInterval';
 import MotionFramer from '@/components/client/modal-framer';
 import type {
-  CourseClassAssignmentModel,
-  CourseClassModel,
+  $UserAPI,
   CourseModel,
 } from 'lms-types';
 import MotionOverlay from '@/components/client/modal-overlay';
@@ -28,12 +27,12 @@ const Assignment = ({
                       assignments,
                       courses,
                     }: {
-  assignments: (CourseClassAssignmentModel & { class: CourseClassModel })[];
+  assignments: $UserAPI.GetUserAssignments.Response['data'];
   courses: { course: CourseModel }[];
 }) => {
-  const data = assignments.map((assignment) => ({
+  const data = assignments.map(({assignment, type}) => ({
     status: true,
-    course: assignment.class.title,
+    course: type === "personal" ? "Personal" : assignment.class.title,
     class: 'K01',
     name: assignment.title,
     deadline: new Date(assignment.deadline),
@@ -349,78 +348,83 @@ const Assignment = ({
           </MotionFramer>
         )}
       </AnimatePresence>
-      <ul className='w-full p-2 rounded-2xl shadow-md bg-white'>
-        <Separator/>
-        {data.map((card, i) => (
-          <>
-            <motion.div
-              layoutId={`card-${card.name + card.class + card.course}-${id}`}
-              key={`${card.name + card.class}-${id + i}`}
-              onClick={() => setActive(card)}
-              className='py-3 px-4 flex w-full cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
-            >
-              <div className='flex gap-4 items-center'>
-                <motion.div
-                  layoutId={`notebook-${
-                    card.name + card.class + card.course
-                  }-${id}`}
-                  className='text-navy'
-                >
-                  <Notebook className='w-7 h-7 md:w-10 md:h-10'/>
-                </motion.div>
-                <div className=''>
-                  <motion.h2
-                    layoutId={`name-${
+      {assignments.length === 0 && (
+        <p className='font-medium text-muted-foreground w-full text-center'>No Assignments</p>
+      )}
+      {assignments.length > 0 && (
+        <ul className='w-full p-2 rounded-2xl shadow-md bg-white'>
+          <Separator/>
+          {data.map((card, i) => (
+            <>
+              <motion.div
+                layoutId={`card-${card.name + card.class + card.course}-${id}`}
+                key={`${card.name + card.class}-${id + i}`}
+                onClick={() => setActive(card)}
+                className='py-3 px-4 flex w-full cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
+              >
+                <div className='flex gap-4 items-center'>
+                  <motion.div
+                    layoutId={`notebook-${
                       card.name + card.class + card.course
                     }-${id}`}
-                    className='font-medium md:text-lg text-sm'
+                    className='text-navy'
                   >
-                    {card.name}
-                  </motion.h2>
-                  <p className='flex gap-2 items-center'>
-                    <motion.span
-                      layoutId={`class-${
+                    <Notebook className='w-7 h-7 md:w-10 md:h-10'/>
+                  </motion.div>
+                  <div className=''>
+                    <motion.h2
+                      layoutId={`name-${
                         card.name + card.class + card.course
                       }-${id}`}
-                      className='text-xs md:text-sm text-muted-foreground'
-                    >{`${card.class}`}</motion.span>
-                    -
-                    <motion.span
-                      layoutId={`course-${
-                        card.name + card.class + card.course
-                      }-${id}`}
-                      className='text-xs md:text-sm text-muted-foreground line-clamp-1'
+                      className='font-medium md:text-lg text-sm'
                     >
-                      {card.course}
-                    </motion.span>
-                  </p>
-                  <div
-                    className={`text-xs md:text-sm flex gap-2 ${
-                      card.status ? 'text-green-600' : 'text-red-500'
-                    }`}
-                  >
-                    <motion.p
-                      layoutId={`deadline-${
-                        card.name + card.class + card.course
-                      }-${id}`}
+                      {card.name}
+                    </motion.h2>
+                    <p className='flex gap-2 items-center'>
+                      <motion.span
+                        layoutId={`class-${
+                          card.name + card.class + card.course
+                        }-${id}`}
+                        className='text-xs md:text-sm text-muted-foreground'
+                      >{`${card.class}`}</motion.span>
+                      -
+                      <motion.span
+                        layoutId={`course-${
+                          card.name + card.class + card.course
+                        }-${id}`}
+                        className='text-xs md:text-sm text-muted-foreground line-clamp-1'
+                      >
+                        {card.course}
+                      </motion.span>
+                    </p>
+                    <div
+                      className={`text-xs md:text-sm flex gap-2 ${
+                        card.status ? 'text-green-600' : 'text-red-500'
+                      }`}
                     >
-                      {card.deadline.toDateString()}
-                    </motion.p>
-                    <motion.p
-                      layoutId={`submission-${
-                        card.name + card.class + card.course
-                      }-${id}`}
-                      className='line-clamp-1'
-                    >{`(${card.submission})`}</motion.p>
+                      <motion.p
+                        layoutId={`deadline-${
+                          card.name + card.class + card.course
+                        }-${id}`}
+                      >
+                        {card.deadline.toDateString()}
+                      </motion.p>
+                      <motion.p
+                        layoutId={`submission-${
+                          card.name + card.class + card.course
+                        }-${id}`}
+                        className='line-clamp-1'
+                      >{`(${card.submission})`}</motion.p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <ChevronRight/>
-            </motion.div>
-            <Separator/>
-          </>
-        ))}
-      </ul>
+                <ChevronRight/>
+              </motion.div>
+              <Separator/>
+            </>
+          ))}
+        </ul>
+      )}
     </>
   );
 };

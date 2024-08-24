@@ -1,6 +1,6 @@
 'use client';
 
-import { signUp } from '@/actions/user-action';
+import {signUp} from '@/actions/user-action';
 import Button from '@/components/ui/button/button';
 import {
   Form,
@@ -11,35 +11,37 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {Input} from '@/components/ui/input';
+import {zodResolver} from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type BaseSyntheticEvent, useState } from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
-import { z } from 'zod';
-import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'sonner';
-import { signUpSchema } from '@/lib/schema';
-import { useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowBigLeft, ArrowBigRight } from 'lucide-react';
+import {type BaseSyntheticEvent, ChangeEvent, useState} from 'react';
+import {useForm, UseFormReturn} from 'react-hook-form';
+import {FiEye, FiEyeOff} from 'react-icons/fi';
+import {z} from 'zod';
+import {useAction} from 'next-safe-action/hooks';
+import {toast} from 'sonner';
+import {signUpSchema} from '@/lib/schema';
+import {useRouter} from 'next/navigation';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ArrowBigLeft, ArrowBigRight, Check} from 'lucide-react';
 import Spinner from '@/components/client/spinner';
+import {errors} from "jose";
 
 export default function SignUp() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
-  const [prevStep, setPrevStep] = useState(step);
-  const { executeAsync, isExecuting } = useAction(signUp, {
+  const [prevStep, setPrevStep] = useState(2);
+  const {executeAsync, isExecuting, hasSucceeded, hasErrored} = useAction(signUp, {
     onSuccess: (data) => {
       toast.success(data.data?.message || 'Sign up success');
       router.push('/sign-in');
     },
-    onError: (err) => {
-      toast.error(err.error.serverError || 'Sign up failed');
+    onError: ({error: {serverError, fetchError, validationErrors, bindArgsValidationErrors}}) => {
+      toast.error(serverError || fetchError ||
+        validationErrors?.toString() || bindArgsValidationErrors || 'Sign up failed');
     },
   });
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -49,6 +51,16 @@ export default function SignUp() {
       email: '',
       password: '',
       confirmPassword: '',
+      address: '',
+      phone: '',
+      dateOfBirth: '',
+      lineId: '',
+      bloodType: '',
+      medicalHistories: '',
+      emergencyNumber: '',
+      hobbies: '',
+      HMM: '',
+      UKM: '',
     },
   });
 
@@ -58,7 +70,11 @@ export default function SignUp() {
   ) => {
     e?.preventDefault();
     await executeAsync(data);
-    form.reset();
+
+    if (hasSucceeded && !hasErrored) {
+      form.reset();
+    }
+    setStep(1);
   };
 
   const dir = step > prevStep ? 'right' : 'left';
@@ -103,17 +119,20 @@ export default function SignUp() {
               Step{' '}
               <AnimatePresence mode='wait'>
                 <motion.span
-                  initial={{ y: -10 }}
-                  animate={{ y: 0 }}
-                  exit={{ y: 10 }}
+                  initial={{y: -10}}
+                  animate={{y: 0}}
+                  exit={{y: 10}}
                   key={`step-signup-${step}`}
                 >
                   {step}
                 </motion.span>
               </AnimatePresence>
-              /3
+              /{steps.length}
             </p>
           </div>
+          {!form.formState.isValid && form.formState.submitCount > 0 &&
+              <p className="text-red-600 text-xs text-left w-full">Please recheck the inputs</p>
+          }
           <AnimatePresence mode='wait'>
             <motion.div
               className='flex flex-col gap-4 w-full'
@@ -122,27 +141,28 @@ export default function SignUp() {
                 opacity: 0,
                 x: step === prevStep ? '0' : dir === 'right' ? '100%' : '-100%',
               }}
-              animate={{ opacity: 1, x: 0 }}
+              animate={{opacity: 1, x: 0}}
               exit={{
                 opacity: 0,
                 x:
                   prevStep === 2 && step === 1
                     ? '-100%'
                     : dir === 'right'
-                    ? '-100%'
-                    : '100%',
+                      ? '-100%'
+                      : '100%',
               }}
-              transition={{ duration: 0.2, type: 'tween' }}
+              transition={{duration: 0.2, type: 'tween'}}
             >
-              {steps[step - 1].map((step, i) => (
+              {steps[step - 1].map((step, _) => (
                 <FormInput
-                  key={step.name}
+                  key={step.name + "sign-up-page"}
                   name={step.name}
                   form={form}
                   type={step.type}
                   isPassword={step.isPassword ?? false}
                   desc={step.desc}
                   label={step.label}
+                  autoCompletion={step.autoCompletion}
                   showPassword={
                     step.name === 'password'
                       ? showPassword
@@ -167,27 +187,29 @@ export default function SignUp() {
                 }
               }}
               disabled={step === 1}
-              className='aspect-square bg-transparent border border-navy text-navy hover:bg-navy/10 transition-all'
+              className='aspect-square p-0 flex items-center justify-center w-12 h-12 bg-transparent border border-navy text-navy hover:bg-navy/10 transition-all'
             >
-              <ArrowBigLeft />
+              <ArrowBigLeft/>
             </Button>
             <Button
-              type={step === 3 ? 'button' : 'button'}
-              disabled={isExecuting}
-              className='aspect-square bg-transparent border border-navy text-navy hover:bg-navy/10 transition-all'
-              onClick={() => {
-                if (step < 3) {
+              type={step === steps.length ? 'button' : 'button'}
+              disabled={isExecuting || form.formState.isSubmitting ||
+                (!form.formState.isDirty && step === steps.length)}
+              className={`aspect-square p-0 flex items-center justify-center w-12 h-12 bg-transparent border border-navy text-navy hover:bg-navy/10 transition-all ${step === steps.length && "border-green-600 text-green-500"}`}
+              onClick={(e) => {
+                if (step < steps.length) {
                   setPrevStep(step);
                   setStep(step + 1);
                 } else {
-                  form.handleSubmit(onSubmit)();
+                  form.handleSubmit(onSubmit)(e);
                 }
               }}
             >
               {isExecuting ? (
-                <Spinner className='h-4 w-4' />
-              ) : (
-                <ArrowBigRight />
+                <Spinner className='h-4 w-4'/>
+              ) : step === steps.length ? (
+                <Check/>) : (
+                <ArrowBigRight/>
               )}
             </Button>
           </div>
@@ -203,13 +225,20 @@ export default function SignUp() {
   );
 }
 
-const step1: {
+type stepType = {
   name: keyof z.infer<typeof signUpSchema>;
-  type: 'text' | 'email' | 'password';
+  type: 'text' | 'email' | 'password' | 'date';
   isPassword?: boolean;
   desc?: string;
   label: string;
-}[] = [
+  autoCompletion?: {
+    replaceReg: RegExp;
+    replace: string;
+    replacement: string;
+  };
+}
+
+const step1: stepType[] = [
   {
     name: 'name',
     type: 'text',
@@ -220,6 +249,11 @@ const step1: {
     type: 'email',
     label: 'Email',
     desc: '131*****@mahasiswa.itb.ac.id',
+    autoCompletion: {
+      replaceReg: /@.*/,
+      replace: "@",
+      replacement: "@mahasiswa.itb.ac.id",
+    }
   },
   {
     name: 'password',
@@ -235,20 +269,14 @@ const step1: {
   },
 ];
 
-const step2: {
-  name: keyof z.infer<typeof signUpSchema>;
-  type: 'text' | 'email' | 'password' | 'date';
-  isPassword?: boolean;
-  desc?: string;
-  label: string;
-}[] = [
+const step2: stepType[] = [
   {
     name: 'address',
     type: 'text',
     label: 'Address',
   },
   {
-    name: 'phone',
+    name: 'phoneNumber',
     type: 'text',
     label: 'Phone',
     desc: '08xxxxxxxxxx',
@@ -265,13 +293,7 @@ const step2: {
   },
 ];
 
-const step3: {
-  name: keyof z.infer<typeof signUpSchema>;
-  type: 'text' | 'email' | 'password' | 'date';
-  isPassword?: boolean;
-  desc?: string;
-  label: string;
-}[] = [
+const step3: stepType[] = [
   {
     name: 'bloodType',
     type: 'text',
@@ -279,7 +301,7 @@ const step3: {
     desc: 'A, B, AB, O',
   },
   {
-    name: 'medicalHistory',
+    name: 'medicalHistories',
     type: 'text',
     label: 'Medical History',
   },
@@ -289,24 +311,39 @@ const step3: {
     label: 'Emergency Number',
   },
   {
-    name: 'hobby',
+    name: 'hobbies',
     type: 'text',
-    label: 'Hobby',
+    label: 'Hobbies',
   },
 ];
 
-const steps = [step1, step2, step3];
+const step4: stepType[] = [
+  {
+    name: "HMM",
+    type: 'text',
+    label: 'HMM Division/Department',
+  },
+  {
+    name: 'UKM',
+    type: 'text',
+    label: 'Unit Kegiatan Mahasiswa',
+    desc: "e.g. PSM ITB, URO ITB, etc.",
+  },
+];
+
+const steps = [step1, step2, step3, step4];
 
 function FormInput({
-  name,
-  form,
-  type = 'text',
-  isPassword = false,
-  desc,
-  label,
-  showPassword,
-  setShowPassword,
-}: {
+                     name,
+                     form,
+                     type = 'text',
+                     isPassword = false,
+                     desc,
+                     label,
+                     showPassword,
+                     setShowPassword,
+                     autoCompletion = undefined,
+                   }: {
   name: keyof z.infer<typeof signUpSchema>;
   form: UseFormReturn<z.infer<typeof signUpSchema>>;
   type: 'text' | 'email' | 'password' | 'date';
@@ -315,13 +352,18 @@ function FormInput({
   label: string;
   showPassword?: boolean;
   setShowPassword?: (value: boolean) => void;
+  autoCompletion?: {
+    replaceReg: RegExp;
+    replace: string;
+    replacement: string;
+  };
 }) {
   return (
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem className='w-full'>
+      render={({field: {onChange, ...props}}) => (
+        <FormItem className='w-full space-y-1'>
           <FormLabel className='self-start text-navy font-semibold'>
             {label}
           </FormLabel>
@@ -331,7 +373,8 @@ function FormInput({
                 <Input
                   className=''
                   type={showPassword ? 'text' : 'password'}
-                  {...field}
+                  onChange={onChange}
+                  {...props}
                 />
                 {showPassword ? (
                   <FiEye
@@ -349,14 +392,23 @@ function FormInput({
               <Input
                 className=''
                 type={type}
-                {...field}
+                onChange={autoCompletion ?
+                  (e: ChangeEvent<HTMLInputElement>) => {
+                    const v = e.target.value;
+                    if (v.includes(autoCompletion.replace)) {
+                      form.setValue(name, v.replace(autoCompletion.replaceReg, autoCompletion.replacement));
+                    } else {
+                      form.setValue(name, v.replace(autoCompletion.replacement.replace(autoCompletion.replace, ""), ""));
+                    }
+                  } : onChange}
+                {...props}
               />
             )}
           </FormControl>
           {desc && (
             <FormDescription className='text-xs'>{desc}</FormDescription>
           )}
-          <FormMessage className='text-xs' />
+          <FormMessage className='text-xs'/>
         </FormItem>
       )}
     />

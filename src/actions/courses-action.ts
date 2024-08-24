@@ -3,12 +3,13 @@
 import {cache} from 'react';
 import {fetchAction} from "@/lib/fetch";
 import {
+  $UserAPI as userAPI,
   $CourseAPI as courseAPI,
   $CourseLessonAPI as lessonAPI,
   $CourseLessonVideoAPI as videoAPI,
 } from "lms-types";
 
-export const getEnrolledCourses = fetchAction<courseAPI.GetEnrolledCourses["data"]>(courseAPI.GetEnrolledCoursesUrl(), 'Failed to fetch courses', {
+export const getEnrolledCourses = fetchAction<userAPI.GetUserEnrolledAsStudentCourses.Response["data"]>(userAPI.GetUserEnrolledAsStudentCourses.generateUrl(":userId"), 'Failed to fetch courses', {
   queryParams: {
     include_author: true,
     include_category: false,
@@ -18,7 +19,7 @@ export const getEnrolledCourses = fetchAction<courseAPI.GetEnrolledCourses["data
   }
 });
 
-export const getCourses = fetchAction<courseAPI.GetCourses["data"]>(courseAPI.GetCoursesUrl(), 'Failed to fetch courses', {
+export const getCourses = fetchAction<courseAPI.GetCourses.Response["data"]>(courseAPI.GetCourses.generateUrl(), 'Failed to fetch courses', {
   queryParams: {
     include_author: true,
     include_category: true,
@@ -27,9 +28,9 @@ export const getCourses = fetchAction<courseAPI.GetCourses["data"]>(courseAPI.Ge
   },
 });
 
-export const getLessons = async (courseId: string) => await fetchAction<lessonAPI.GetLessons["data"]>(lessonAPI.GetLessonsUrl(Number(courseId)), 'Failed to fetch lessons')();
+export const getLessons = async (courseId: string) => await fetchAction<lessonAPI.GetLessons.Response["data"]>(lessonAPI.GetLessons.generateUrl(Number(courseId)), 'Failed to fetch lessons')();
 
-export const getVideos = async (courseId: string | number, lessonId: string | number) => await fetchAction<videoAPI.GetVideos["data"]>(videoAPI.GetVideosUrl(Number(courseId), Number(lessonId)), 'Failed to fetch videos')();
+export const getVideos = async (courseId: string | number, lessonId: string | number) => await fetchAction<videoAPI.GetVideos.Response["data"]>(videoAPI.GetVideos.generateUrl(Number(courseId), Number(lessonId)), 'Failed to fetch videos')();
 
 export const getVideoData = cache(async (videoId: string) => {
   const res = await fetch(

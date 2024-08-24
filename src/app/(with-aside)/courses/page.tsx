@@ -10,8 +10,11 @@ const CoursesPage = async () => {
   return (
     <div className='w-full h-full'>
       <Search />
+      {courses.length === 0 && (
+          <p className='text-muted-foreground text-center w-full font-medium py-6'>No courses available</p>
+      )}
       <div className='grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2 gap-x-4 gap-y-6 md:gap-x-8 lg:gap-x-10 md:gap-y-10 flex-1 grid-rows-2 mt-5'>
-        {courses.map(({ course }: any, i: number) => (
+        {courses.map((course, i: number) => (
           <CoursesItem
             href=''
             key={i}

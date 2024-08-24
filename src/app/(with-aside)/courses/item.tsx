@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { FileSpreadsheet, SquarePlay } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 type CoursesItemProps = {
-  id: string;
+  id: string | number;
   title: string;
   image: string;
   subject: string;

@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
-  if (request.nextUrl.pathname.split('/')[1] === 'portal' && role !== UserRoleModel.INSTRUCTOR) {
+  if (request.nextUrl.pathname.split('/')[1] === 'portal' && role !== UserRoleModel.ADMIN) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

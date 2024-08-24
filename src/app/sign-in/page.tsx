@@ -82,7 +82,7 @@ export default function SignIn() {
           <FormField
             control={form.control}
             name='email'
-            render={({field: {onChange, value, ...props}}) => (
+            render={({field: {onChange, ...props}}) => (
               <FormItem className='w-full'>
                 <FormLabel className='self-start text-navy font-semibold'>
                   Email
@@ -98,9 +98,7 @@ export default function SignIn() {
                       } else {
                         form.setValue('email', v.replace("mahasiswa.itb.ac.id", ""));
                       }
-                      // onChange(value);
                     }}
-                    value={value}
                     {...props}
                   />
                 </FormControl>

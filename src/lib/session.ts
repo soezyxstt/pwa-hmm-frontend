@@ -49,7 +49,7 @@ export async function createSession(
     expires: expire,
   });
 
-  console.log(expire);
+  console.log(id, role, access_token, refresh_token, expire);
 
   cookies().set('session-hmm', session, {
     httpOnly: true,

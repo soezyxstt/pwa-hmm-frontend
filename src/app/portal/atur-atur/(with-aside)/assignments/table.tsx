@@ -5,9 +5,9 @@ import {TableBody, TableCell, TableHead, TableHeader, TableRow, Table} from "@/c
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Ellipsis} from "lucide-react";
 import Pagination from "@/components/client/pagination";
-import {getAssignmentsReturnType} from "@/actions/assignment-action";
+import {$UserAPI} from "lms-types";
 
-function AssignmentTable({data}: { data: getAssignmentsReturnType }) {
+function AssignmentTable({data}: { data: $UserAPI.GetUserAssignments.Response["data"] }) {
   const [page, setPage] = useState(1)
   const assignmentPerPage = 6
   const totalPage = Math.ceil(data.length / assignmentPerPage)
@@ -27,13 +27,13 @@ function AssignmentTable({data}: { data: getAssignmentsReturnType }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((assignment, index) => {
+          {data.map(({type, assignment}, index) => {
             if (index < (page - 1) * assignmentPerPage || index >= page * assignmentPerPage) return null
 
             return (
               <TableRow key={assignment.id}>
                 <TableCell className=''>{assignment.id}</TableCell>
-                <TableCell>{assignment.class.title}</TableCell>
+                <TableCell>{type === "personal" ? "Personal" : assignment.class.title}</TableCell>
                 <TableCell>{assignment.title}</TableCell>
                 <TableCell
                   className='whitespace-nowrap text-nowrap'>{(new Date(assignment.deadline)).toDateString()}</TableCell>

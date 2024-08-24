@@ -4,6 +4,8 @@ import {getAssignments} from "@/actions/assignment-action";
 import Add from "@/app/portal/atur-atur/(with-aside)/assignments/add";
 import {getCourses} from "@/actions/courses-action";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Assignments() {
   const assignments = await getAssignments();
   const courses = await getCourses();

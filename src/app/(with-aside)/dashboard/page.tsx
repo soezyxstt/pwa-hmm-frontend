@@ -3,6 +3,8 @@ import Calendar, { type EventMap } from './calendar-x';
 import UpcomingSchedule from './upcomingSched';
 import Berita from './berita';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const events: EventMap[] = [
     {

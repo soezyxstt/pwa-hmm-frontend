@@ -12,7 +12,7 @@ export const getUser = cache(async () => {
   try {
     const {refresh_token, access_token, userId} = await verifySession();
 
-    const data = await fetch(env.API_URL + $UserAPI.GetUserById.generateUrl(Number(session.userId)),
+    const data = await fetch(env.API_URL + $UserAPI.GetUserById.generateUrl(session.userId),
       {
         headers: {
           'Content-Type': 'application/json',

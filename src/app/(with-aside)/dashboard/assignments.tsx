@@ -1,7 +1,7 @@
 import Button from '@/components/ui/button/button';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import Link from 'next/link';
-import {getAssignments} from "@/actions/assignment-action";
+import {getAssignments} from "@/_actions/assignment-action";
 
 export const beforeColors = [
   'before:bg-oren',

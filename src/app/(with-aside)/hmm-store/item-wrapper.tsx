@@ -50,12 +50,6 @@ const Main = ({ className, ...props }: {} & HTMLAttributes<HTMLDivElement>) => {
             id={`item-${active.title + active.price + active.stars}-${id}`}
             className='p-0.5 rounded-xl'
           >
-            <button
-              className='absolute top-2 right-4 text-2xl text-black'
-              onClick={() => setActive(null)}
-            >
-              &times;
-            </button>
             <motion.div
               layoutId={`image-${
                 active.title + active.price + active.stars

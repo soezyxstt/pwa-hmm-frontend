@@ -1,6 +1,6 @@
 'use client';
 
-import {signIn} from '@/actions/user-action';
+import {signIn} from '@/_actions/user-action';
 import Button from '@/components/ui/button/button';
 import {
   Form,
@@ -91,6 +91,7 @@ export default function SignIn() {
                   <Input
                     className=''
                     type='email'
+                    autoFocus
                     onChange={(e) => {
                       const v = e.target.value;
                       if (v.includes('@')) {

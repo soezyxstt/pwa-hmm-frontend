@@ -6,17 +6,17 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Ellipsis} from "lucide-react";
 import Pagination from "@/components/client/pagination";
 import {$UserAPI} from "lms-types";
+import Wrapper from "@/app/portal/atur-atur/wrapper";
 
 function AssignmentTable({data}: { data: $UserAPI.GetUserAssignments.Response["data"] }) {
   const [page, setPage] = useState(1)
   const assignmentPerPage = 6
   const totalPage = Math.ceil(data.length / assignmentPerPage)
   return (
-    <div className='rounded-xl shadow-md w-full bg-white flex-1 p-4 flex flex-col justify-between'>
-      <Table className='*:*:*:text-xs md:*:*:*:text-sm'>
+    <Wrapper>
+      <Table className='table-admin'>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Course</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Due Date</TableHead>
@@ -32,7 +32,6 @@ function AssignmentTable({data}: { data: $UserAPI.GetUserAssignments.Response["d
 
             return (
               <TableRow key={assignment.id}>
-                <TableCell className=''>{assignment.id}</TableCell>
                 <TableCell>{type === "personal" ? "Personal" : assignment.class.title}</TableCell>
                 <TableCell>{assignment.title}</TableCell>
                 <TableCell
@@ -58,7 +57,7 @@ function AssignmentTable({data}: { data: $UserAPI.GetUserAssignments.Response["d
         </TableBody>
       </Table>
       <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
-    </div>
+    </Wrapper>
   );
 }
 

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const submissionsEnum: [string, ...string[]] = ['MS Teams', 'Edunex', 'WhatsApp', 'GDrive'];
+
 export const signInSchema = z.object({
   email: z.string().email({ message: 'Invalid email format' }),
   // .regex(/[0-9]{8}@mahasiswa.itb.ac.id$/,
@@ -36,7 +38,15 @@ export const signUpSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
-  }).refine((data) => data.emergencyNumber !== data.phoneNumber, {
+  })
+  .refine((data) => data.emergencyNumber !== data.phoneNumber, {
     message: 'Emergency number must be different from phone number',
     path: ['emergencyNumber'],
   });
+
+export const addAssignmentSchema = z.object({
+  submissions: z.enum(submissionsEnum, { message: 'Invalid submission method' }),
+  title: z.string().min(3, { message: 'Input at least 3 characters' }),
+  deadline: z.string(),
+  classId: z.string(),
+})

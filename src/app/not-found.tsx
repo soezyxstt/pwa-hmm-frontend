@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
+import type {Metadata} from 'next';
 import Link from 'next/link';
+import BackButton from "@/components/client/back-button";
 
 export default function NotFound() {
   return (
@@ -8,12 +9,15 @@ export default function NotFound() {
         <p className='text-2xl md:text-4xl font-medium'>404</p>
         <p className=''>{'Sorry, page could not be found'}</p>
       </div>
-      <Link
-        href='/'
-        className='p-2 text-blue-600 rounded-sm '
-      >
-        Home
-      </Link>
+      <div className="flex gap-4">
+        <Link
+          href='/'
+          className='p-2 text-blue-600 rounded-sm '
+        >
+          Home
+        </Link>
+        <BackButton className='p-2 text-blue-600 rounded-sm' />
+      </div>
     </div>
   );
 }

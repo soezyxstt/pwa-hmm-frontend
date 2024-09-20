@@ -20,15 +20,14 @@ export const getUser = cache(async () => {
         },
       }
     );
-
-    if (!data.ok) {
-      throw new PWAError('Error fetching user data');
-    }
-
     const user = await data.json();
 
     if (user.error) {
       throw new Error(user.error);
+    }
+
+    if (!data.ok) {
+      throw new PWAError('Error fetching user data');
     }
 
     return user.data as $UserAPI.GetUserById.Response["data"];

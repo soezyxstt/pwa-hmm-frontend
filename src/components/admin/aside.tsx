@@ -17,6 +17,7 @@ const links = [
   {title: 'MyHMM', path: "myhmm"},
   {title: 'MyCareer', path: 'mycareer'},
   {title: 'Users', path: 'users'},
+  {title: 'Events', path: 'events'},
 ];
 
 function Link({
@@ -29,7 +30,7 @@ function Link({
   NextLink.LinkProps) {
   return (
     <NextLink.default
-      href={href}
+      href={`/portal/atur-atur/${href}`}
       className={cn(
         'px-4 py-2 rounded-lg border border-abu-2 w-full font-semibold text-abu-2 transition-colors',
         isActive ? 'bg-background text-navy' : 'hover:bg-abu-2 hover:text-navy',

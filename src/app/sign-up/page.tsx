@@ -1,6 +1,6 @@
 'use client';
 
-import {signUp} from '@/actions/user-action';
+import {signUp} from '@/_actions/user-action';
 import Button from '@/components/ui/button/button';
 import {
   Form,
@@ -26,7 +26,6 @@ import {useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ArrowBigLeft, ArrowBigRight, Check} from 'lucide-react';
 import Spinner from '@/components/client/spinner';
-import {errors} from "jose";
 
 export default function SignUp() {
   const router = useRouter();
@@ -152,10 +151,26 @@ export default function SignUp() {
                       : '100%',
               }}
               transition={{duration: 0.2, type: 'tween'}}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  if (e.shiftKey) {
+                    const button = document.getElementById("prev-button-sign-up");
+                    button?.click();
+                    return
+                  }
+                  const button = document.getElementById("submit-button-sign-up");
+                  button?.click();
+                } else if (e.key === 'Escape') {
+                  setStep(1);
+                  form.reset();
+                }
+              }}
             >
-              {steps[step - 1].map((step, _) => (
+              {steps[step - 1].map((step, i) => (
                 <FormInput
                   key={step.name + "sign-up-page"}
+                  index={i}
                   name={step.name}
                   form={form}
                   type={step.type}
@@ -179,6 +194,7 @@ export default function SignUp() {
           </AnimatePresence>
           <div className='w-full flex justify-between items-center'>
             <Button
+              id="prev-button-sign-up"
               type='button'
               onClick={() => {
                 if (step > 1) {
@@ -192,6 +208,7 @@ export default function SignUp() {
               <ArrowBigLeft/>
             </Button>
             <Button
+              id="submit-button-sign-up"
               type={step === steps.length ? 'button' : 'button'}
               disabled={isExecuting || form.formState.isSubmitting ||
                 (!form.formState.isDirty && step === steps.length)}
@@ -334,6 +351,7 @@ const step4: stepType[] = [
 const steps = [step1, step2, step3, step4];
 
 function FormInput({
+                     index,
                      name,
                      form,
                      type = 'text',
@@ -344,6 +362,7 @@ function FormInput({
                      setShowPassword,
                      autoCompletion = undefined,
                    }: {
+  index: number;
   name: keyof z.infer<typeof signUpSchema>;
   form: UseFormReturn<z.infer<typeof signUpSchema>>;
   type: 'text' | 'email' | 'password' | 'date';
@@ -392,6 +411,7 @@ function FormInput({
               <Input
                 className=''
                 type={type}
+                autoFocus={index === 0}
                 onChange={autoCompletion ?
                   (e: ChangeEvent<HTMLInputElement>) => {
                     const v = e.target.value;

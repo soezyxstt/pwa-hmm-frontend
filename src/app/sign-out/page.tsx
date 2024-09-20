@@ -1,6 +1,6 @@
 'use client';
 
-import { signOut } from '@/actions/user-action';
+import { signOut } from '@/_actions/user-action';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 // import { useAction } from 'next-safe-action/hooks';

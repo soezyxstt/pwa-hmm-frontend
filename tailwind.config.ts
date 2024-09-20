@@ -1,4 +1,5 @@
-import type { Config } from "tailwindcss"
+import type {Config} from "tailwindcss"
+import plugin from "tailwindcss/plugin";
 
 const config = {
   darkMode: ['class'],
@@ -76,12 +77,12 @@ const config = {
       },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          from: {height: '0'},
+          to: {height: 'var(--radix-accordion-content-height)'},
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
+          from: {height: 'var(--radix-accordion-content-height)'},
+          to: {height: '0'},
         },
       },
       animation: {
@@ -90,7 +91,30 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), plugin(function ({addComponents, theme}) {
+    addComponents({
+      '.table-admin': {
+        '*': {
+          '*': {
+            '*': {
+              fontSize: theme('fontSize.xs'),
+            }
+          }
+        }
+      },
+      '@media (min-width: 780px)': {
+        '.table-admin': {
+          '*': {
+            '*': {
+              '*': {
+                fontSize: theme('fontSize.sm'),
+              }
+            }
+          }
+        }
+      }
+    })
+  })],
 } satisfies Config;
 
 export default config

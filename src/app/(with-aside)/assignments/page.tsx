@@ -1,6 +1,6 @@
-import { getEnrolledCourses } from '@/actions/courses-action';
+import { getEnrolledCourses } from '@/_actions/courses-action';
 import Assignment from './assignment';
-import { getAssignments } from '@/actions/assignment-action';
+import { getAssignments } from '@/_actions/assignment-action';
 
 export const dynamic = 'force-dynamic';
 

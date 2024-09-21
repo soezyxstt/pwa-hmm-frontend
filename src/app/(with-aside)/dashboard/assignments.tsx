@@ -90,9 +90,8 @@ const AssignmentCard = ({
       className={` before:absolute text-black relative ${randomColor} before:left-0 before:w-1.5 before:h-full before:top-0 flex justify-between items-center border-y-[1px] border-y-abu-1 px-10 py-3`}
     >
       <div className='flex text-xs gap-2 *:text-left items-center'>
-        <p className='capitalize' title={title}>{title}</p>
-        <p className=''>-</p>
-        <p className='font-normal capitalize' title={desc}>{desc}</p>
+        <p className='capitalize line-clamp-1 w-1/2' title={title}>{title}</p>
+        <p className='font-normal capitalize line-clamp-1 w-1/2' title={desc}>{desc}</p>
       </div>
       <div
         className='text-2xs font-semibold w-max min-w-16 text-right'>

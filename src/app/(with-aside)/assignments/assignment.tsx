@@ -14,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {Checkbox} from '@/components/ui/checkbox';
 import {useInterval} from '@/hooks/useInterval';
 import MotionFramer from '@/components/client/modal-framer';
 import type {
@@ -28,7 +27,7 @@ const Assignment = ({
                       courses,
                     }: {
   assignments: $UserAPI.GetUserAssignments.Response['data'];
-  courses: $UserAPI.GetUserEnrolledAsStudentCourses.Response['data'];
+  courses: $UserAPI.GetUserEnrolledCourses.Response['data'];
 }) => {
   const data = assignments.map(({assignment, type}) => ({
     status: true,

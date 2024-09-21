@@ -74,7 +74,6 @@ export default async function EditProfile({
     emergencyNumber,
     lineId,
     UKM,
-    HMM,
     dateOfBirth,
     address,
     bloodType,
@@ -157,7 +156,7 @@ export default async function EditProfile({
       type: 'text',
       name: 'illness',
       id: 'illness',
-      defaultValue: medicalHistories,
+      defaultValue: medicalHistories.join(', '),
     },
     {
       label: 'Line ID',
@@ -178,21 +177,21 @@ export default async function EditProfile({
       type: 'text',
       name: 'hmmPos',
       id: 'hmmPos',
-      defaultValue: HMM,
+      defaultValue: '',
     },
     {
       label: 'UKM',
       type: 'text',
       name: 'ukm',
       id: 'ukm',
-      defaultValue: UKM,
+      defaultValue: UKM.join(', '),
     },
     {
       label: 'Hobby',
       type: 'text',
       name: 'hobby',
       id: 'hobby',
-      defaultValue: hobbies,
+      defaultValue: hobbies.join(', '),
     },
   ];
 

@@ -29,11 +29,10 @@ export const signUpSchema = z
     dateOfBirth: z.string(),
     lineId: z.string(),
     bloodType: z.enum(['A', 'B', 'AB', 'O'], { message: 'Invalid blood type' }),
-    medicalHistories: z.string(),
+    medicalHistories: z.array(z.string().min(3, { message: 'Input at least 3 characters' })).optional(),
     emergencyNumber: z.string().min(9, {message: "Input at least 9 characters"}).refine((value) => value.startsWith('08'), {message: 'Must start with 08'}),
-    hobbies: z.string().min(3, { message: 'Input at least 3 characters' }),
-    HMM: z.string(),
-    UKM: z.string().min(3, { message: 'Input at least 3 characters' }),
+    hobbies: z.array(z.string().min(3, { message: 'Input at least 3 characters' })).optional(),
+    UKM: z.array(z.string().min(3, { message: 'Input at least 3 characters' })).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',

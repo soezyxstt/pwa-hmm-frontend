@@ -9,7 +9,7 @@ import {
   $CourseLessonVideoAPI as videoAPI,
 } from "lms-types";
 
-export const getEnrolledCourses = fetchAction<userAPI.GetUserEnrolledAsStudentCourses.Response["data"]>(userAPI.GetUserEnrolledAsStudentCourses.generateUrl(":userId"), 'Failed to fetch courses'
+export const getEnrolledCourses = fetchAction<userAPI.GetUserEnrolledCourses.Response["data"]>(userAPI.GetUserEnrolledCourses.generateUrl(":userId"), 'Failed to fetch courses'
 );
 
 export const getCourses = fetchAction<courseAPI.GetCourses.Response["data"]>(courseAPI.GetCourses.generateUrl(), 'Failed to fetch courses', {

@@ -5,7 +5,7 @@ const UpcomingSchedule = () => {
   return (
     <div className='md:w-1/2 bg-white rounded-lg shadow-md p-6'>
       <h3 className='font-bold mb-2'>Upcoming Schedule</h3>
-      <ScrollArea className=' h-64'>
+      <ScrollArea className=' h-72'>
         <div className='flex flex-col gap-2 text-center font-medium'>
           <h5 className='font-semibold'>Today</h5>
           <UpSchedCard
@@ -41,7 +41,6 @@ const UpcomingSchedule = () => {
           />
         </div>
       </ScrollArea>
-      <Button className='mt-4 text-xs w-full py-1.5'>See All Activities</Button>
     </div>
   );
 };

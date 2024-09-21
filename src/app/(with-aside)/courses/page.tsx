@@ -2,6 +2,7 @@ import Search from '@/components/client/search';
 import CoursesItem from '@/app/(with-aside)/courses/item';
 import {getEnrolledCourses as courses_action} from '@/_actions/courses-action';
 import Link from "next/link";
+import CourseDialog from './dialog';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +22,7 @@ const CoursesPage = async ({searchParams}: {searchParams: Record<string, string>
           <Link href={'?all=true'} className={`rounded-full md:py-2 md:px-4 py-1.5 px-3 hover:bg-kuning transition drop-shadow-lg font-semibold hover:text-navy md:text-sm text-xs ${isAllCourse ? 'bg-kuning text-navy' : 'bg-navy text-white'}`}>
             All Courses
           </Link>
+          <CourseDialog/>
         </div>
       </div>
       {courses.length === 0 && (

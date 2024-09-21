@@ -23,10 +23,10 @@ const ProfilePage = async () => {
     emergencyNumber,
     lineId,
     UKM,
-    HMM,
     dateOfBirth,
     address,
     bloodType,
+    about,
   } = user;
 
   return (
@@ -89,7 +89,7 @@ const ProfilePage = async () => {
                 Golongan darah: <span>{bloodType}</span>
               </p>
               <p className=''>
-                Riwayat peyakit: <span>{medicalHistories}</span>
+                Riwayat peyakit: <span>{medicalHistories.join(', ')}</span>
               </p>
             </div>
             <div className='[&_p]:text-xs [&_p]:font-semibold [&_span]:font-normal space-y-2'>
@@ -107,13 +107,13 @@ const ProfilePage = async () => {
             <div className='[&_p]:text-xs [&_p]:font-semibold [&_span]:font-normal space-y-2'>
               <h2 className='text-base'>Kemahasiswaan</h2>
               <p className=''>
-                Badan HMM: <span>{HMM}</span>
+                Badan HMM: <span></span>
               </p>
               <p className=''>
-                Unit Kegiatan Mahasiswa: <span>{UKM}</span>
+                Unit Kegiatan Mahasiswa: <span>{UKM.join(", ")}</span>
               </p>
               <p className=''>
-                Hobby: <span>{hobbies}</span>
+                Hobby: <span>{hobbies.join(", ")}</span>
               </p>
             </div>
           </div>

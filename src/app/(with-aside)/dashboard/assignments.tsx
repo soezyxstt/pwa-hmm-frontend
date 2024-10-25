@@ -1,7 +1,7 @@
 import Button from '@/components/ui/button/button';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import Link from 'next/link';
-import {getAssignments} from "@/_actions/assignment-action";
+import {getUserAssignment} from "@/_actions/assignment-action";
 
 export const beforeColors = [
   'before:bg-oren',
@@ -13,7 +13,7 @@ export const beforeColors = [
 export const colors = ['bg-oren', 'bg-navy', 'bg-hijau', 'bg-kuning'];
 
 export const Assignments = async () => {
-  const assignments = await getAssignments();
+  const assignments = await getUserAssignment();
   const today = new Date();
   const todayAssignments = assignments.filter(({assignment: {deadline}}) => {
     const deadlineDate = new Date(deadline);

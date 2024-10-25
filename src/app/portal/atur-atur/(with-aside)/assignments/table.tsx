@@ -5,10 +5,11 @@ import {TableBody, TableCell, TableHead, TableHeader, TableRow, Table} from "@/c
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Ellipsis} from "lucide-react";
 import Pagination from "@/components/client/pagination";
-import {$UserAPI} from "lms-types";
+import {$CourseClassAssignmentAPI, CourseClassModel} from "lms-types";
 import Wrapper from "@/app/portal/atur-atur/wrapper";
 
-function AssignmentTable({data}: { data: $UserAPI.GetUserAssignments.Response["data"] }) {
+function AssignmentTable({data}: {
+  data: ($CourseClassAssignmentAPI.GetAssignments.Response["data"][number] & { class: CourseClassModel } & { course: string })[] }) {
   const [page, setPage] = useState(1)
   const assignmentPerPage = 6
   const totalPage = Math.ceil(data.length / assignmentPerPage)
@@ -27,16 +28,16 @@ function AssignmentTable({data}: { data: $UserAPI.GetUserAssignments.Response["d
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(({type, assignment}, index) => {
+          {data.map(({id, title, deadline, description, course, submission, taskType}, index) => {
             if (index < (page - 1) * assignmentPerPage || index >= page * assignmentPerPage) return null
 
             return (
-              <TableRow key={assignment.id}>
-                <TableCell>{type === "personal" ? "Personal" : assignment.class.title}</TableCell>
-                <TableCell>{assignment.title}</TableCell>
+              <TableRow key={id + title}>
+                <TableCell>{course}</TableCell>
+                <TableCell>{title}</TableCell>
                 <TableCell
-                  className='whitespace-nowrap text-nowrap'>{(new Date(assignment.deadline)).toDateString()}</TableCell>
-                <TableCell>{assignment.submission}</TableCell>
+                  className='whitespace-nowrap text-nowrap'>{(new Date(deadline)).toDateString()}</TableCell>
+                <TableCell>{submission}</TableCell>
                 <TableCell>
                   <Popover>
                     <PopoverTrigger>

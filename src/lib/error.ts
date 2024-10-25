@@ -12,5 +12,7 @@ export async function handleError(err: { message: string, errorCode: string } | 
     return redirect('/sign-out');
   }
 
+  console.log(err.errorCode);
+
   throw new PWAError(err.message);
 }

@@ -4,6 +4,7 @@ import {updateSession, verifySession} from "@/lib/session";
 import {env} from "@/env";
 import {cookieGenerator} from "@/lib/utils";
 import {handleError, PWAError} from "@/lib/error";
+import {revalidatePath as rPath, revalidateTag as rTag} from "next/cache";
 
 export function fetchAction<T>(url: string, errorMessage?: string, options?: {
   queryParams?: {
@@ -12,6 +13,7 @@ export function fetchAction<T>(url: string, errorMessage?: string, options?: {
     [key: string]: unknown;
   },
   method?: "GET" | "POST" | "PUT" | "DELETE",
+  revalidatePath?: string, revalidateTag?: string,
   logResponse?: boolean,
   logData?: boolean,
 }): () => Promise<T> {
@@ -21,7 +23,9 @@ export function fetchAction<T>(url: string, errorMessage?: string, options?: {
       bodyObject,
       logResponse = false,
       logData = false,
-      method = bodyObject ? "POST" : "GET"
+      method = bodyObject ? "POST" : "GET",
+      revalidatePath,
+      revalidateTag,
     } = options ?? {};
     try {
       const {refresh_token, access_token, userId} = await verifySession();
@@ -54,6 +58,7 @@ export function fetchAction<T>(url: string, errorMessage?: string, options?: {
 
       const {error, data} = await res.json();
       if (!res.ok || error) {
+        console.log(error);
         return handleError(error);
       }
 
@@ -61,6 +66,14 @@ export function fetchAction<T>(url: string, errorMessage?: string, options?: {
 
       {
         logData && console.log(data);
+      }
+
+      if (revalidatePath) {
+        rPath(revalidatePath);
+      }
+
+      if (revalidateTag) {
+        rTag(revalidateTag);
       }
 
       return data;

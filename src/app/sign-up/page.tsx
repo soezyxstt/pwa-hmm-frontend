@@ -454,6 +454,7 @@ function FormInput({
               <div className='relative items-center flex'>
                 <Input
                   className=''
+                  id={'input-signup-' + name}
                   type={type}
                   autoFocus={index === 0}
                   onChange={
@@ -493,7 +494,7 @@ function FormInput({
                 {isArray && (
                   <Plus
                     className={`absolute right-3 transform ${
-                      _value.length < 3 || value?.length! >= 5
+                      _value.length < 3 || value?.length! >= 5 || (value as string[]).includes(_value)
                         ? 'text-navy/50 cursor-not-allowed'
                         : 'text-navy cursor-pointer'
                     }`}
@@ -503,6 +504,10 @@ function FormInput({
                       if ((value as string[]).includes(_value)) return;
                       form.setValue(name, [...(value as string[]), _value]);
                       setValue('');
+                      const input = document.getElementById(
+                        'input-signup-' + name
+                      );
+                      input?.focus();
                     }}
                   />
                 )}

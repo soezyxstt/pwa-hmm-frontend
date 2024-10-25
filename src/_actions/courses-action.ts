@@ -15,7 +15,7 @@ export const getEnrolledCourses = fetchAction<userAPI.GetUserEnrolledCourses.Res
 export const getCourses = fetchAction<courseAPI.GetCourses.Response["data"]>(courseAPI.GetCourses.generateUrl(), 'Failed to fetch courses', {
   queryParams: {
     include_category: true,
-    pageSize: 10,
+    pageSize: 999,
     pageNumber: 1,
   },
 });
@@ -36,3 +36,5 @@ export const getVideoData = cache(async (videoId: string) => {
 
   return res.json();
 });
+
+export const getCourseEnrollmentStatus = async (courseId: string) => await fetchAction<userAPI.GetUserCourseEnrollmentStatusByCourseId.Response["data"]>(userAPI.GetUserCourseEnrollmentStatusByCourseId.generateUrl(":userId", Number(courseId)), 'Failed to fetch course enrollment status', {logResponse: true, logData: true})();

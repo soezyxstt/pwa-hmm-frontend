@@ -1,11 +1,11 @@
 import { getEnrolledCourses } from '@/_actions/courses-action';
 import Assignment from './assignment';
-import { getAssignments } from '@/_actions/assignment-action';
+import { getUserAssignment } from '@/_actions/assignment-action';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  const assignments = await getAssignments();
+  const assignments = await getUserAssignment();
   const courses = await getEnrolledCourses();
   return (
     <>

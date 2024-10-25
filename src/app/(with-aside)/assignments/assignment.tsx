@@ -1,5 +1,5 @@
 'use client';
-import React, {useEffect, useId, useState} from 'react';
+import React, {type BaseSyntheticEvent, useEffect, useId, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ChevronRight, LayoutList, Notebook} from 'lucide-react';
 import {Separator} from '@/components/ui/separator';
@@ -21,6 +21,16 @@ import type {
 } from 'lms-types';
 import MotionOverlay from '@/components/client/modal-overlay';
 import {Badge} from "@/components/ui/badge";
+import {useAction} from "next-safe-action/hooks";
+import {createPersonalAssignment, updatePersonalAssignment} from "@/_actions/assignment-action";
+import {toast} from "sonner";
+import {Textarea} from "@/components/ui/textarea";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {addPersonalAssignmentSchema} from "@/lib/schema";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {UUC2N} from "@/lib/utils";
+import {createCompletion, updateCompletion} from "@/_actions/completion-action";
 
 const Assignment = ({
                       assignments,
@@ -30,17 +40,61 @@ const Assignment = ({
   courses: $UserAPI.GetUserEnrolledCourses.Response['data'];
 }) => {
   const data = assignments.map(({assignment, type}) => ({
-    status: true,
-    course: type === "personal" ? "Personal" : assignment.class.title,
-    class: 'K01',
+    // @ts-ignore
+    status: type === "personal" ? assignment.completionStatus : assignment.completion?.completionStatus,
+    course: type === "personal" ? assignment.course : assignment.course.title,
+    class: type === "personal" ? "Personal" : assignment.class.id,
     name: assignment.title,
     deadline: new Date(assignment.deadline),
     submission: assignment.submission,
+    taskType: assignment.taskType === "PERSONAL_TASK" ? "Personal Task" : "Group Task",
+    description: assignment.description,
+    id: assignment.id,
+    classId: type === "course" ? assignment.class.id : null,
+    courseId: type === "course" ? assignment.course.id : null,
+    completionId: type === "course" ? assignment.completion?.id : null,
+    type: type,
   }));
+  const {executeAsync, isExecuting} = useAction(createPersonalAssignment, {
+    onSuccess: () => {
+      toast.success('Assignment created');
+    },
+    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+      toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to create assignment');
+    },
+  })
+
+  const {
+    handleSubmit,
+    formState: {isSubmitting, errors},
+    getValues,
+    setValue,
+    register,
+    reset
+  } = useForm<z.infer<typeof addPersonalAssignmentSchema>>({
+    resolver: zodResolver(addPersonalAssignmentSchema),
+    defaultValues: {
+      title: '',
+      course: '',
+      deadline: new Date(),
+      submission: '',
+      description: '',
+      taskType: 'PERSONAL_TASK',
+      completionStatus: 'NOT_STARTED',
+    }
+  })
 
   const [active, setActive] = useState<
     (typeof data)[number] | 'add' | boolean | null
   >(null);
+
+  const onSubmit = async (data: z.infer<typeof addPersonalAssignmentSchema>, e: BaseSyntheticEvent | undefined) => {
+    e?.preventDefault();
+    console.log(data);
+    await executeAsync(data);
+    reset();
+    setActive(null);
+  }
 
   const id = useId();
   useEffect(() => {
@@ -88,22 +142,71 @@ const Assignment = ({
     timeLeft(new Date('2024-07-27T00:00:00'))
   );
 
-  const badges = [{
-    variant: 'warning',
-    children: 'Over Due Date',
-  },
-    {
-      variant: 'success',
-      children: 'Done',
+  const badges = (s: string) => {
+    switch (s) {
+      case 'OVER_DUE_DATE':
+        return 'warning';
+      case 'DONE':
+        return 'success';
+      case 'IN_PROGRESS':
+        return 'alert';
+      case 'NOT_STARTED':
+        return 'default';
+      default:
+        return 'default';
+    }
+  }
+
+  const {execute: exeUPA, result: resultUPA} = useAction(updatePersonalAssignment, {
+    onSuccess: () => {
+      toast.success('Assignment updated');
     },
-    {
-      variant: 'alert',
-      children: 'On Progress',
+    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+      toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
-    {
-      variant: "default",
-      children: "Not Started"
-    }] as {variant: "default" | "warning" | "alert" | "success", children: string}[];
+  })
+  const {execute: exeUC, result: resultUC} = useAction(updateCompletion, {
+    onSuccess: () => {
+      toast.success('Assignment updated');
+    },
+    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+      toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
+    },
+  })
+  const {execute: exeCC, result: resultCC} = useAction(createCompletion, {
+    onSuccess: () => {
+      toast.success('Assignment updated');
+    },
+    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+      toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
+    },
+  })
+
+  function updateComp(assignment: (typeof data)[number], status: string) {
+    if (assignment.type === "personal") {
+      exeUPA({
+        assignmentId: Number(assignment.id),
+        completionStatus: status,
+      })
+    } else {
+      if (assignment.completionId) {
+        exeUC({
+          assignmentId: Number(assignment.id),
+          classId: Number(assignment.classId),
+          courseId: Number(assignment.courseId),
+          completionId: Number(assignment.completionId),
+          completionStatus: status,
+        });
+      } else {
+        exeCC({
+          assignmentId: Number(assignment.id),
+          classId: Number(assignment.classId),
+          courseId: Number(assignment.courseId),
+          completionStatus: status,
+        });
+      }
+    }
+  }
 
   return (
     <>
@@ -111,12 +214,14 @@ const Assignment = ({
         <motion.div layoutId={'add' + id}>
           <Button
             className='text-sm font-semibold px-4 py-2 md:py-2.5'
+            disabled={isExecuting}
             onClick={() => setActive('add')}
           >
             <motion.p layoutId={'add-button' + id}>Add Assignment</motion.p>
           </Button>
         </motion.div>
       </div>
+      {/* Add Assignment Modal */}
       <AnimatePresence>
         {active === 'add' && (
           <MotionFramer id={'add' + id}>
@@ -138,18 +243,19 @@ const Assignment = ({
               </button>
             </div>
             <Separator className='my-2'/>
-            <div className='flex flex-col gap-4'>
+            <form onSubmit={(e) => handleSubmit(onSubmit)(e)} className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>
                 <label
                   htmlFor='name'
                   className='text-sm font-semibold'
                 >
-                  Name
+                  Name*
                 </label>
                 <Input
                   type='text'
                   id='name'
                   className='Input'
+                  {...register('title', {required: 'Title is required'})}
                 />
               </div>
               <div className='flex flex-col gap-2'>
@@ -157,52 +263,28 @@ const Assignment = ({
                   htmlFor='class'
                   className='text-sm font-semibold'
                 >
-                  Class
+                  Course*
                 </label>
                 <Input
                   type='text'
                   id='class'
                   className='Input'
+                  {...register('course', {required: 'Course is required'})}
                 />
-              </div>
-              <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='course'
-                  className='text-sm font-semibold'
-                >
-                  Course
-                </label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select Course'/>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Course</SelectLabel>
-                      {courses.map((course) => (
-                        <SelectItem
-                          key={course.id + course.title}
-                          value={course.title.toLowerCase()}
-                        >
-                          {course.title}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
               </div>
               <div className='flex flex-col gap-2'>
                 <label
                   htmlFor='deadline'
                   className='text-sm font-semibold'
                 >
-                  Deadline
+                  Deadline*
                 </label>
                 <div className='flex gap-2'>
                   <Input
                     type='date'
                     id='deadline'
                     className='Input'
+                    {...register('deadline', {required: 'Deadline is required', valueAsDate: true})}
                   />
                   <Input type='time'/>
                 </div>
@@ -212,9 +294,12 @@ const Assignment = ({
                   htmlFor='submission'
                   className='text-sm font-semibold'
                 >
-                  Submission
+                  Submission*
                 </label>
-                <Select>
+                <Select
+                  onValueChange={(v) => setValue('submission', v)}
+                  {...register('submission', {required: 'Submission is required'})}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder='Select Submission'/>
                   </SelectTrigger>
@@ -229,13 +314,50 @@ const Assignment = ({
                   </SelectContent>
                 </Select>
               </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='submission'
+                  className='text-sm font-semibold'
+                >
+                  Task Type*
+                </label>
+                <Select
+                  defaultValue={'PERSONAL_TASK'}
+                  {...register('taskType', {required: 'Task type is required'})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select Type'/>
+                  </SelectTrigger>
+                  <SelectContent className='pointer-events-auto'>
+                    <SelectGroup>
+                      <SelectLabel>Assignment Type</SelectLabel>
+                      <SelectItem value='PERSONAL_TASK'>Personal</SelectItem>
+                      <SelectItem value='GROUP_TASK'>Group</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label
+                  htmlFor='description'
+                  className='text-sm font-semibold'
+                >
+                  Description
+                </label>
+                <Textarea
+                  id='description'
+                  className='Input'
+                  {...register('description')}
+                />
+              </div>
               <Button
                 className='text-sm font-semibold px-4 py-2.5'
-                onClick={() => setActive(null)}
+                type='submit'
+                onClick={(e) => onSubmit(getValues(), e)}
               >
                 Add
               </Button>
-            </div>
+            </form>
           </MotionFramer>
         )}
       </AnimatePresence>
@@ -244,6 +366,8 @@ const Assignment = ({
         setTo={null}
         show={!!(active && (typeof active === 'object' || active === 'add'))}
       />
+
+      {/* Assignment Modal */}
       <AnimatePresence>
         {active && typeof active === 'object' && (
           <MotionFramer
@@ -328,15 +452,15 @@ const Assignment = ({
                   <td className='text-sm text-muted-foreground'>Tracker</td>
                   <td className='text-sm'>:</td>
                   <td className='flex gap-6'>
-                    <Select>
+                    <Select onValueChange={(v) => updateComp(active, v)}>
                       <SelectTrigger className='py-0 w-fit h-min'>
                         <SelectValue placeholder='Select Tracker'/>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="done">Done</SelectItem>
-                        <SelectItem value="in-progress">In Progress</SelectItem>
-                        <SelectItem value="not-started">Not Started</SelectItem>
-                        <SelectItem value="over-due">Over Due Date</SelectItem>
+                        <SelectItem value="DONE">Done</SelectItem>
+                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                        <SelectItem value="NOT_STARTED">Not Started</SelectItem>
+                        <SelectItem value="OVER_DUE">Over Due Date</SelectItem>
                       </SelectContent>
                     </Select>
                   </td>
@@ -344,7 +468,8 @@ const Assignment = ({
                 <tr className=''>
                   <td className='text-sm text-muted-foreground'>Description</td>
                   <td className='text-sm'>:</td>
-                  <td className='text-sm text-justify'>You are tasked with organizing a community wellness fair aimed at promoting health and wellness among local residents. This includes coordinating with health professionals, securing vendors for healthy food options, and arranging interactive workshops on topics such as nutrition, mental health, and fitness. Additionally, you will create promotional materials to advertise the event across social media and local bulletin boards, while also establishing partnerships with local businesses to sponsor activities. The fair is set to take place in four weeks, so time management and effective communication will be key to ensuring a successful and engaging experience for all attendees.</td>
+                  <td className='text-sm text-justify'>{active.description}
+                  </td>
                 </tr>
               </table>
             </div>
@@ -354,18 +479,21 @@ const Assignment = ({
       {assignments.length === 0 && (
         <p className='font-medium text-muted-foreground w-full text-center'>No Assignments</p>
       )}
+
+      {/* Assignment List */}
       {assignments.length > 0 && (
         <ul className='w-full py-2 overflow-hidden rounded-2xl shadow-md bg-white'>
           <Separator/>
           {data.map((card, i) => (
             <>
-              <motion.div
+              <motion.li
                 layoutId={`card-${card.name + card.class + card.course}-${id}`}
                 key={`${card.name + card.class}-${id + i}`}
                 onClick={() => setActive(card)}
                 className='py-3 px-6 md:px-8 flex w-full relative cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
               >
-                <div className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i%4]}`}></div>
+                <div
+                  className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i % 4]}`}></div>
                 <div className='flex gap-4 md:gap-6 items-center w-full'>
                   <motion.div
                     layoutId={`notebook-${
@@ -425,16 +553,16 @@ const Assignment = ({
                     </div>
                     <div className="flex w-full md:w-1/2 gap-2 items-center mt-2 md:mt-0">
                       <div className="md:w-1/2">
-                        <Badge variant={badges[i%4].variant} className='h-fit'>{badges[i % 4].children}</Badge>
+                        <Badge variant={badges(card.status!)} className='h-fit'>{UUC2N(card.status!)}</Badge>
                       </div>
                       <div className="md:hidden w-px h-4 bg-border"></div>
-                      <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>personal task
+                      <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>{card.taskType}
                       </div>
                     </div>
                   </div>
                   <ChevronRight className='w-4 h-4 md:w-6 md:h-6'/>
                 </div>
-              </motion.div>
+              </motion.li>
               <Separator/>
             </>
           ))}

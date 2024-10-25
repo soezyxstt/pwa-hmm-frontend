@@ -11,7 +11,7 @@ import {
 import VideoList from '@/app/(with-aside)/courses/[id]/videoList';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import Lesson from './lesson';
-import {getLessons, getVideoData, getVideos} from '@/_actions/courses-action';
+import {getCourseEnrollmentStatus, getLessons, getVideoData, getVideos} from '@/_actions/courses-action';
 
 export default async function CoursesPage({
                                             searchParams,
@@ -55,6 +55,7 @@ export default async function CoursesPage({
     ({videoId}) => videoId === query
   )?.author_name;
   const params = `?expanded=${isExpanded}`;
+  const isEnrolled = (await getCourseEnrollmentStatus(id)).isEnrolled;
 
   const Description = () => (
     <div className='bg-slate-200 rounded-md p-1.5 h-full flex flex-col gap-3'>
@@ -79,6 +80,9 @@ export default async function CoursesPage({
 
   return (
     <div className='flex gap-6'>
+      {isEnrolled || <button className='bg-navy rounded-full font-semibold py-1.5 text-white hover:bg-navy/80 transition px-6 text-sm md:text-base w-fit h-fit absolute top-[72px] md:top-20 right-4 md:right-8'>
+        Enroll
+      </button>}
       <Lesson
         lessonId={lessonId}
         params={params}
@@ -86,7 +90,7 @@ export default async function CoursesPage({
       />
       <ScrollArea className='w-full bg-white shadow-md rounded-xl md:relative border-t-0 md:h-[calc(100vh-4rem)]'>
         <Suspense
-          fallback={<Skeleton className='w-full aspect-video rounded-xl'/>}
+          fallback={<Skeleton className='w-full aspect-video rounded-xl' />}
         >
           <YoutubeEmbed
             embedId={query}
@@ -110,7 +114,7 @@ export default async function CoursesPage({
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <Description/>
+                <Description />
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -123,7 +127,7 @@ export default async function CoursesPage({
         </div>
         <div className='px-4 py-4 space-y-4 h-full hidden md:block'>
           <h4 className='text font-semibold'>{title}</h4>
-          <Description/>
+          <Description />
         </div>
       </ScrollArea>
       <ScrollArea className='hidden md:block w-[450px] relative h-[calc(100vh-4rem)]'>

@@ -3,7 +3,7 @@ import {Label as ShadLabel} from "@/components/ui/label";
 import {HTMLAttributes, HTMLInputTypeAttribute} from "react";
 import {cn} from "@/lib/utils";
 
-function Input({className, type, ...props}: HTMLAttributes<HTMLInputElement> & {type?: HTMLInputTypeAttribute}) {
+function Input({className, type, ...props}: HTMLAttributes<HTMLInputElement> & {type?: HTMLInputTypeAttribute, placeholder?: string}) {
   return (
     <ShadInput type={type} className={cn('bg-transparent border border-navy mb-4', className)} {...props} />
   );

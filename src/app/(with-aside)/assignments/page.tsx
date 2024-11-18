@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 export default async function Page() {
   const assignments = await getUserAssignment();
   const courses = await getEnrolledCourses();
+
   return (
     <>
       <Assignment assignments={assignments} courses={courses} />

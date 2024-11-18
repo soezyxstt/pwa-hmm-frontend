@@ -31,6 +31,12 @@ export const getCourses = fetchAction<courseAPI.GetCourses.Response['data']>(
   }
 );
 
+export const getCourseById = async (courseId: string) =>
+  await fetchAction<courseAPI.GetCourseById.Response['data']>(
+    courseAPI.GetCourseById.generateUrl(Number(courseId)),
+    'Failed to fetch course'
+  )();
+
 export const getLessons = async (courseId: string) =>
   await fetchAction<lessonAPI.GetLessons.Response['data']>(
     lessonAPI.GetLessons.generateUrl(Number(courseId)),

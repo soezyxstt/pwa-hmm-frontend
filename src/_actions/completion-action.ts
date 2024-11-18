@@ -1,6 +1,5 @@
 'use server';
 
-import {fetchAction} from "@/lib/fetch";
 import {actionClient} from "@/lib/action-client";
 import {handleError, PWAError} from "@/lib/error";
 import {env} from "@/env";

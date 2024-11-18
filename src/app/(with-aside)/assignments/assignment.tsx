@@ -1,10 +1,10 @@
 'use client';
-import React, {type BaseSyntheticEvent, useEffect, useId, useState} from 'react';
-import {AnimatePresence, motion} from 'framer-motion';
-import {ChevronRight, LayoutList, Notebook} from 'lucide-react';
-import {Separator} from '@/components/ui/separator';
+import React, { type BaseSyntheticEvent, useEffect, useId, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronRight, LayoutList, Notebook, ChevronUpIcon, ChevronDownIcon } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 import Button from '@/components/ui/button/button';
-import {Input} from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -14,59 +14,72 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {useInterval} from '@/hooks/useInterval';
+import { useInterval } from '@/hooks/useInterval';
 import MotionFramer from '@/components/client/modal-framer';
 import type {
   $UserAPI,
 } from 'lms-types';
 import MotionOverlay from '@/components/client/modal-overlay';
-import {Badge} from "@/components/ui/badge";
-import {useAction} from "next-safe-action/hooks";
-import {createPersonalAssignment, updatePersonalAssignment} from "@/_actions/assignment-action";
-import {toast} from "sonner";
-import {Textarea} from "@/components/ui/textarea";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
-import {addPersonalAssignmentSchema} from "@/lib/schema";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {UUC2N} from "@/lib/utils";
-import {createCompletion, updateCompletion} from "@/_actions/completion-action";
+import { Badge } from "@/components/ui/badge";
+import { useAction } from "next-safe-action/hooks";
+import { createPersonalAssignment, updatePersonalAssignment } from "@/_actions/assignment-action";
+import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { addPersonalAssignmentSchema } from "@/lib/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UUC2N } from "@/lib/utils";
+import { createCompletion, updateCompletion } from "@/_actions/completion-action";
+import Search from '@/components/client/search';
+import useDebounce from '@/hooks/useDebounce';
 
 const Assignment = ({
-                      assignments,
-                      courses,
-                    }: {
+  assignments,
+  courses,
+}: {
   assignments: $UserAPI.GetUserAssignments.Response['data'];
   courses: $UserAPI.GetUserEnrolledCourses.Response['data'];
 }) => {
-  const data = assignments.map(({assignment, type}) => ({
-    // @ts-ignore
-    status: type === "personal" ? assignment.completionStatus : assignment.completion?.completionStatus,
-    course: type === "personal" ? assignment.course : assignment.course.title,
-    class: type === "personal" ? "Personal" : assignment.class.id,
-    name: assignment.title,
-    deadline: new Date(assignment.deadline),
-    submission: assignment.submission,
-    taskType: assignment.taskType === "PERSONAL_TASK" ? "Personal Task" : "Group Task",
-    description: assignment.description,
-    id: assignment.id,
-    classId: type === "course" ? assignment.class.id : null,
-    courseId: type === "course" ? assignment.course.id : null,
-    completionId: type === "course" ? assignment.completion?.id : null,
-    type: type,
-  }));
-  const {executeAsync, isExecuting} = useAction(createPersonalAssignment, {
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState<'date' | 'name' | 'status'>('date');
+
+  const data = assignments
+    .map(({ assignment, type }) => ({
+      // @ts-ignore
+      status: type === "personal" ? assignment.completionStatus : assignment.completion?.completionStatus,
+      course: type === "personal" ? assignment.course : assignment.course.title,
+      class: type === "personal" ? "Personal" : assignment.class.id,
+      name: assignment.title,
+      deadline: new Date(assignment.deadline),
+      submission: assignment.submission,
+      taskType: assignment.taskType === "PERSONAL_TASK" ? "Personal Task" : "Group Task",
+      description: assignment.description,
+      id: assignment.id,
+      classId: type === "course" ? assignment.class.id : null,
+      courseId: type === "course" ? assignment.course.id : null,
+      completionId: type === "course" ? assignment.completion?.id : null,
+      type: type,
+    }))
+    .filter((item) => 
+      item.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+      item.course.toString().toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+      item.class.toString().toLowerCase().includes(debouncedSearch.toLowerCase())
+    );
+  const { executeAsync, isExecuting } = useAction(createPersonalAssignment, {
     onSuccess: () => {
       toast.success('Assignment created');
     },
-    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+    onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to create assignment');
     },
   })
 
   const {
     handleSubmit,
-    formState: {isSubmitting, errors},
+    formState: { isSubmitting, errors },
     getValues,
     setValue,
     register,
@@ -129,13 +142,13 @@ const Assignment = ({
     const deadline = date.getTime();
     const diff = deadline - now;
 
-    if (diff < 0) return {days: 0, hours: 0, minutes: 0, seconds: 0};
+    if (diff < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    return {days, hours, minutes, seconds};
+    return { days, hours, minutes, seconds };
   };
 
   const [timeToDeadline, setTimeToDeadline] = useState(
@@ -157,27 +170,38 @@ const Assignment = ({
     }
   }
 
-  const {execute: exeUPA, result: resultUPA} = useAction(updatePersonalAssignment, {
+  const getStatus = (status: string, deadline: Date) => {
+    if (status === 'DONE') {
+      return 'DONE';
+    }
+    const now = new Date();
+    if (now > deadline) {
+      return 'OVER_DUE_DATE';
+    }
+    return status;
+  }
+
+  const { execute: exeUPA, result: resultUPA } = useAction(updatePersonalAssignment, {
     onSuccess: () => {
       toast.success('Assignment updated');
     },
-    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+    onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
   })
-  const {execute: exeUC, result: resultUC} = useAction(updateCompletion, {
+  const { execute: exeUC, result: resultUC } = useAction(updateCompletion, {
     onSuccess: () => {
       toast.success('Assignment updated');
     },
-    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+    onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
   })
-  const {execute: exeCC, result: resultCC} = useAction(createCompletion, {
+  const { execute: exeCC, result: resultCC } = useAction(createCompletion, {
     onSuccess: () => {
       toast.success('Assignment updated');
     },
-    onError: ({error: {serverError, validationErrors, fetchError}}) => {
+    onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
   })
@@ -208,18 +232,71 @@ const Assignment = ({
     }
   }
 
+  const sortedData = [...data].sort((a, b) => {
+    switch (sortBy) {
+      case 'date':
+        return sortOrder === 'asc' 
+          ? a.deadline.getTime() - b.deadline.getTime()
+          : b.deadline.getTime() - a.deadline.getTime();
+      case 'name':
+        return sortOrder === 'asc'
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      case 'status':
+        return sortOrder === 'asc'
+          ? getStatus(a.status!, a.deadline).localeCompare(getStatus(b.status!, b.deadline))
+          : getStatus(b.status!, b.deadline).localeCompare(getStatus(a.status!, a.deadline));
+      default:
+        return 0;
+    }
+  });
+
   return (
     <>
-      <div className='flex justify-end'>
-        <motion.div layoutId={'add' + id}>
-          <Button
-            className='text-sm font-semibold px-4 py-2 md:py-2.5'
-            disabled={isExecuting}
-            onClick={() => setActive('add')}
-          >
-            <motion.p layoutId={'add-button' + id}>Add Assignment</motion.p>
-          </Button>
-        </motion.div>
+      <div className='flex flex-col md:flex-row md:items-center gap-4'>
+        {/* Search bar - full width on mobile */}
+        <Search 
+          query={searchQuery}
+          setQuery={setSearchQuery}
+          className="w-full md:max-w-md"
+        />
+        
+        {/* Filter and Add button container */}
+        <div className="flex items-center justify-between md:justify-end w-full gap-2">
+          <div className="flex items-center gap-2">
+            <Select value={sortBy} onValueChange={(value: 'date' | 'name' | 'status') => setSortBy(value)}>
+              <SelectTrigger className="w-[140px] rounded-full border-navy">
+                <SelectValue placeholder="Sort by..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">By Date</SelectItem>
+                <SelectItem value="name">By Name</SelectItem>
+                <SelectItem value="status">By Status</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              className="w-8 h-8 p-0 rounded-full border-navy flex items-center justify-center"
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
+            >
+              {sortOrder === 'asc' ? (
+                <ChevronUpIcon className="h-4 w-4" />
+              ) : (
+                <ChevronDownIcon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          <motion.div layoutId={'add' + id}>
+            <Button
+              className='text-sm font-semibold px-4 py-2 md:py-2.5'
+              disabled={isExecuting}
+              onClick={() => setActive('add')}
+            >
+              <motion.p layoutId={'add-button' + id}>Add Assignment</motion.p>
+            </Button>
+          </motion.div>
+        </div>
       </div>
       {/* Add Assignment Modal */}
       <AnimatePresence>
@@ -227,7 +304,7 @@ const Assignment = ({
           <MotionFramer id={'add' + id}>
             <div className='flex items-center gap-4 justify-between'>
               <div className='flex items-center gap-4'>
-                <Notebook size={32}/>
+                <Notebook size={32} />
                 <motion.p
                   layoutId={'add-button' + id}
                   className='font-medium text-lg'
@@ -239,10 +316,10 @@ const Assignment = ({
                 className='text-sm font-semibold px-4 py-2.5'
                 onClick={() => setActive(null)}
               >
-                <CloseIcon/>
+                <CloseIcon />
               </button>
             </div>
-            <Separator className='my-2'/>
+            <Separator className='my-2' />
             <form onSubmit={(e) => handleSubmit(onSubmit)(e)} className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>
                 <label
@@ -255,7 +332,7 @@ const Assignment = ({
                   type='text'
                   id='name'
                   className='Input'
-                  {...register('title', {required: 'Title is required'})}
+                  {...register('title', { required: 'Title is required' })}
                 />
               </div>
               <div className='flex flex-col gap-2'>
@@ -269,7 +346,7 @@ const Assignment = ({
                   type='text'
                   id='class'
                   className='Input'
-                  {...register('course', {required: 'Course is required'})}
+                  {...register('course', { required: 'Course is required' })}
                 />
               </div>
               <div className='flex flex-col gap-2'>
@@ -284,9 +361,9 @@ const Assignment = ({
                     type='date'
                     id='deadline'
                     className='Input'
-                    {...register('deadline', {required: 'Deadline is required', valueAsDate: true})}
+                    {...register('deadline', { required: 'Deadline is required', valueAsDate: true })}
                   />
-                  <Input type='time'/>
+                  <Input type='time' />
                 </div>
               </div>
               <div className='flex flex-col gap-2'>
@@ -298,10 +375,10 @@ const Assignment = ({
                 </label>
                 <Select
                   onValueChange={(v) => setValue('submission', v)}
-                  {...register('submission', {required: 'Submission is required'})}
+                  {...register('submission', { required: 'Submission is required' })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Select Submission'/>
+                    <SelectValue placeholder='Select Submission' />
                   </SelectTrigger>
                   <SelectContent className='pointer-events-auto'>
                     <SelectGroup>
@@ -323,10 +400,10 @@ const Assignment = ({
                 </label>
                 <Select
                   defaultValue={'PERSONAL_TASK'}
-                  {...register('taskType', {required: 'Task type is required'})}
+                  {...register('taskType', { required: 'Task type is required' })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder='Select Type'/>
+                    <SelectValue placeholder='Select Type' />
                   </SelectTrigger>
                   <SelectContent className='pointer-events-auto'>
                     <SelectGroup>
@@ -378,16 +455,14 @@ const Assignment = ({
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-4 text-navy'>
                   <motion.div
-                    layoutId={`notebook-${
-                      active.name + active.class + active.course
-                    }-${id}`}
+                    layoutId={`notebook-${active.name + active.class + active.course
+                      }-${id}`}
                   >
-                    <Notebook size={32}/>
+                    <Notebook size={32} />
                   </motion.div>
                   <motion.div
-                    layoutId={`name-${
-                      active.name + active.class + active.course
-                    }-${id}`}
+                    layoutId={`name-${active.name + active.class + active.course
+                      }-${id}`}
                     className='font-medium text-lg'
                   >
                     {active.name}
@@ -396,15 +471,14 @@ const Assignment = ({
                 <div
                   className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
               </div>
-              <Separator className=''/>
+              <Separator className='' />
               <table className='space-y-4 *:*:py-2'>
                 <tr className='gap-2'>
                   <td className='text-sm text-muted-foreground'>Course</td>
                   <td className='text-sm'>:</td>
                   <motion.p
-                    layoutId={`course-${
-                      active.name + active.class + active.course
-                    }-${id}`}
+                    layoutId={`course-${active.name + active.class + active.course
+                      }-${id}`}
                     className='text-sm'
                   >
                     {active.course}
@@ -414,9 +488,8 @@ const Assignment = ({
                   <td className='text-sm text-muted-foreground'>Deadline</td>
                   <td className='text-sm'>:</td>
                   <motion.p
-                    layoutId={`deadline-${
-                      active.name + active.class + active.course
-                    }-${id}`}
+                    layoutId={`deadline-${active.name + active.class + active.course
+                      }-${id}`}
                     className='text-sm'
                   >
                     {active.deadline.toDateString()}
@@ -428,9 +501,8 @@ const Assignment = ({
                   </td>
                   <td className='text-sm pr-2'>:</td>
                   <motion.p
-                    layoutId={`submission-${
-                      active.name + active.class + active.course
-                    }-${id}`}
+                    layoutId={`submission-${active.name + active.class + active.course
+                      }-${id}`}
                     className='text-sm'
                   >
                     MS-Teams
@@ -440,9 +512,8 @@ const Assignment = ({
                   <td className='text-sm text-muted-foreground'>Type</td>
                   <td className='text-sm'>:</td>
                   <motion.p
-                    layoutId={`class-${
-                      active.name + active.class + active.course
-                    }-${id}`}
+                    layoutId={`class-${active.name + active.class + active.course
+                      }-${id}`}
                     className='text-sm'
                   >
                     Personal Task
@@ -454,13 +525,12 @@ const Assignment = ({
                   <td className='flex gap-6'>
                     <Select onValueChange={(v) => updateComp(active, v)}>
                       <SelectTrigger className='py-0 w-fit h-min'>
-                        <SelectValue placeholder='Select Tracker'/>
+                        <SelectValue placeholder='Select Tracker' />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="DONE">Done</SelectItem>
                         <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
                         <SelectItem value="NOT_STARTED">Not Started</SelectItem>
-                        <SelectItem value="OVER_DUE">Over Due Date</SelectItem>
                       </SelectContent>
                     </Select>
                   </td>
@@ -483,8 +553,8 @@ const Assignment = ({
       {/* Assignment List */}
       {assignments.length > 0 && (
         <ul className='w-full py-2 overflow-hidden rounded-2xl shadow-md bg-white'>
-          <Separator/>
-          {data.map((card, i) => (
+          <Separator />
+          {sortedData.map((card, i) => (
             <>
               <motion.li
                 layoutId={`card-${card.name + card.class + card.course}-${id}`}
@@ -496,19 +566,17 @@ const Assignment = ({
                   className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i % 4]}`}></div>
                 <div className='flex gap-4 md:gap-6 items-center w-full'>
                   <motion.div
-                    layoutId={`notebook-${
-                      card.name + card.class + card.course
-                    }-${id}`}
+                    layoutId={`notebook-${card.name + card.class + card.course
+                      }-${id}`}
                     className='text-navy'
                   >
-                    <LayoutList className='w-7 h-7 md:w-10 md:h-10'/>
+                    <LayoutList className='w-7 h-7 md:w-10 md:h-10' />
                   </motion.div>
                   <div className=" flex flex-col md:flex-row items-center flex-1">
                     <div className='md:w-1/2 overflow-hidden '>
                       <motion.h2
-                        layoutId={`name-${
-                          card.name + card.class + card.course
-                        }-${id}`}
+                        layoutId={`name-${card.name + card.class + card.course
+                          }-${id}`}
                         title={card.name}
                         className='font-medium md:text-lg text-sm line-clamp-1'
                       >
@@ -516,16 +584,14 @@ const Assignment = ({
                       </motion.h2>
                       <p className='flex gap-2 items-center'>
                         <motion.span
-                          layoutId={`class-${
-                            card.name + card.class + card.course
-                          }-${id}`}
+                          layoutId={`class-${card.name + card.class + card.course
+                            }-${id}`}
                           className='text-xs md:text-sm text-muted-foreground'
                         >{`${card.class}`}</motion.span>
                         -
                         <motion.span
-                          layoutId={`course-${
-                            card.name + card.class + card.course
-                          }-${id}`}
+                          layoutId={`course-${card.name + card.class + card.course
+                            }-${id}`}
                           className='text-xs md:text-sm text-muted-foreground line-clamp-1'
                         >
                           {card.course}
@@ -536,34 +602,34 @@ const Assignment = ({
                       `}
                       >
                         <motion.p
-                          layoutId={`deadline-${
-                            card.name + card.class + card.course
-                          }-${id}`}
+                          layoutId={`deadline-${card.name + card.class + card.course
+                            }-${id}`}
                         >
                           {card.deadline.toDateString()}
                         </motion.p>
                         <div className="w-px h-4 bg-red-500"></div>
                         <motion.p
-                          layoutId={`submission-${
-                            card.name + card.class + card.course
-                          }-${id}`}
+                          layoutId={`submission-${card.name + card.class + card.course
+                            }-${id}`}
                           className='line-clamp-1'
                         >{`${card.deadline.getHours()}:${card.deadline.getMinutes()} @MS-Teams`}</motion.p>
                       </div>
                     </div>
                     <div className="flex w-full md:w-1/2 gap-2 items-center mt-2 md:mt-0">
                       <div className="md:w-1/2">
-                        <Badge variant={badges(card.status!)} className='h-fit'>{UUC2N(card.status!)}</Badge>
+                        <Badge variant={badges(getStatus(card.status!, card.deadline))} className='h-fit'>
+                          {UUC2N(getStatus(card.status!, card.deadline))}
+                        </Badge>
                       </div>
                       <div className="md:hidden w-px h-4 bg-border"></div>
                       <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>{card.taskType}
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className='w-4 h-4 md:w-6 md:h-6'/>
+                  <ChevronRight className='w-4 h-4 md:w-6 md:h-6' />
                 </div>
               </motion.li>
-              <Separator/>
+              <Separator />
             </>
           ))}
         </ul>
@@ -603,8 +669,8 @@ export const CloseIcon = () => {
         d='M0 0h24v24H0z'
         fill='none'
       />
-      <path d='M18 6l-12 12'/>
-      <path d='M6 6l12 12'/>
+      <path d='M18 6l-12 12' />
+      <path d='M6 6l12 12' />
     </motion.svg>
   );
 };

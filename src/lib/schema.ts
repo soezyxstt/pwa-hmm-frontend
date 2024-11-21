@@ -28,67 +28,57 @@ export const signInSchema = z.object({
     .min(8, { message: 'Password must be at least 8 characters' }),
 });
 
-export const signUpSchema = z
-  .object({
-    name: z.string().min(3, { message: 'Input at least 3 characters' }),
-    email: z
-      .string()
-      .min(1, { message: 'Email is required' })
-      .email({ message: 'Invalid email format' })
-      .regex(/131[0-9]{5}@mahasiswa.itb.ac.id$/, {
-        message: 'Must be ITB student email',
-      }),
-    password: z.string().min(8, { message: 'Input at least 8 characters' }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: 'Confirm password is required' }),
-    address: z.string().min(3, { message: 'Input at least 3 characters' }),
-    phoneNumber: z
-      .string()
-      .min(9, { message: 'Input at least 9 characters' })
-      .refine((value) => value.startsWith('08'), {
-        message: 'Must start with 08',
-      }),
-    dateOfBirth: z.string().min(1, { message: 'Date of birth is required' }),
-    lineId: z.string().min(1, { message: 'Line ID is required' }),
-    bloodType: z.enum(['A', 'B', 'AB', 'O'], { message: 'Invalid blood type' }),
-    medicalHistories: z
-      .array(z.string().min(3, { message: 'Input at least 3 characters' }))
-      .optional(),
-    emergencyNumber: z
-      .string()
-      .min(9, { message: 'Input at least 9 characters' })
-      .refine((value) => value.startsWith('08'), {
-        message: 'Must start with 08',
-      }),
-    hobbies: z
-      .array(z.string().min(3, { message: 'Input at least 3 characters' }))
-      .optional(),
-    UKM: z
-      .array(z.string().min(3, { message: 'Input at least 3 characters' }))
-      .optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
-  .refine((data) => data.emergencyNumber !== data.phoneNumber, {
-    message: 'Emergency number must be different from phone number',
-    path: ['emergencyNumber'],
-  });
+export const userSchema = z.object({
+  name: z.string().min(4, { message: 'Name must be at least 4 characters' }),
+  email: z.string().email({ message: 'Invalid email format' }),
+  address: z.string().min(4, { message: 'Address must be at least 4 characters' }),
+  phoneNumber: z.string().min(10, { message: 'Invalid phone number' }),
+  dateOfBirth: z.string(),
+  lineId: z.string().min(4, { message: 'Line ID must be at least 4 characters' }),
+  bloodType: z.string().max(3, { message: 'Invalid blood type' }),
+  emergencyNumber: z.string().min(10, { message: 'Invalid emergency number' }),
+  medicalHistories: z.array(z.string()),
+  hobbies: z.array(z.string()),
+  UKM: z.array(z.string()),
+});
+
+export const signUpSchema = userSchema.extend({
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export const editProfileSchema = z.object({
+  name: z.string().min(4, { message: 'Name must be at least 4 characters' }),
+  email: z.string().email({ message: 'Invalid email format' }),
+  address: z.string().min(4, { message: 'Address must be at least 4 characters' }),
+  phoneNumber: z.string().min(10, { message: 'Invalid phone number' }),
+  dateOfBirth: z.string(),
+  lineId: z.string().min(4, { message: 'Line ID must be at least 4 characters' }),
+  bloodType: z.string().max(3, { message: 'Invalid blood type' }),
+  emergencyNumber: z.string().min(10, { message: 'Invalid emergency number' }),
+  medicalHistories: z.array(z.string()),
+  hobbies: z.array(z.string()),
+  UKM: z.array(z.string()),
+});
 
 // assignment schema
 export const addPersonalAssignmentSchema = z.object({
-  title: z.string().min(3, { message: 'Input at least 3 characters' }),
-  course: z.string().min(3, { message: 'Input at least 3 characters' }),
-  deadline: z.date({ message: 'Invalid date format' }),
-  submission: z.enum(submissionsEnum, { message: 'Invalid submission method' }),
-  description: z.string().optional(),
-  taskType: z.nativeEnum(AssignmentTaskTypeModel, {
-    message: 'Invalid task type',
+  title: z.string().min(1, { message: 'Title is required' }),
+  course: z.string().min(1, { message: 'Course is required' }),
+  deadline: z.date({
+    required_error: 'Deadline is required',
+    invalid_type_error: 'Invalid date format',
   }),
-  completionStatus: z.nativeEnum(AssignmentCompletionStatusModel, {
-    message: 'Invalid completion status',
+  submission: z.string().min(1, { message: 'Submission method is required' }),
+  description: z.string().optional(),
+  taskType: z.enum(['PERSONAL_TASK', 'GROUP_TASK'], {
+    required_error: 'Task type is required',
+  }),
+  completionStatus: z.enum(['NOT_STARTED', 'IN_PROGRESS', 'DONE'], {
+    required_error: 'Completion status is required',
   }),
 });
 
@@ -233,4 +223,24 @@ export const deleteCompletionSchema = z.object({
   completionId: z
     .number({ message: 'Completion ID must be a number' })
     .min(1, { message: 'Completion ID must be at least 1' }),
+});
+
+// event schemas
+export const addEventSchema = z.object({
+  title: z.string().min(1, { message: 'Title is required' }),
+  description: z.string().optional(),
+  date: z.date({ message: 'Invalid date format' })
+});
+
+export const updateEventSchema = z.object({
+  id: z.number({ message: 'Event ID must be a number' })
+    .min(1, { message: 'Event ID must be at least 1' }),
+  title: z.string().min(1, { message: 'Title is required' }).optional(),
+  description: z.string().optional(),
+  date: z.date({ message: 'Invalid date format' }).optional()
+});
+
+export const deleteEventSchema = z.object({
+  eventId: z.number({ message: 'Event ID must be a number' })
+    .min(1, { message: 'Event ID must be at least 1' })
 });

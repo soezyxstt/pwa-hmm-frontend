@@ -33,6 +33,7 @@ import { UUC2N } from "@/lib/utils";
 import { createCompletion, updateCompletion } from "@/_actions/completion-action";
 import Search from '@/components/client/search';
 import useDebounce from '@/hooks/useDebounce';
+import Pagination from '@/components/client/pagination';
 
 const Assignment = ({
   assignments,
@@ -45,6 +46,9 @@ const Assignment = ({
   const debouncedSearch = useDebounce(searchQuery);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortBy, setSortBy] = useState<'date' | 'name' | 'status'>('date');
+  const [page, setPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const assignmentPerPage = isMobile ? 5 : 6;
 
   const data = assignments
     .map(({ assignment, type }) => ({
@@ -79,11 +83,11 @@ const Assignment = ({
 
   const {
     handleSubmit,
-    formState: { isSubmitting, errors },
-    getValues,
+    formState: { isSubmitting, errors, isValid },
     setValue,
     register,
-    reset
+    reset,
+    trigger,
   } = useForm<z.infer<typeof addPersonalAssignmentSchema>>({
     resolver: zodResolver(addPersonalAssignmentSchema),
     defaultValues: {
@@ -91,10 +95,11 @@ const Assignment = ({
       course: '',
       deadline: new Date(),
       submission: '',
-      description: '',
+      description: undefined,
       taskType: 'PERSONAL_TASK',
       completionStatus: 'NOT_STARTED',
-    }
+    },
+    mode: 'onChange',
   })
 
   const [active, setActive] = useState<
@@ -214,20 +219,37 @@ const Assignment = ({
       })
     } else {
       if (assignment.completionId) {
-        exeUC({
-          assignmentId: Number(assignment.id),
-          classId: Number(assignment.classId),
-          courseId: Number(assignment.courseId),
-          completionId: Number(assignment.completionId),
-          completionStatus: status,
-        });
+        const assignmentId = Number(assignment.id);
+        const classId = Number(assignment.classId);
+        const courseId = Number(assignment.courseId);
+        const completionId = Number(assignment.completionId);
+
+        if (!isNaN(assignmentId) && !isNaN(classId) && !isNaN(courseId) && !isNaN(completionId)) {
+          exeUC({
+            assignmentId,
+            classId,
+            courseId,
+            completionId,
+            completionStatus: status,
+          });
+        } else {
+          toast.error('Invalid assignment parameters');
+        }
       } else {
-        exeCC({
-          assignmentId: Number(assignment.id),
-          classId: Number(assignment.classId),
-          courseId: Number(assignment.courseId),
-          completionStatus: status,
-        });
+        const assignmentId = Number(assignment.id);
+        const classId = Number(assignment.classId);
+        const courseId = Number(assignment.courseId);
+
+        if (!isNaN(assignmentId) && !isNaN(classId) && !isNaN(courseId)) {
+          exeCC({
+            assignmentId,
+            classId,
+            courseId,
+            completionStatus: status,
+          });
+        } else {
+          toast.error('Invalid assignment parameters');
+        }
       }
     }
   }
@@ -250,6 +272,32 @@ const Assignment = ({
         return 0;
     }
   });
+
+  const totalPage = Math.ceil(sortedData.length / assignmentPerPage);
+
+  const paginatedData = sortedData.filter((_, index) => 
+    index >= (page - 1) * assignmentPerPage && 
+    index < page * assignmentPerPage
+  );
+
+  // Calculate the range of items being shown
+  const startItem = (page - 1) * assignmentPerPage + 1;
+  const endItem = Math.min(page * assignmentPerPage, sortedData.length);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px is the standard md breakpoint
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <>
@@ -320,57 +368,51 @@ const Assignment = ({
               </button>
             </div>
             <Separator className='my-2' />
-            <form onSubmit={(e) => handleSubmit(onSubmit)(e)} className='flex flex-col gap-4'>
+            <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='name'
-                  className='text-sm font-semibold'
-                >
+                <label htmlFor='name' className='text-sm font-semibold'>
                   Name*
                 </label>
                 <Input
                   type='text'
                   id='name'
-                  className='Input'
+                  className={`Input ${errors.title ? 'border-red-500' : ''}`}
                   {...register('title', { required: 'Title is required' })}
                 />
+                {errors.title && (
+                  <span className="text-red-500 text-sm">{errors.title.message}</span>
+                )}
               </div>
               <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='class'
-                  className='text-sm font-semibold'
-                >
+                <label htmlFor='class' className='text-sm font-semibold'>
                   Course*
                 </label>
                 <Input
                   type='text'
                   id='class'
-                  className='Input'
+                  className={`Input ${errors.course ? 'border-red-500' : ''}`}
                   {...register('course', { required: 'Course is required' })}
                 />
+                {errors.course && (
+                  <span className="text-red-500 text-sm">{errors.course.message}</span>
+                )}
               </div>
               <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='deadline'
-                  className='text-sm font-semibold'
-                >
+                <label htmlFor='deadline' className='text-sm font-semibold'>
                   Deadline*
                 </label>
-                <div className='flex gap-2'>
-                  <Input
-                    type='date'
-                    id='deadline'
-                    className='Input'
-                    {...register('deadline', { required: 'Deadline is required', valueAsDate: true })}
-                  />
-                  <Input type='time' />
-                </div>
+                <Input
+                  type='datetime-local'
+                  id='deadline'
+                  className='Input'
+                  {...register('deadline', { required: 'Deadline is required', valueAsDate: true })}
+                />
+                {errors.deadline && (
+                  <span className="text-red-500 text-sm">{errors.deadline.message}</span>
+                )}
               </div>
               <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='submission'
-                  className='text-sm font-semibold'
-                >
+                <label htmlFor='submission' className='text-sm font-semibold'>
                   Submission*
                 </label>
                 <Select
@@ -392,10 +434,7 @@ const Assignment = ({
                 </Select>
               </div>
               <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='submission'
-                  className='text-sm font-semibold'
-                >
+                <label htmlFor='submission' className='text-sm font-semibold'>
                   Task Type*
                 </label>
                 <Select
@@ -415,22 +454,23 @@ const Assignment = ({
                 </Select>
               </div>
               <div className='flex flex-col gap-2'>
-                <label
-                  htmlFor='description'
-                  className='text-sm font-semibold'
-                >
-                  Description
+                <label htmlFor='description' className='text-sm font-semibold'>
+                  Description*
                 </label>
                 <Textarea
                   id='description'
                   className='Input'
                   {...register('description')}
                 />
+                {errors.description && (
+                  <span className="text-red-500 text-sm">{errors.description.message}</span>
+                )}
               </div>
               <Button
                 className='text-sm font-semibold px-4 py-2.5'
                 type='submit'
-                onClick={(e) => onSubmit(getValues(), e)}
+                disabled={!isValid || isSubmitting}
+                onClick={() => trigger()}
               >
                 Add
               </Button>
@@ -523,7 +563,7 @@ const Assignment = ({
                   <td className='text-sm text-muted-foreground'>Tracker</td>
                   <td className='text-sm'>:</td>
                   <td className='flex gap-6'>
-                    <Select onValueChange={(v) => updateComp(active, v)}>
+                    <Select defaultValue={active.status} onValueChange={(v) => updateComp(active, v)}>
                       <SelectTrigger className='py-0 w-fit h-min'>
                         <SelectValue placeholder='Select Tracker' />
                       </SelectTrigger>
@@ -552,87 +592,99 @@ const Assignment = ({
 
       {/* Assignment List */}
       {assignments.length > 0 && (
-        <ul className='w-full py-2 overflow-hidden rounded-2xl shadow-md bg-white'>
-          <Separator />
-          {sortedData.map((card, i) => (
-            <>
-              <motion.li
-                layoutId={`card-${card.name + card.class + card.course}-${id}`}
-                key={`${card.name + card.class}-${id + i}`}
-                onClick={() => setActive(card)}
-                className='py-3 px-6 md:px-8 flex w-full relative cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
-              >
-                <div
-                  className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i % 4]}`}></div>
-                <div className='flex gap-4 md:gap-6 items-center w-full'>
-                  <motion.div
-                    layoutId={`notebook-${card.name + card.class + card.course
-                      }-${id}`}
-                    className='text-navy'
-                  >
-                    <LayoutList className='w-7 h-7 md:w-10 md:h-10' />
-                  </motion.div>
-                  <div className=" flex flex-col md:flex-row items-center flex-1">
-                    <div className='md:w-1/2 overflow-hidden '>
-                      <motion.h2
-                        layoutId={`name-${card.name + card.class + card.course
-                          }-${id}`}
-                        title={card.name}
-                        className='font-medium md:text-lg text-sm line-clamp-1'
-                      >
-                        {card.name}
-                      </motion.h2>
-                      <p className='flex gap-2 items-center'>
-                        <motion.span
-                          layoutId={`class-${card.name + card.class + card.course
+        <>
+          <ul className='w-full py-2 overflow-hidden rounded-2xl shadow-md bg-white'>
+            <Separator />
+            {paginatedData.map((card, i) => (
+              <>
+                <motion.li
+                  layoutId={`card-${card.name + card.class + card.course}-${id}`}
+                  key={`${card.name + card.class}-${id + i}`}
+                  onClick={() => setActive(card)}
+                  className='py-3 px-6 md:px-8 flex w-full relative cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
+                >
+                  <div
+                    className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i % 4]}`}></div>
+                  <div className='flex gap-4 md:gap-6 items-center w-full'>
+                    <motion.div
+                      layoutId={`notebook-${card.name + card.class + card.course
+                        }-${id}`}
+                      className='text-navy'
+                    >
+                      <LayoutList className='w-7 h-7 md:w-10 md:h-10' />
+                    </motion.div>
+                    <div className=" flex flex-col md:flex-row items-center flex-1">
+                      <div className='md:w-1/2 overflow-hidden '>
+                        <motion.h2
+                          layoutId={`name-${card.name + card.class + card.course
                             }-${id}`}
-                          className='text-xs md:text-sm text-muted-foreground'
-                        >{`${card.class}`}</motion.span>
-                        -
-                        <motion.span
-                          layoutId={`course-${card.name + card.class + card.course
-                            }-${id}`}
-                          className='text-xs md:text-sm text-muted-foreground line-clamp-1'
+                          title={card.name}
+                          className='font-medium md:text-lg text-sm line-clamp-1'
                         >
-                          {card.course}
-                        </motion.span>
-                      </p>
-                      <div
-                        className={`text-xs md:text-sm flex items-center gap-2 text-red-500
+                          {card.name}
+                        </motion.h2>
+                        <p className='flex gap-2 items-center'>
+                          <motion.span
+                            layoutId={`class-${card.name + card.class + card.course
+                              }-${id}`}
+                            className='text-xs md:text-sm text-muted-foreground'
+                          >{`${card.class}`}</motion.span>
+                          -
+                          <motion.span
+                            layoutId={`course-${card.name + card.class + card.course
+                              }-${id}`}
+                            className='text-xs md:text-sm text-muted-foreground line-clamp-1'
+                          >
+                            {card.course}
+                          </motion.span>
+                        </p>
+                        <div
+                          className={`text-xs md:text-sm flex items-center gap-2 text-red-500
                       `}
-                      >
-                        <motion.p
-                          layoutId={`deadline-${card.name + card.class + card.course
-                            }-${id}`}
                         >
-                          {card.deadline.toDateString()}
-                        </motion.p>
-                        <div className="w-px h-4 bg-red-500"></div>
-                        <motion.p
-                          layoutId={`submission-${card.name + card.class + card.course
-                            }-${id}`}
-                          className='line-clamp-1'
-                        >{`${card.deadline.getHours()}:${card.deadline.getMinutes()} @MS-Teams`}</motion.p>
+                          <motion.p
+                            layoutId={`deadline-${card.name + card.class + card.course
+                              }-${id}`}
+                          >
+                            {card.deadline.toDateString()}
+                          </motion.p>
+                          <div className="w-px h-4 bg-red-500"></div>
+                          <motion.p
+                            layoutId={`submission-${card.name + card.class + card.course
+                              }-${id}`}
+                            className='line-clamp-1'
+                          >{`${card.deadline.getHours()}:${card.deadline.getMinutes()} @MS-Teams`}</motion.p>
+                        </div>
+                      </div>
+                      <div className="flex w-full md:w-1/2 gap-2 items-center mt-2 md:mt-0">
+                        <div className="md:w-1/2">
+                          <Badge variant={badges(getStatus(card.status!, card.deadline))} className='h-fit'>
+                            {UUC2N(getStatus(card.status!, card.deadline))}
+                          </Badge>
+                        </div>
+                        <div className="md:hidden w-px h-4 bg-border"></div>
+                        <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>{card.taskType}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex w-full md:w-1/2 gap-2 items-center mt-2 md:mt-0">
-                      <div className="md:w-1/2">
-                        <Badge variant={badges(getStatus(card.status!, card.deadline))} className='h-fit'>
-                          {UUC2N(getStatus(card.status!, card.deadline))}
-                        </Badge>
-                      </div>
-                      <div className="md:hidden w-px h-4 bg-border"></div>
-                      <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>{card.taskType}
-                      </div>
-                    </div>
+                    <ChevronRight className='w-4 h-4 md:w-6 md:h-6' />
                   </div>
-                  <ChevronRight className='w-4 h-4 md:w-6 md:h-6' />
-                </div>
-              </motion.li>
-              <Separator />
-            </>
-          ))}
-        </ul>
+                </motion.li>
+                <Separator />
+              </>
+            ))}
+          </ul>
+          <div className="mt-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPage={totalPage}
+            />
+            <p className="text-sm text-muted-foreground">
+              Showing {startItem} to {endItem} of {sortedData.length} items
+            </p>
+          </div>
+        </>
       )}
     </>
   );

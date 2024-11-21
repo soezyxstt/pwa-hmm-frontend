@@ -2,8 +2,8 @@
 
 import {env} from '@/env';
 import {actionClient} from '@/lib/action-client';
-import {PWAError} from '@/lib/error';
-import {signInSchema, signUpSchema} from '@/lib/schema';
+import {handleError, PWAError} from '@/lib/error';
+import {signInSchema, signUpSchema, editProfileSchema} from '@/lib/schema';
 import {createSession, deleteSession, verifySession} from '@/lib/session';
 import {getTokenFromResponse} from '@/lib/utils';
 import {flattenValidationErrors} from 'next-safe-action';
@@ -141,3 +141,48 @@ export async function signOut() {
     throw new PWAError('Failed to sign out');
   }
 }
+
+export const editProfile = actionClient
+  .metadata({ actionName: 'editProfile' })
+  .schema(editProfileSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { dateOfBirth, email, ...input } }) => {
+    try {
+      const session = await verifySession();
+      
+      if (!session.isAuth) {
+        throw new PWAError('Unauthorized');
+      }
+
+      const bodyInput: userAPI.UpdateBasicUser.Dto = {
+        dateOfBirth: new Date(dateOfBirth),
+        email,
+        ...input,
+      };
+
+      const res = await fetch(env.API_URL + userAPI.UpdateBasicUser.generateUrl(session.userId), {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: `accessToken=${session.access_token}`,
+        },
+        body: JSON.stringify(bodyInput),
+      });
+
+      if (!res.ok) {
+        handleError(res);
+      }
+
+      return {
+        message: 'Profile updated successfully',
+        status: 'success',
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new PWAError(err.message);
+      }
+      throw new PWAError('Failed to update profile');
+    }
+  });

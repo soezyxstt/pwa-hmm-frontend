@@ -1,3 +1,5 @@
+'use server';
+
 import { actionClient } from '@/lib/action-client';
 import { flattenValidationErrors } from 'next-safe-action';
 import { fetchAction } from '@/lib/fetch';
@@ -67,7 +69,10 @@ export const deleteEvent = actionClient
   .action(async ({ parsedInput: { eventId } }) => {
     const res = await fetchAction<$EventAPI.DeleteEvent.Response['data']>(
       $EventAPI.DeleteEvent.generateUrl(eventId),
-      'Failed to delete event'
+      'Failed to delete event',
+      {
+        method: 'DELETE',
+      }
     )();
     return res;
   });

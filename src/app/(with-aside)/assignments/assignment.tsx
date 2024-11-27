@@ -67,7 +67,7 @@ const Assignment = ({
       completionId: type === "course" ? assignment.completion?.id : null,
       type: type,
     }))
-    .filter((item) => 
+    .filter((item) =>
       item.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
       item.course.toString().toLowerCase().includes(debouncedSearch.toLowerCase()) ||
       item.class.toString().toLowerCase().includes(debouncedSearch.toLowerCase())
@@ -257,7 +257,7 @@ const Assignment = ({
   const sortedData = [...data].sort((a, b) => {
     switch (sortBy) {
       case 'date':
-        return sortOrder === 'asc' 
+        return sortOrder === 'asc'
           ? a.deadline.getTime() - b.deadline.getTime()
           : b.deadline.getTime() - a.deadline.getTime();
       case 'name':
@@ -275,8 +275,8 @@ const Assignment = ({
 
   const totalPage = Math.ceil(sortedData.length / assignmentPerPage);
 
-  const paginatedData = sortedData.filter((_, index) => 
-    index >= (page - 1) * assignmentPerPage && 
+  const paginatedData = sortedData.filter((_, index) =>
+    index >= (page - 1) * assignmentPerPage &&
     index < page * assignmentPerPage
   );
 
@@ -303,12 +303,12 @@ const Assignment = ({
     <>
       <div className='flex flex-col md:flex-row md:items-center gap-4'>
         {/* Search bar - full width on mobile */}
-        <Search 
+        <Search
           query={searchQuery}
           setQuery={setSearchQuery}
           className="w-full md:max-w-md"
         />
-        
+
         {/* Filter and Add button container */}
         <div className="flex items-center justify-between md:justify-end w-full gap-2">
           <div className="flex items-center gap-2">

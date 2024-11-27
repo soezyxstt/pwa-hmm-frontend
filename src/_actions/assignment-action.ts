@@ -203,7 +203,7 @@ export const createAssignment = actionClient
       );
 
       const { data, error } = await res.json();
-      if (!res.ok) {
+      if (error) {
         return handleError(error);
       }
 

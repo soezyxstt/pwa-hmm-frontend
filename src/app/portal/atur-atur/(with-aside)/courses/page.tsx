@@ -13,7 +13,7 @@ async function Courses() {
       <AdminHeader title='Courses' />
       <div className='flex justify-between items-center'>
         <AdminBreadcrumb />
-        <CustomLink href={'add'}>Add Course</CustomLink>
+        <CustomLink href={'courses/add'}>Add Course</CustomLink>
       </div>
       <CoursesTable data={courses} />
     </>

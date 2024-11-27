@@ -1,9 +1,9 @@
-import type {Metadata} from 'next';
-import {ReactNode} from "react";
+import type { Metadata } from 'next';
+import { ReactNode } from "react";
 
 export default function Layout({
-                                 children,
-                               }: Readonly<{
+  children,
+}: Readonly<{
   children: ReactNode;
 }>) {
   return (

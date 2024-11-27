@@ -18,6 +18,7 @@ const links = [
   {title: 'MyCareer', path: 'mycareer'},
   {title: 'Users', path: 'users'},
   {title: 'Events', path: 'events'},
+  {title: 'Scholarships', path: 'scholarships'},
 ];
 
 function Link({

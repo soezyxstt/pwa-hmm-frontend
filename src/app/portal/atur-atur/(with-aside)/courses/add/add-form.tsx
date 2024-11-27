@@ -60,7 +60,7 @@ function AddForm() {
       className='space-y-4'
     >
       <div>
-        <Label>Code*</Label>
+        <Label>Code</Label>
         <Input
           id='code'
           {...register('code')}
@@ -80,7 +80,7 @@ function AddForm() {
       </div>
 
       <div>
-        <Label>Title*</Label>
+        <Label>Title</Label>
         <Input
           id='title'
           {...register('title')}
@@ -89,7 +89,7 @@ function AddForm() {
       </div>
 
       <div>
-        <Label>Status*</Label>
+        <Label>Status</Label>
         <Select
           onValueChange={(value) =>
             setValue('status', value as 'PUBLISHED' | 'DRAFT')

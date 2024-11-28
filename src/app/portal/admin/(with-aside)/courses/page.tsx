@@ -1,5 +1,5 @@
 import AdminHeader from '@/components/admin/header';
-import CoursesTable from '@/app/portal/atur-atur/(with-aside)/courses/table';
+import CoursesTable from '@/app/portal/admin/(with-aside)/courses/table';
 import AdminBreadcrumb from '@/components/admin/breadcrumb';
 import CustomLink from '@/components/admin/custom-link';
 import { getCourses } from '@/_actions/courses-action';

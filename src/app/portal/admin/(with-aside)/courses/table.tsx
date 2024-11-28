@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Ellipsis } from "lucide-react";
 import Pagination from "@/components/client/pagination";
 import { $CourseAPI } from "lms-types";
-import Wrapper from "@/app/portal/atur-atur/wrapper";
+import Wrapper from "@/app/portal/admin/wrapper";
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -66,7 +66,7 @@ function CoursesTable({ data }: { data: $CourseAPI.GetCourses.Response["data"] }
                     <PopoverContent align='end' className='w-40 border-navy border p-1'>
                       <div className='flex flex-col text-sm *:text-left *:font-medium'>
                         <h3 className='font-bold text-sm p-2'>Action</h3>
-                        <Link href={`/portal/atur-atur/courses/edit/${course.id}`} className='hover:bg-navy/40 p-2 rounded-md transition'>
+                        <Link href={`/portal/admin/courses/edit/${course.id}`} className='hover:bg-navy/40 p-2 rounded-md transition'>
                           Edit
                         </Link>
                         <button 

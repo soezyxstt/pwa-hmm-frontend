@@ -1,7 +1,7 @@
 'use client';
 import React, { type BaseSyntheticEvent, useEffect, useId, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronRight, LayoutList, Notebook, ChevronUpIcon, ChevronDownIcon } from 'lucide-react';
+import { ChevronRight, LayoutList, Notebook, ChevronUpIcon, ChevronDownIcon, Calendar } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import Button from '@/components/ui/button/button';
 import { Input } from '@/components/ui/input';
@@ -37,7 +37,6 @@ import Pagination from '@/components/client/pagination';
 
 const Assignment = ({
   assignments,
-  courses,
 }: {
   assignments: $UserAPI.GetUserAssignments.Response['data'];
   courses: $UserAPI.GetUserEnrolledCourses.Response['data'];
@@ -108,7 +107,6 @@ const Assignment = ({
 
   const onSubmit = async (data: z.infer<typeof addPersonalAssignmentSchema>, e: BaseSyntheticEvent | undefined) => {
     e?.preventDefault();
-    console.log(data);
     await executeAsync(data);
     reset();
     setActive(null);
@@ -186,29 +184,38 @@ const Assignment = ({
     return status;
   }
 
-  const { execute: exeUPA, result: resultUPA } = useAction(updatePersonalAssignment, {
+  const { execute: exeUPA } = useAction(updatePersonalAssignment, {
     onSuccess: () => {
       toast.success('Assignment updated');
     },
     onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
+    onSettled: () => {
+      setActive(null);
+    }
   })
-  const { execute: exeUC, result: resultUC } = useAction(updateCompletion, {
+  const { execute: exeUC } = useAction(updateCompletion, {
     onSuccess: () => {
       toast.success('Assignment updated');
     },
     onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
+    onSettled: () => {
+      setActive(null);
+    }
   })
-  const { execute: exeCC, result: resultCC } = useAction(createCompletion, {
+  const { execute: exeCC } = useAction(createCompletion, {
     onSuccess: () => {
       toast.success('Assignment updated');
     },
     onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(serverError || fetchError || validationErrors?.toString() || 'Failed to update assignment');
     },
+    onSettled: () => {
+      setActive(null);
+    }
   })
 
   function updateComp(assignment: (typeof data)[number], status: string) {
@@ -488,28 +495,26 @@ const Assignment = ({
       <AnimatePresence>
         {active && typeof active === 'object' && (
           <MotionFramer
-            // @ts-ignore
             id={`card-${active.name + active.class + active.course}-${id}`}
           >
             <div className='flex flex-col gap-3'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-4 text-navy'>
                   <motion.div
-                    layoutId={`notebook-${active.name + active.class + active.course
-                      }-${id}`}
+                    layoutId={`notebook-${active.name + active.class + active.course}-${id}`}
                   >
                     <Notebook size={32} />
                   </motion.div>
-                  <motion.div
-                    layoutId={`name-${active.name + active.class + active.course
-                      }-${id}`}
+                  <motion.h2
+                    layoutId={`name-${active.name + active.class + active.course}-${id}`}
                     className='font-medium text-lg'
                   >
                     {active.name}
-                  </motion.div>
+                  </motion.h2>
                 </div>
-                <div
-                  className=''>{`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}</div>
+                <div>
+                  {`${timeToDeadline.days}d ${timeToDeadline.hours}h ${timeToDeadline.minutes}m ${timeToDeadline.seconds}s`}
+                </div>
               </div>
               <Separator className='' />
               <table className='space-y-4 *:*:py-2'>
@@ -604,56 +609,39 @@ const Assignment = ({
                   className='py-3 px-6 md:px-8 flex w-full relative cursor-pointer justify-between items-center gap-4 hover:bg-gray-500/20 transition-[background-color] rounded-lg'
                 >
                   <div
-                    className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i % 4]}`}></div>
+                    className={`absolute w-2 h-full left-0 top-0 ${['bg-destructive', 'bg-hijau', 'bg-kuning', 'bg-navy'][i % 4]}`}
+                  ></div>
                   <div className='flex gap-4 md:gap-6 items-center w-full'>
                     <motion.div
-                      layoutId={`notebook-${card.name + card.class + card.course
-                        }-${id}`}
+                      layoutId={`notebook-${card.name + card.class + card.course}-${id}`}
                       className='text-navy'
                     >
                       <LayoutList className='w-7 h-7 md:w-10 md:h-10' />
                     </motion.div>
-                    <div className=" flex flex-col md:flex-row items-center flex-1">
-                      <div className='md:w-1/2 overflow-hidden '>
+                    <div className="flex flex-col md:flex-row items-center flex-1">
+                      <div className='md:w-1/2 overflow-hidden'>
                         <motion.h2
-                          layoutId={`name-${card.name + card.class + card.course
-                            }-${id}`}
+                          layoutId={`name-${card.name + card.class + card.course}-${id}`}
                           title={card.name}
                           className='font-medium md:text-lg text-sm line-clamp-1'
                         >
                           {card.name}
                         </motion.h2>
                         <p className='flex gap-2 items-center'>
-                          <motion.span
-                            layoutId={`class-${card.name + card.class + card.course
-                              }-${id}`}
-                            className='text-xs md:text-sm text-muted-foreground'
-                          >{`${card.class}`}</motion.span>
+                          <span className='text-xs md:text-sm text-muted-foreground'>
+                            {`${card.class}`}
+                          </span>
                           -
-                          <motion.span
-                            layoutId={`course-${card.name + card.class + card.course
-                              }-${id}`}
-                            className='text-xs md:text-sm text-muted-foreground line-clamp-1'
-                          >
+                          <span className='text-xs md:text-sm text-muted-foreground line-clamp-1'>
                             {card.course}
-                          </motion.span>
+                          </span>
                         </p>
-                        <div
-                          className={`text-xs md:text-sm flex items-center gap-2 text-red-500
-                      `}
-                        >
-                          <motion.p
-                            layoutId={`deadline-${card.name + card.class + card.course
-                              }-${id}`}
-                          >
-                            {card.deadline.toDateString()}
-                          </motion.p>
+                        <div className='text-xs md:text-sm flex items-center gap-2 text-red-500'>
+                          <p>{card.deadline.toDateString()}</p>
                           <div className="w-px h-4 bg-red-500"></div>
-                          <motion.p
-                            layoutId={`submission-${card.name + card.class + card.course
-                              }-${id}`}
-                            className='line-clamp-1'
-                          >{`${card.deadline.getHours()}:${card.deadline.getMinutes()} @MS-Teams`}</motion.p>
+                          <p className='line-clamp-1'>
+                            {`${card.deadline.getHours()}:${card.deadline.getMinutes()} @MS-Teams`}
+                          </p>
                         </div>
                       </div>
                       <div className="flex w-full md:w-1/2 gap-2 items-center mt-2 md:mt-0">
@@ -663,7 +651,8 @@ const Assignment = ({
                           </Badge>
                         </div>
                         <div className="md:hidden w-px h-4 bg-border"></div>
-                        <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>{card.taskType}
+                        <div className='text-muted-foreground capitalize md:w-1/2 text-sm md:text-base'>
+                          {card.taskType}
                         </div>
                       </div>
                     </div>

@@ -17,7 +17,7 @@ import {
 import { Ellipsis } from 'lucide-react';
 import Pagination from '@/components/client/pagination';
 import { $ScholarshipAPI } from 'lms-types';
-import Wrapper from '@/app/portal/atur-atur/wrapper';
+import Wrapper from '@/app/portal/admin/wrapper';
 import { useAction } from 'next-safe-action/hooks';
 import { deleteScholarship } from '@/_actions/scholarship-action';
 import { toast } from 'sonner';
@@ -85,7 +85,7 @@ function ScholarshipTable({
                       <div className='flex flex-col text-sm *:text-left *:font-medium'>
                         <h3 className='font-bold text-sm p-2'>Action</h3>
                         <Link
-                          href={`/portal/atur-atur/scholarships/edit/${scholarship.id}`}
+                          href={`/portal/admin/scholarships/edit/${scholarship.id}`}
                           className='hover:bg-navy/40 p-2 rounded-md transition'
                         >
                           Edit

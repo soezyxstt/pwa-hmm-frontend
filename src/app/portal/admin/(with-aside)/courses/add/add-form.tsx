@@ -43,7 +43,7 @@ function AddForm() {
   const { execute: executeAddCourse, status } = useAction(createCourse, {
     onSuccess: () => {
       toast.success('Course added successfully');
-      router.push('/portal/atur-atur/courses');
+      router.push('/portal/admin/courses');
     },
     onError: (error) => {
       toast.error(error.error?.serverError || 'Failed to add course');

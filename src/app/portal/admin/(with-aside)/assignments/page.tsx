@@ -1,5 +1,5 @@
 import AdminHeader from '@/components/admin/header';
-import AssignmentTable from '@/app/portal/atur-atur/(with-aside)/assignments/table';
+import AssignmentTable from '@/app/portal/admin/(with-aside)/assignments/table';
 import { getAssignments } from '@/_actions/assignment-action';
 import { getCourses } from '@/_actions/courses-action';
 import CustomLink from '@/components/admin/custom-link';

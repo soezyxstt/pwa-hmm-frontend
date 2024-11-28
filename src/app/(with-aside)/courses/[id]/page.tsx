@@ -18,6 +18,7 @@ import LinkList from './linkList';
 import PdfViewer from '@/components/client/PdfViewer';
 import LinkViewer from '@/components/client/LinkViewer';
 import Image from 'next/image';
+import EnrollmentModal from './enrollment-modal';
 
 export default async function CoursesPage({
   searchParams,
@@ -26,6 +27,39 @@ export default async function CoursesPage({
   searchParams: Record<string, string>;
   params: { id: string };
 }) {
+  const { isEnrolled } = await getCourseEnrollmentStatus(id);
+  const course = await getCourseById(id);
+
+  if (!isEnrolled) {
+    return (
+      <div className="w-full">
+        <ScrollArea className='w-full bg-white shadow-md rounded-xl md:relative border-t-0 md:h-[calc(100vh-4rem)]'>
+          <div className="p-6 space-y-6">
+            <div className="relative rounded-xl overflow-hidden
+                          w-full md:w-[600px] lg:w-[800px]
+                          h-[200px] md:h-[300px] lg:h-[400px]
+                          mx-auto">
+              <Image
+                src={course.image || '/images/mesin.png'}
+                alt={course.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw,
+                       (max-width: 1024px) 600px,
+                       800px"
+              />
+            </div>
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold">{course.title}</h2>
+              <p className="text-gray-600">{course.description}</p>
+              <EnrollmentModal courseId={Number(id)} courseTitle={course.title} />
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  }
+
   const isExpanded = searchParams['expanded'] === 'true';
   const lessons = await getLessons(id);
   const lessonId = searchParams['lessonId'] ?? lessons[0].id;
@@ -61,8 +95,6 @@ export default async function CoursesPage({
     ({ videoId }) => videoId === query
   )?.author_name;
   const params = `?expanded=${isExpanded}`;
-  const isEnrolled = (await getCourseEnrollmentStatus(id)).isEnrolled;
-  const course = await getCourseById(id);
 
   const Description = () => (
     <div className='bg-slate-200 rounded-md p-1.5 h-full flex flex-col gap-3'>
@@ -117,14 +149,7 @@ export default async function CoursesPage({
 
   return (
     <div className='flex gap-6'>
-      {isEnrolled || (
-        <div className="flex gap-2 absolute top-[72px] md:top-20 right-4 md:right-8">
-          <button className='bg-navy rounded-full font-semibold py-1.5 text-white hover:bg-navy/80 transition px-6 text-sm md:text-base w-fit h-fit'>
-            Enroll
-          </button>
-        </div>
-      )}
-      {isEnrolled && <FormatSelector format={format} />}
+      <FormatSelector format={format} />
       <Lesson
         lessonId={lessonId}
         params={params}

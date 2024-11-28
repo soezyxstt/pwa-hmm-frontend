@@ -29,7 +29,7 @@ export const Assignments = async () => {
 
   return (
     <div className='md:w-1/2 h-96 bg-white rounded-lg shadow-md py-6 flex flex-col'>
-      <h3 className='font-bold px-6 mb-2'>Assignments</h3>
+      <h3 className='font-bold px-6 mb-2 text-center'>Assignments</h3>
       <ScrollArea className='h-64'>
         <div className='flex flex-col text-center font-medium'>
           <h5 className='font-semibold my-2'>Today</h5>

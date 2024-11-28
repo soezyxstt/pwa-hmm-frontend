@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { useAction } from 'next-safe-action/hooks';
 import { createAssignment } from '@/_actions/assignment-action';
 import { toast } from 'sonner';
-import ErrorText from '@/app/portal/atur-atur/error-text';
+import ErrorText from '@/app/portal/admin/error-text';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Textarea } from '@/components/ui/textarea';

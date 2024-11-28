@@ -2,7 +2,7 @@ import Assignments from './assignments';
 import Calendar, { type EventMap } from './calendar-x';
 import UpcomingSchedule from './upcomingSched';
 import Berita from './berita';
-import { getEvents } from '@/_actions/event-action';
+import { getAllUserSchedules } from '@/_actions/schedule-action';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,13 +24,13 @@ export default async function Home() {
     { '2024-07-31': [{ title: 'Pre-Machining' }, { title: 'FRS' }] },
   ];
   
-  // Fetch events for upcoming schedule
-  const upcomingEvents = await getEvents();
+  // Fetch schedules for upcoming schedule
+  const schedules = await getAllUserSchedules();
   
   return (
     <div className='flex flex-col items-stretch flex-1 h-max gap-6 relative'>
       <div className='flex flex-col md:flex-row gap-6'>
-        <UpcomingSchedule events={upcomingEvents} />
+        <UpcomingSchedule schedules={schedules} />
         <Assignments />
       </div>
       <div className='flex flex-col md:flex-row w-full gap-6 items-center'>
@@ -48,6 +48,7 @@ export default async function Home() {
     </div>
   );
 }
+
 export const metadata = {
   title: 'Dashboard',
 };

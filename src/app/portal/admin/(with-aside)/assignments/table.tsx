@@ -17,7 +17,7 @@ import {
 import { Ellipsis } from 'lucide-react';
 import Pagination from '@/components/client/pagination';
 import { $CourseClassAssignmentAPI, CourseClassModel } from 'lms-types';
-import Wrapper from '@/app/portal/atur-atur/wrapper';
+import Wrapper from '@/app/portal/admin/wrapper';
 import { useAction } from 'next-safe-action/hooks';
 import { deleteAssignment } from '@/_actions/assignment-action';
 import { toast } from 'sonner';
@@ -44,9 +44,9 @@ function AssignmentTable({
     onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(
         serverError ||
-          fetchError ||
-          validationErrors?.toString() ||
-          'Failed to delete assignment'
+        fetchError ||
+        validationErrors?.toString() ||
+        'Failed to delete assignment'
       );
     },
   });

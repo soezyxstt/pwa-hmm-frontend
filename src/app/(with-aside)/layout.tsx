@@ -20,3 +20,4 @@ export const metadata: Metadata = {
     absolute: 'HMM ITB',
   },
 };
+

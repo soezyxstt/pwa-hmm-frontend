@@ -351,3 +351,35 @@ export const updateScholarshipSchema = z.object({
 export const deleteScholarshipSchema = z.object({
   scholarshipId: z.number().min(1, { message: 'Scholarship ID is required' }),
 });
+
+// Add this with other schemas
+export const createEnrollmentSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  role: z.enum(['STUDENT', 'TEACHER'] as const, {
+    message: 'Invalid role',
+  }),
+});
+
+// Add these with other schemas
+export const createScheduleSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  title: z.string().min(1, { message: 'Title is required' }),
+  description: z.string().optional(),
+  date: z.date({
+    required_error: 'Date is required',
+    invalid_type_error: 'Invalid date format',
+  }),
+});
+
+export const updateScheduleSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  scheduleId: z.number().min(1, { message: 'Schedule ID is required' }),
+  title: z.string().min(1, { message: 'Title is required' }).optional(),
+  description: z.string().optional(),
+  date: z.date().optional(),
+});
+
+export const deleteScheduleSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  scheduleId: z.number().min(1, { message: 'Schedule ID is required' }),
+});

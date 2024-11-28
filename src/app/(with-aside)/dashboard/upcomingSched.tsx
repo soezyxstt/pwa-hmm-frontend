@@ -1,10 +1,10 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { type EventModel } from 'lms-types';
+import { type CourseScheduleModel } from 'lms-types';
 
 const UpcomingSchedule = ({ 
-  events 
+  schedules 
 }: { 
-  events: EventModel[]
+  schedules: (CourseScheduleModel & { courseName: string })[]
 }) => {
   // Helper function to check if date is today or tomorrow
   const isToday = (date: Date) => {
@@ -18,44 +18,44 @@ const UpcomingSchedule = ({
     return date.toDateString() === tomorrow.toDateString();
   };
 
-  // Filter and sort events
-  const todayEvents = events
-    .filter(event => isToday(new Date(event.date)))
+  // Filter and sort schedules
+  const todaySchedules = schedules
+    .filter(schedule => isToday(new Date(schedule.date)))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  const tomorrowEvents = events
-    .filter(event => isTomorrow(new Date(event.date)))
+  const tomorrowSchedules = schedules
+    .filter(schedule => isTomorrow(new Date(schedule.date)))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <div className='md:w-1/2 bg-white rounded-lg shadow-md p-6'>
-      <h3 className='font-bold mb-2'>Upcoming Schedule</h3>
-      <ScrollArea className='h-72'>
-        <div className='flex flex-col gap-2 text-center font-medium'>
-          <h5 className='font-semibold'>Today</h5>
-          {todayEvents.map((event) => (
+    <div className='md:w-1/2 bg-white rounded-lg shadow-md py-6 flex flex-col'>
+      <h3 className='font-bold px-6 mb-2 text-center'>Upcoming Schedule</h3>
+      <ScrollArea className='h-64'>
+        <div className='flex flex-col text-center font-medium'>
+          <h5 className='font-semibold my-2'>Today</h5>
+          {todaySchedules.map((schedule) => (
             <UpSchedCard
-              key={event.id}
-              title={event.title}
-              description={event.description || undefined}
-              time={new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              key={schedule.id}
+              title={schedule.title}
+              description={`${schedule.courseName}${schedule.description ? ` - ${schedule.description}` : ''}`}
+              time={new Date(schedule.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             />
           ))}
-          {todayEvents.length === 0 && (
-            <p className="text-xs text-muted-foreground border-y border-y-abu-1 py-3">No events today</p>
+          {todaySchedules.length === 0 && (
+            <p className="text-xs text-muted-foreground border-y border-y-abu-1 py-3">No schedules today</p>
           )}
 
-          <h5 className='font-semibold'>Tomorrow</h5>
-          {tomorrowEvents.map((event) => (
+          <h5 className='font-semibold my-2'>Tomorrow</h5>
+          {tomorrowSchedules.map((schedule) => (
             <UpSchedCard
-              key={event.id}
-              title={event.title}
-              description={event.description || undefined}
-              time={new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              key={schedule.id}
+              title={schedule.title}
+              description={`${schedule.courseName}${schedule.description ? ` - ${schedule.description}` : ''}`}
+              time={new Date(schedule.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             />
           ))}
-          {tomorrowEvents.length === 0 && (
-            <p className="text-xs text-muted-foreground border-y border-y-abu-1 py-3">No events tomorrow</p>
+          {tomorrowSchedules.length === 0 && (
+            <p className="text-xs text-muted-foreground border-y border-y-abu-1 py-3">No schedules tomorrow</p>
           )}
         </div>
       </ScrollArea>

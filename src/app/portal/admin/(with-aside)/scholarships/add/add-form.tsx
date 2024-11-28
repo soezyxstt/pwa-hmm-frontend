@@ -14,7 +14,7 @@ import { addScholarshipSchema } from '@/lib/schema';
 import { useAction } from 'next-safe-action/hooks';
 import { createScholarship } from '@/_actions/scholarship-action';
 import { toast } from 'sonner';
-import ErrorText from '@/app/portal/atur-atur/error-text';
+import ErrorText from '@/app/portal/admin/error-text';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Textarea } from '@/components/ui/textarea';
@@ -46,7 +46,7 @@ function AddForm() {
   const { execute, status } = useAction(createScholarship, {
     onSuccess: () => {
       toast.success('Scholarship added successfully');
-      router.push('/portal/atur-atur/scholarships');
+      router.push('/portal/admin/scholarships');
     },
     onError: (error) => {
       toast.error(error.error?.serverError || 'Failed to add scholarship');

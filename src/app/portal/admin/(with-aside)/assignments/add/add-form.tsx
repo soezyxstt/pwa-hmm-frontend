@@ -32,7 +32,7 @@ function AddForm({
     courseId: number;
   })[];
 }) {
-  const { execute, result, isExecuting } = useAction(createAssignment, {
+  const { execute, isExecuting } = useAction(createAssignment, {
     onSuccess: () => {
       toast.success('Assignment created successfully');
     },

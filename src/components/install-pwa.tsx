@@ -5,8 +5,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 import { FiDownload } from 'react-icons/fi';
+import { DropdownMenuItem } from './ui/dropdown-menu';
 
-export function InstallPWA({className}:{className?:string}) {
+export function InstallPWA({ className }: { className?: string }) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -84,27 +85,18 @@ export function InstallPWA({className}:{className?:string}) {
 
   return (
     <>
-      {isMobile ? (
-        <div
+      <Tooltip>
+        <TooltipTrigger
+          className='md:bg-white p-2 rounded-full text-lg '
           onClick={handleInstallClick}
-          className={cn('flex items-center gap-2 cursor-pointer', className)}
         >
           <FiDownload />
-          <span>{isInstalled ? 'Already Installed' : 'Install App'}</span>
-        </div>
-      ) : (
-        <Tooltip>
-            <TooltipTrigger
-              className='bg-white p-2 rounded-full text-lg hidden md:block'
-              onClick={handleInstallClick}
-            >
-              <FiDownload />
-            </TooltipTrigger>
-            <TooltipContent className='hidden md:block'>
-              <p>{isInstalled ? 'Already Installed' : 'Install App'}</p>
-          </TooltipContent>
-        </Tooltip>
-      )}
+        </TooltipTrigger>
+        <TooltipContent className='hidden md:block'>
+          <p>{isInstalled ? 'Already Installed' : 'Install App'}</p>
+        </TooltipContent>
+      </Tooltip>
+
     </>
   );
 } 

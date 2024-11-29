@@ -39,7 +39,7 @@ const ProfileMenu = async () => {
           <p>Settings</p>
         </TooltipContent>
       </Tooltip>
-      <InstallPWA className='hidden md:block' />
+      <InstallPWA  />
       <Tooltip>
         <TooltipTrigger className='hidden md:block'>
           <Link
@@ -90,9 +90,6 @@ const ProfileMenu = async () => {
                 <User className='mr-2 w-4 h-4' />
                 <span>Profile</span>
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <InstallPWA />
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Bell className='mr-2 w-4 h-4' />

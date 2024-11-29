@@ -20,11 +20,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CourseCategoryModel } from 'lms-types';
 
 type FormData = z.infer<typeof addCourseSchema>;
 
-function AddForm() {
+interface AddFormProps {
+  initialCategories: CourseCategoryModel[];
+}
+
+function AddForm({ initialCategories }: AddFormProps) {
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -51,7 +57,12 @@ function AddForm() {
   });
 
   const onSubmit = handleSubmit((data) => {
-    executeAddCourse(data);
+    // Convert categoryId to number if it exists
+    const formData = {
+      ...data,
+      categoryId: data.categoryId ? Number(data.categoryId) : undefined
+    };
+    executeAddCourse(formData);
   });
 
   return (
@@ -107,14 +118,23 @@ function AddForm() {
       </div>
 
       <div>
-        <Label>Category ID</Label>
-        <Input
-          id='categoryId'
-          {...register('categoryId')}
-        />
-        {errors.categoryId && (
-          <ErrorText>{errors.categoryId.message}</ErrorText>
-        )}
+        <Label>Category</Label>
+        <Select
+          onValueChange={(value) => setValue('categoryId', Number(value))}
+        >
+          <SelectTrigger className='w-full'>
+            <SelectValue placeholder='Select category' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="0">None</SelectItem>
+            {initialCategories.map((category) => (
+              <SelectItem key={category.id} value={String(category.id)}>
+                {category.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.categoryId && <ErrorText>{errors.categoryId.message}</ErrorText>}
       </div>
 
       <div>

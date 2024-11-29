@@ -23,6 +23,7 @@ export function fetchAction<T>(
     cache?: 'force-cache' | 'no-cache';
     revalidate?: boolean | number;
     tags?: string[];
+    name?: string;
   }
 ): () => Promise<T> {
   return (async () => {
@@ -37,6 +38,7 @@ export function fetchAction<T>(
       cache = 'force-cache',
       revalidate,
       tags,
+      name,
     } = options ?? {};
     try {
       const { refresh_token, access_token, userId } = await verifySession();
@@ -72,7 +74,7 @@ export function fetchAction<T>(
       const { error, data } = await res.json();
       if (!res.ok || error) {
         console.log(error);
-        return handleError(error);
+        return handleError(error, name);
       }
 
       void updateSession(res); // update session in case the token is refreshed

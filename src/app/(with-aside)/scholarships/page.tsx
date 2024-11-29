@@ -1,74 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bitcoin, ChevronRight, DollarSign, Users } from 'lucide-react';
+import { Bitcoin, ChevronRight, DollarSign } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type ScholarshipModel } from 'lms-types';
 import { getScholarships } from '@/_actions/scholarship-action';
 
-// This dummy data will be used by both pages
-export const dummyData: ScholarshipModel[] = [
-  {
-    id: 1,
-    title: 'Beasiswa Tanoto Foundation',
-    provider: 'Tanoto Foundation',
-    deadline: new Date('2024-12-31'),
-    reference: 'https://www.tanotofoundation.org/en/education/scholarship/',
-    funding: 'FULLY_FUNDED',
-    scope: 'Undergraduate',
-    description: 'Beasiswa untuk mahasiswa berprestasi dari Tanoto Foundation',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 2,
-    title: 'Beasiswa LPDP',
-    provider: 'LPDP',
-    deadline: new Date('2024-11-30'),
-    reference: 'https://www.lpdp.kemenkeu.go.id/',
-    funding: 'FULLY_FUNDED',
-    scope: 'Graduate',
-    description: 'Program beasiswa dari Kementerian Keuangan RI',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 3,
-    title: 'Djarum Beasiswa Plus',
-    provider: 'PT Djarum',
-    deadline: new Date('2024-10-15'),
-    reference: 'https://djarumbeasiswaplus.org/',
-    funding: 'PARTIALLY_FUNDED',
-    scope: 'Undergraduate',
-    description: 'Program beasiswa dari Djarum Foundation',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 4,
-    title: 'Beasiswa Bank Indonesia',
-    provider: 'Bank Indonesia',
-    deadline: new Date('2024-09-30'),
-    reference: 'https://www.bi.go.id/',
-    funding: 'PARTIALLY_FUNDED',
-    scope: 'Undergraduate',
-    description: 'Program beasiswa dari Bank Indonesia',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: 5,
-    title: 'Beasiswa BCA',
-    provider: 'Bank Central Asia',
-    deadline: new Date('2024-08-31'),
-    reference: 'https://www.bca.co.id/',
-    funding: 'FULLY_FUNDED',
-    scope: 'Undergraduate',
-    description: 'Program beasiswa dari BCA untuk mahasiswa berprestasi',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-];
+export const dynamic = 'force-dynamic';
 
 const Scholarships = async () => {
   const data = await getScholarships();

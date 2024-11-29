@@ -67,7 +67,7 @@ const ClientPage = ({ courses, isAllCourse }: ClientPageProps) => {
             key={i}
             id={course.id}
             title={course.title}
-            image={images[i % 4]}
+            image={course.image}
             subject={'MS2021'}
             numberOfMaterials={course.totalLessons}
             numberOfVideos={course.totalVideos}

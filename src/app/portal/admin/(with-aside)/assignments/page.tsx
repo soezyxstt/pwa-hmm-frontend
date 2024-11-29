@@ -1,10 +1,9 @@
 import AdminHeader from '@/components/admin/header';
-import AssignmentTable from '@/app/portal/admin/(with-aside)/assignments/table';
 import { getAssignments } from '@/_actions/assignment-action';
 import { getCourses } from '@/_actions/courses-action';
-import CustomLink from '@/components/admin/custom-link';
 import AdminBreadcrumb from '@/components/admin/breadcrumb';
 import { getClasses } from '@/_actions/class-action';
+import AssignmentSection from './assignment-section';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,9 +44,8 @@ export default async function Assignments() {
       <AdminHeader title='Assignments' />
       <div className='flex justify-between items-center'>
         <AdminBreadcrumb />
-        <CustomLink href={'assignments/add'}>Add Assignment</CustomLink>
       </div>
-      <AssignmentTable data={assignments} />
+      <AssignmentSection data={assignments} />
     </>
   );
 }

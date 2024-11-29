@@ -19,18 +19,27 @@ import {
 } from '@/lib/schema';
 import { flattenValidationErrors } from 'next-safe-action';
 import { cookieGenerator } from '@/lib/utils';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 type getUserAssignmentsRT = userAPI.GetUserAssignments.Response['data'];
 
 export const getUserAssignment = fetchAction<getUserAssignmentsRT>(
   '/users/:userId/assignments',
-  'Failed to fetch assignments'
+  'Failed to fetch assignments',
+  { 
+    tags: ['assignments'],
+    name: 'getUserAssignment'
+  }
 );
 
 export const getAssignments = async (courseId: number, classId: number) =>
   await fetchAction<$CourseClassAssignmentAPI.GetAssignments.Response['data']>(
-    $CourseClassAssignmentAPI.GetAssignments.generateUrl(courseId, classId)
+    $CourseClassAssignmentAPI.GetAssignments.generateUrl(courseId, classId),
+    'Failed to fetch assignments',
+    { 
+      tags: ['assignments', `course-${courseId}-assignments`],
+      name: 'getAssignments'
+    }
   )();
 
 export const createPersonalAssignment = actionClient
@@ -66,6 +75,7 @@ export const createPersonalAssignment = actionClient
       }
 
       revalidatePath('/assignments');
+      revalidateTag('assignments');
 
       return data;
     } catch (err) {
@@ -115,6 +125,9 @@ export const updateAssignment = actionClient
       }
 
       revalidatePath('/assignments');
+      revalidateTag('assignments');
+      revalidateTag(`course-${courseId}-assignments`);
+      revalidateTag(`assignment-${assignmentId}`);
 
       return data as $CourseClassAssignmentAPI.UpdateAssignment.Response['data'];
     } catch (err) {
@@ -162,6 +175,7 @@ export const updatePersonalAssignment = actionClient
       }
 
       revalidatePath('/assignments');
+      revalidateTag('assignments');
 
       return data as $PersonalAssignmentAPI.UpdateAssignment.Response['data'];
     } catch (err) {
@@ -208,6 +222,7 @@ export const createAssignment = actionClient
       }
 
       revalidatePath('/assignments');
+      revalidateTag('assignments');
 
       return data as $CourseClassAssignmentAPI.CreateAssignment.Response['data'];
     } catch (err) {
@@ -247,6 +262,8 @@ export const deleteAssignment = actionClient
         return handleError(error);
       }
       revalidatePath('/portal/atur-atur/assignments');
+      revalidateTag('assignments');
+      revalidateTag(`course-${courseId}-assignments`);
       return data as $CourseClassAssignmentAPI.DeleteAssignment.Response['data'];
     } catch (err) {
       if (err instanceof Error) {
@@ -256,17 +273,12 @@ export const deleteAssignment = actionClient
     }
   });
 
-export const getAssignmentById = async (
-  courseId: number,
-  classId: number,
-  assignmentId: number
-) =>
-  await fetchAction<
-    $CourseClassAssignmentAPI.GetAssignmentById.Response['data']
-  >(
-    $CourseClassAssignmentAPI.GetAssignmentById.generateUrl(
-      courseId,
-      classId,
-      assignmentId
-    )
+export const getAssignmentById = async (courseId: number, classId: number, assignmentId: number) =>
+  await fetchAction<$CourseClassAssignmentAPI.GetAssignmentById.Response['data']>(
+    $CourseClassAssignmentAPI.GetAssignmentById.generateUrl(courseId, classId, assignmentId),
+    'Failed to fetch assignment',
+    { 
+      tags: ['assignments', `assignment-${assignmentId}`],
+      name: 'getAssignmentById'
+    }
   )();

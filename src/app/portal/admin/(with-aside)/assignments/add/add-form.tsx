@@ -106,6 +106,7 @@ function AddForm({
         <Label>Deadline</Label>
         <Input
           type='datetime-local'
+          step={60}
           {...register('deadline', {
             validate: (val) => new Date(val) > new Date() || 'Deadline must be in the future',
           })}

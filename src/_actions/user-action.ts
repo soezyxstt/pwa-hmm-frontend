@@ -199,20 +199,23 @@ export const editProfile = actionClient
   // Get all public users
 export const getPublicUsers = fetchAction<userAPI.GetPublicUsers.Response['data']>(
   userAPI.GetPublicUsers.generateUrl(),
-  'Failed to fetch public users'
+  'Failed to fetch public users',
+  { tags: ['users'] }
 );
 
 // Get user by ID
 export const getUserById = async (userId: string) =>
   await fetchAction<userAPI.GetUserById.Response['data']>(
     userAPI.GetUserById.generateUrl(userId),
-    'Failed to fetch user'
+    'Failed to fetch user',
+    { tags: ['users', `user-${userId}`] }
   )();
 
 // Get current user
 export const getMe = fetchAction<userAPI.GetMe.Response['data']>(
   userAPI.GetMe.generateUrl(),
-  'Failed to fetch current user'
+  'Failed to fetch current user',
+  { tags: ['me'] }
 );
 
 // Get user permissions

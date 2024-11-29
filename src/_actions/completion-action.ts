@@ -6,7 +6,7 @@ import {env} from "@/env";
 import {verifySession} from "@/lib/session";
 import {flattenValidationErrors} from "next-safe-action";
 import {cookieGenerator} from "@/lib/utils";
-import {revalidatePath} from "next/cache";
+import {revalidatePath, revalidateTag} from "next/cache";
 import {createCompletionSchema, updateCompletionSchema} from "@/lib/schema";
 import {$CourseClassAssignmentCompletionAPI} from "lms-types";
 
@@ -37,6 +37,8 @@ export const createCompletion = actionClient
       }
 
       revalidatePath('/assignments');
+      revalidateTag('completions');
+      revalidateTag(`assignment-${assignmentId}-completions`);
 
       return data as $CourseClassAssignmentCompletionAPI.CreateCompletion.Response
     } catch (err) {
@@ -73,6 +75,8 @@ export const updateCompletion = actionClient
       }
 
       revalidatePath('/assignments');
+      revalidateTag('completions');
+      revalidateTag(`assignment-${assignmentId}-completions`);
 
       return data
     } catch (err) {

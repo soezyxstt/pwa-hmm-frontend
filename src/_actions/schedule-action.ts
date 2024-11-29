@@ -9,18 +9,20 @@ import { verifySession } from '@/lib/session';
 import { env } from '@/env';
 import { handleError, PWAError } from '@/lib/error';
 import { cookieGenerator } from '@/lib/utils';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const getSchedules = async (courseId: number) => 
   await fetchAction<$CourseScheduleAPI.GetSchedules.Response['data']>(
     $CourseScheduleAPI.GetSchedules.generateUrl(courseId),
-    'Failed to fetch schedules'
+    'Failed to fetch schedules',
+    { tags: ['schedules', `course-${courseId}-schedules`] }
   )();
 
 export const getScheduleById = async (courseId: number, scheduleId: number) =>
   await fetchAction<$CourseScheduleAPI.GetScheduleById.Response['data']>(
     $CourseScheduleAPI.GetScheduleById.generateUrl(courseId, scheduleId),
-    'Failed to fetch schedule'
+    'Failed to fetch schedule',
+    { tags: ['schedules', `schedule-${scheduleId}`] }
   )();
 
 export const createSchedule = actionClient
@@ -50,6 +52,8 @@ export const createSchedule = actionClient
       }
 
       revalidatePath('/courses/[id]');
+      revalidateTag('schedules');
+      revalidateTag(`course-${courseId}-schedules`);
       return data as $CourseScheduleAPI.CreateSchedule.Response['data'];
     } catch (err) {
       if (err instanceof Error) {
@@ -86,6 +90,9 @@ export const updateSchedule = actionClient
       }
 
       revalidatePath('/courses/[id]');
+      revalidateTag('schedules');
+      revalidateTag(`course-${courseId}-schedules`);
+      revalidateTag(`schedule-${scheduleId}`);
       return data as $CourseScheduleAPI.UpdateSchedule.Response['data'];
     } catch (err) {
       if (err instanceof Error) {
@@ -120,6 +127,8 @@ export const deleteSchedule = actionClient
       }
 
       revalidatePath('/courses/[id]');
+      revalidateTag('schedules');
+      revalidateTag(`course-${courseId}-schedules`);
       return data as $CourseScheduleAPI.DeleteSchedule.Response['data'];
     } catch (err) {
       if (err instanceof Error) {

@@ -1,8 +1,7 @@
 import AdminHeader from '@/components/admin/header';
 import { getScholarships } from '@/_actions/scholarship-action';
-import CustomLink from '@/components/admin/custom-link';
 import AdminBreadcrumb from '@/components/admin/breadcrumb';
-import ScholarshipTable from './table';
+import ScholarshipSection from './scholarship-section';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,9 +13,8 @@ export default async function Scholarships() {
       <AdminHeader title='Scholarships' />
       <div className='flex justify-between items-center'>
         <AdminBreadcrumb />
-        <CustomLink href={'scholarships/add'}>Add Scholarship</CustomLink>
       </div>
-      <ScholarshipTable data={scholarships} />
+      <ScholarshipSection data={scholarships} />
     </>
   );
 } 

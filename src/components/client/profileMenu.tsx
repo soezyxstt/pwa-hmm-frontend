@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Bell, Settings, User } from 'lucide-react';
+import { InstallPWA } from '../install-pwa';
 
 const ProfileMenu = async () => {
   const user = await getUser();
@@ -38,6 +39,7 @@ const ProfileMenu = async () => {
           <p>Settings</p>
         </TooltipContent>
       </Tooltip>
+      <InstallPWA />
       <Tooltip>
         <TooltipTrigger className='hidden md:block'>
           <Link
@@ -89,6 +91,7 @@ const ProfileMenu = async () => {
                 <span>Profile</span>
               </Link>
             </DropdownMenuItem>
+            <InstallPWA />
             <DropdownMenuItem>
               <Bell className='mr-2 w-4 h-4' />
               <span>Notifications</span>

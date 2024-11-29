@@ -4,8 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
-import { ReactNode } from "react";
-import { InstallPWA } from '@/components/install-pwa';
+import { type ReactNode } from "react";
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -30,7 +29,6 @@ export default async function RootLayout({
       <body className={cn(poppins.className, 'md:flex')}>
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster richColors />
-        <InstallPWA />
       </body>
     </html>
   );

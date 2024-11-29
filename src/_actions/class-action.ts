@@ -9,13 +9,20 @@ import {verifySession} from "@/lib/session";
 import { addClassSchema, updateClassSchema, deleteClassSchema } from "@/lib/schema";
 import {flattenValidationErrors} from "next-safe-action";
 import {cookieGenerator} from "@/lib/utils";
-import {revalidatePath} from "next/cache";
+import {revalidatePath, revalidateTag} from "next/cache";
 
-export const getClasses = async (courseId: number) => await fetchAction<$CourseClassAPI.GetClasses.Response["data"]>($CourseClassAPI.GetClasses.generateUrl(courseId))()
+export const getClasses = async (courseId: number) => 
+  await fetchAction<$CourseClassAPI.GetClasses.Response['data']>(
+    $CourseClassAPI.GetClasses.generateUrl(courseId),
+    'Failed to fetch classes',
+    { tags: ['classes', `course-${courseId}-classes`] }
+  )();
 
 export const getClassById = async (courseId: number, classId: number) =>
   await fetchAction<$CourseClassAPI.GetClassById.Response['data']>(
-    $CourseClassAPI.GetClassById.generateUrl(courseId, classId)
+    $CourseClassAPI.GetClassById.generateUrl(courseId, classId),
+    'Failed to fetch class',
+    { tags: ['classes', `class-${classId}`] }
   )();
 
 export const createClass = actionClient
@@ -46,6 +53,8 @@ export const createClass = actionClient
       }
 
       revalidatePath('/classes');
+      revalidateTag('classes');
+      revalidateTag(`course-${courseId}-classes`);
       return data;
     } catch (err) {
       if (err instanceof Error) {
@@ -84,6 +93,9 @@ export const updateClass = actionClient
       }
 
       revalidatePath('/classes');
+      revalidateTag('classes');
+      revalidateTag(`course-${courseId}-classes`);
+      revalidateTag(`class-${classId}`);
       return data;
     } catch (err) {
       if (err instanceof Error) {
@@ -120,6 +132,8 @@ export const deleteClass = actionClient
       }
 
       revalidatePath('/classes');
+      revalidateTag('classes');
+      revalidateTag(`course-${courseId}-classes`);
       return data;
     } catch (err) {
       if (err instanceof Error) {

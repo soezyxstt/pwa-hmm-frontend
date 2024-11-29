@@ -568,16 +568,20 @@ const Assignment = ({
                   <td className='text-sm text-muted-foreground'>Tracker</td>
                   <td className='text-sm'>:</td>
                   <td className='flex gap-6'>
-                    <Select defaultValue={active.status} onValueChange={(v) => updateComp(active, v)}>
-                      <SelectTrigger className='py-0 w-fit h-min'>
-                        <SelectValue placeholder='Select Tracker' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="DONE">Done</SelectItem>
-                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                        <SelectItem value="NOT_STARTED">Not Started</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    {getStatus(active.status!, active.deadline) === 'OVER_DUE_DATE' ? (
+                      <Badge variant="warning">Overdue</Badge>
+                    ) : (
+                        <Select defaultValue={active.status} onValueChange={(v) => updateComp(active, v)}>
+                          <SelectTrigger className='py-0 w-fit h-min'>
+                            <SelectValue placeholder='Select Tracker' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="DONE">Done</SelectItem>
+                            <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                            <SelectItem value="NOT_STARTED">Not Started</SelectItem>
+                          </SelectContent>
+                        </Select>
+                    )}
                   </td>
                 </tr>
                 <tr className=''>

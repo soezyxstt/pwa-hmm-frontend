@@ -28,6 +28,8 @@ export const getCourses = fetchAction<courseAPI.GetCourses.Response['data']>(
       pageSize: 999,
       pageNumber: 1,
     },
+    tags: ['courses'],
+    name: 'getCourses'
   }
 );
 
@@ -102,13 +104,34 @@ export const createCourse = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput }) => {
+    const { categoryId, ...rest } = parsedInput;
     const res = await fetchAction<courseAPI.CreateCourse.Response['data']>(
       courseAPI.CreateCourse.generateUrl(),
       'Failed to create course',
       {
         method: 'POST',
-        bodyObject: parsedInput,
+        bodyObject: { ...rest, categoryId: !!categoryId ? Number(categoryId) : undefined },
+        revalidateTag: 'courses'
       }
     )();
     return res;
   });
+
+export const getUserById = async (userId: string) =>
+  await fetchAction<userAPI.GetUserById.Response['data']>(
+    userAPI.GetUserById.generateUrl(userId),
+    'Failed to fetch user',
+    { 
+      tags: ['users', `user-${userId}`],
+      name: 'getUserById'
+    }
+  )();
+
+export const getMe = fetchAction<userAPI.GetMe.Response['data']>(
+  userAPI.GetMe.generateUrl(),
+  'Failed to fetch current user',
+  { 
+    tags: ['me'],
+    name: 'getMe'
+  }
+);

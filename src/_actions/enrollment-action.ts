@@ -1,6 +1,5 @@
 'use server';
 
-import { fetchAction } from '@/lib/fetch';
 import { $CourseEnrollmentAPI } from 'lms-types';
 import { actionClient } from '@/lib/action-client';
 import { createEnrollmentSchema } from '@/lib/schema';
@@ -9,7 +8,7 @@ import { verifySession } from '@/lib/session';
 import { env } from '@/env';
 import { handleError, PWAError } from '@/lib/error';
 import { cookieGenerator } from '@/lib/utils';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const createEnrollment = actionClient
   .metadata({ actionName: 'createEnrollment' })
@@ -37,6 +36,8 @@ export const createEnrollment = actionClient
       }
 
       revalidatePath('/courses/[id]');
+      revalidateTag('enrollments');
+      revalidateTag(`course-${parsedInput.courseId}-enrollments`);
       return data;
     } catch (err) {
       if (err instanceof Error) {

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { DropdownMenuItem } from './ui/dropdown-menu';
 
 export function InstallPWA() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -46,12 +47,20 @@ export function InstallPWA() {
   if (!showInstallButton) return null;
 
   return (
-    <Button
-      onClick={handleInstallClick}
-      className="fixed bottom-4 right-4 z-50 bg-navy"
-    >
-      <Download className="mr-2 h-4 w-4" />
-      Install App
-    </Button>
-  );
+    <>
+      <Tooltip>
+        <TooltipTrigger className='bg-white p-2 rounded-full text-lg hidden md:block'>
+          <Download onClick={handleInstallClick} />
+        </TooltipTrigger>
+        <TooltipContent className='hidden md:block'>
+          <p>Install App</p>
+        </TooltipContent>
+      </Tooltip>
+      <DropdownMenuItem onClick={handleInstallClick}>
+        <Download />
+        <span>Install App</span>
+      </DropdownMenuItem>
+    </>
+  )
+
 } 

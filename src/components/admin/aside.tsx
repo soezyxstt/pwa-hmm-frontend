@@ -60,6 +60,11 @@ function Sidebar({
       {...props}
     >
       <h1 className='text-white text-2xl font-bold uppercase'>Admin Page</h1>
+      <NextLink.default href='/dashboard' className={cn(
+        'px-4 py-2 rounded-lg border border-abu-2 w-full font-semibold text-abu-2 transition-colors',
+        loc === '/' ? 'bg-background text-navy' : 'hover:bg-abu-2 hover:text-navy',
+        className
+      )}>Home</NextLink.default>
       {links.map(({ title, path }) => (
         <Link
           key={title + path}
@@ -98,6 +103,11 @@ function Drawer({
               <DrawerTitle className='text-abu-2'>Admin Page</DrawerTitle>
             </DrawerHeader>
             <div className='flex flex-col gap-3 pb-4'>
+              <NextLink.default href='/dashboard' className={cn(
+                'px-4 py-2 rounded-lg border border-abu-2 w-full font-semibold text-abu-2 transition-colors',
+                loc === '/' ? 'bg-background text-navy' : 'hover:bg-abu-2 hover:text-navy',
+                className
+              )}>Home</NextLink.default>
               {links.map(({ title, path }, index) => (
                 <Link
                   key={index}

@@ -168,7 +168,10 @@ export const addCourseSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   description: z.string().optional(),
   status: z.nativeEnum(CourseStatusModel, { message: 'Invalid status' }),
-  categoryId: z.union([ z.literal(""), z.number({ message: 'Category ID must be a number' }).optional()]),
+  categoryId: z.union([
+    z.literal(""), 
+    z.number({ message: 'Category ID must be a number' }).optional()
+  ]),
 });
 export const deleteCourseSchema = z.object({
   courseId: z
@@ -382,4 +385,18 @@ export const updateScheduleSchema = z.object({
 export const deleteScheduleSchema = z.object({
   courseId: z.number().min(1, { message: 'Course ID is required' }),
   scheduleId: z.number().min(1, { message: 'Schedule ID is required' }),
+});
+
+// Add these with other schemas
+export const addCategorySchema = z.object({
+  title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
+});
+
+export const updateCategorySchema = z.object({
+  categoryId: z.number().min(1, { message: 'Category ID is required' }),
+  title: z.string().min(3, { message: 'Title must be at least 3 characters' }).optional(),
+});
+
+export const deleteCategorySchema = z.object({
+  categoryId: z.number().min(1, { message: 'Category ID is required' }),
 });

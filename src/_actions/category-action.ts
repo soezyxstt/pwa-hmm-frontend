@@ -1,9 +1,9 @@
 'use server';
 
 import { fetchAction } from '@/lib/fetch';
-import { $ScholarshipAPI } from 'lms-types';
+import { $CourseCategoryAPI } from 'lms-types';
 import { actionClient } from '@/lib/action-client';
-import { addScholarshipSchema, updateScholarshipSchema, deleteScholarshipSchema } from '@/lib/schema';
+import { addCategorySchema, updateCategorySchema, deleteCategorySchema } from '@/lib/schema';
 import { flattenValidationErrors } from 'next-safe-action';
 import { verifySession } from '@/lib/session';
 import { env } from '@/env';
@@ -11,22 +11,34 @@ import { handleError, PWAError } from '@/lib/error';
 import { cookieGenerator } from '@/lib/utils';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
-export const getScholarships = fetchAction<$ScholarshipAPI.GetScholarships.Response['data']>(
-  $ScholarshipAPI.GetScholarships.generateUrl(),
-  'Failed to fetch scholarships',
-  { tags: ['scholarships'] }
+export const getCategories = fetchAction<$CourseCategoryAPI.GetCategories.Response['data']>(
+  $CourseCategoryAPI.GetCategories.generateUrl(),
+  'Failed to fetch categories',
+  {
+    tags: ['categories'],
+    name: 'getCategories'
+  }
 );
 
-export const createScholarship = actionClient
-  .metadata({ actionName: 'createScholarship' })
-  .schema(addScholarshipSchema, {
+export const getCategoryById = async (categoryId: number) =>
+  await fetchAction<$CourseCategoryAPI.GetCategoryById.Response['data']>(
+    $CourseCategoryAPI.GetCategoryById.generateUrl(categoryId),
+    'Failed to fetch category',
+    {
+      name: 'getCategoryById'
+    }
+  )();
+
+export const createCategory = actionClient
+  .metadata({ actionName: 'createCategory' })
+  .schema(addCategorySchema, {
     handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput }) => {
     try {
       const { refresh_token, access_token } = await verifySession();
       const res = await fetch(
-        env.API_URL + $ScholarshipAPI.CreateScholarship.generateUrl(),
+        env.API_URL + $CourseCategoryAPI.CreateCategory.generateUrl(),
         {
           method: 'POST',
           headers: {
@@ -42,28 +54,28 @@ export const createScholarship = actionClient
         return handleError(error);
       }
 
-      revalidatePath('/portal/atur-atur/scholarships');
-      revalidateTag('scholarships');
-      return data as $ScholarshipAPI.CreateScholarship.Response['data'];
+      revalidatePath('/portal/atur-atur/categories');
+      revalidateTag('categories');
+      return data as $CourseCategoryAPI.CreateCategory.Response['data'];
     } catch (err) {
       if (err instanceof Error) {
         throw new PWAError(err.message);
       }
-      throw new PWAError('Failed to create scholarship');
+      throw new PWAError('Failed to create category');
     }
   });
 
-export const updateScholarship = actionClient
-  .metadata({ actionName: 'updateScholarship' })
-  .schema(updateScholarshipSchema, {
+export const updateCategory = actionClient
+  .metadata({ actionName: 'updateCategory' })
+  .schema(updateCategorySchema, {
     handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput }) => {
-    const { scholarshipId, ...rest } = parsedInput;
+    const { categoryId, ...rest } = parsedInput;
     try {
       const { refresh_token, access_token } = await verifySession();
       const res = await fetch(
-        env.API_URL + $ScholarshipAPI.UpdateScholarship.generateUrl(scholarshipId),
+        env.API_URL + $CourseCategoryAPI.UpdateCategory.generateUrl(categoryId),
         {
           method: 'PATCH',
           headers: {
@@ -79,28 +91,26 @@ export const updateScholarship = actionClient
         return handleError(error);
       }
 
-      revalidatePath('/portal/atur-atur/scholarships');
-      revalidateTag('scholarships');
-      revalidateTag(`scholarship-${scholarshipId}`);
-      return data as $ScholarshipAPI.UpdateScholarship.Response['data'];
+      revalidatePath('/portal/atur-atur/categories');
+      return data as $CourseCategoryAPI.UpdateCategory.Response['data'];
     } catch (err) {
       if (err instanceof Error) {
         throw new PWAError(err.message);
       }
-      throw new PWAError('Failed to update scholarship');
+      throw new PWAError('Failed to update category');
     }
   });
 
-export const deleteScholarship = actionClient
-  .metadata({ actionName: 'deleteScholarship' })
-  .schema(deleteScholarshipSchema, {
+export const deleteCategory = actionClient
+  .metadata({ actionName: 'deleteCategory' })
+  .schema(deleteCategorySchema, {
     handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput }) => {
     try {
       const { refresh_token, access_token } = await verifySession();
       const res = await fetch(
-        env.API_URL + $ScholarshipAPI.DeleteScholarship.generateUrl(parsedInput.scholarshipId),
+        env.API_URL + $CourseCategoryAPI.DeleteCategory.generateUrl(parsedInput.categoryId),
         {
           method: 'DELETE',
           headers: {
@@ -114,20 +124,12 @@ export const deleteScholarship = actionClient
         return handleError(error);
       }
 
-      revalidatePath('/portal/atur-atur/scholarships');
-      revalidateTag('scholarships');
-      return data as $ScholarshipAPI.DeleteScholarship.Response['data'];
+      revalidatePath('/portal/atur-atur/categories');
+      return data as $CourseCategoryAPI.DeleteCategory.Response['data'];
     } catch (err) {
       if (err instanceof Error) {
         throw new PWAError(err.message);
       }
-      throw new PWAError('Failed to delete scholarship');
+      throw new PWAError('Failed to delete category');
     }
-  });
-
-export const getScholarshipById = async (scholarshipId: number) =>
-  await fetchAction<$ScholarshipAPI.GetScholarshipById.Response['data']>(
-    $ScholarshipAPI.GetScholarshipById.generateUrl(scholarshipId),
-    'Failed to fetch scholarship',
-    { tags: ['scholarships', `scholarship-${scholarshipId}`] }
-  )(); 
+  }); 

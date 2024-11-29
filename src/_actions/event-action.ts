@@ -5,16 +5,19 @@ import { flattenValidationErrors } from 'next-safe-action';
 import { fetchAction } from '@/lib/fetch';
 import { $EventAPI } from 'lms-types';
 import { addEventSchema, deleteEventSchema, updateEventSchema } from '@/lib/schema';
+import { revalidateTag } from 'next/cache';
 
 export const getEvents = fetchAction<$EventAPI.GetEvents.Response['data']>(
   $EventAPI.GetEvents.generateUrl(),
-  'Failed to fetch events'
+  'Failed to fetch events',
+  { tags: ['events'] }
 );
 
 export const getEventById = async (eventId: string) =>
   await fetchAction<$EventAPI.GetEventById.Response['data']>(
     $EventAPI.GetEventById.generateUrl(Number(eventId)),
-    'Failed to fetch event'
+    'Failed to fetch event',
+    { tags: ['events', `event-${eventId}`] }
   )();
 
 export const createEvent = actionClient
@@ -34,6 +37,7 @@ export const createEvent = actionClient
         bodyObject: parsedInput,
       }
     )();
+    revalidateTag('events');
     return res;
   });
 
@@ -55,6 +59,7 @@ export const updateEvent = actionClient
         bodyObject: updateData,
       }
     )();
+    revalidateTag('events');
     return res;
   });
 
@@ -74,6 +79,7 @@ export const deleteEvent = actionClient
         method: 'DELETE',
       }
     )();
+    revalidateTag('events');
     return res;
   });
 

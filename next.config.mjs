@@ -5,7 +5,7 @@ const config = withPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development'
+  disable: process.env.NODE_ENV === 'development',
 })({
   images: {
     remotePatterns: [
@@ -18,6 +18,18 @@ const config = withPWA({
       {
         protocol: 'https',
         hostname: 'picsum.photos',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'climate.onep.go.th',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.google.com',
         port: '',
         pathname: '/**',
       },

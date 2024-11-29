@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { cn } from '@/lib/utils';
 import { FiDownload } from 'react-icons/fi';
-import { DropdownMenuItem } from './ui/dropdown-menu';
 
 export function InstallPWA({ className }: { className?: string }) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     // Check if app is installed
@@ -82,6 +78,8 @@ export function InstallPWA({ className }: { className?: string }) {
       console.error('Installation error:', error);
     }
   };
+
+  if (isInstalled) return null;
 
   return (
     <>

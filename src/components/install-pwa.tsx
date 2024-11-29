@@ -1,31 +1,46 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { DropdownMenuItem } from './ui/dropdown-menu';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
+import { FiDownload } from 'react-icons/fi';
 
-export function InstallPWA() {
+export function InstallPWA({className}:{className?:string}) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
+    // Check if app is installed
+    const checkInstalled = () => {
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        setIsInstalled(true);
+      }
+    };
+
+    checkInstalled();
+
     const handler = (e: Event) => {
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
       // Stash the event so it can be triggered later
       setDeferredPrompt(e);
-      // Show install button
-      setShowInstallButton(true);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => setIsInstalled(true));
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', () => setIsInstalled(true));
+    };
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    console.log('clicked');
+    if (isInstalled) return; // Do nothing if already installed
+    if (!deferredPrompt) return; // Do nothing if installation prompt not available
 
     // Show the install prompt
     deferredPrompt.prompt();
@@ -35,32 +50,32 @@ export function InstallPWA() {
 
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt');
+      setIsInstalled(true);
     } else {
       console.log('User dismissed the install prompt');
     }
 
     // Clear the deferredPrompt
     setDeferredPrompt(null);
-    setShowInstallButton(false);
   };
-
-  if (!showInstallButton) return null;
 
   return (
     <>
-      <Tooltip>
-        <TooltipTrigger className='bg-white p-2 rounded-full text-lg hidden md:block'>
-          <Download onClick={handleInstallClick} />
+      {isMobile ? (
+        <div onClick={handleInstallClick} className={cn('flex items-center gap-2 cursor-pointer ',className)}>
+          <FiDownload />
+          <span>{isInstalled ? 'Already Installed' : 'Install App'}</span>
+        </div>
+      ) : (
+        <Tooltip>
+        <TooltipTrigger className='bg-white p-2 rounded-full text-lg hidden md:block' onClick={handleInstallClick}>
+          <FiDownload />
         </TooltipTrigger>
         <TooltipContent className='hidden md:block'>
-          <p>Install App</p>
-        </TooltipContent>
-      </Tooltip>
-      <DropdownMenuItem onClick={handleInstallClick}>
-        <Download />
-        <span>Install App</span>
-      </DropdownMenuItem>
+          <p>{isInstalled ? 'Already Installed' : 'Install App'}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </>
-  )
-
+  );
 } 

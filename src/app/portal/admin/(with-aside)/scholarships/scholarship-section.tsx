@@ -23,13 +23,13 @@ export default function ScholarshipSection({
 
   return (
     <>
-      <div className="w-full flex justify-between items-center mb-4">
+      <div className="w-full flex flex-col md:flex-row justify-between gap-4 md:items-center mb-4">
         <Search
           query={searchQuery}
           setQuery={setSearchQuery}
           className="w-full md:w-[300px]"
         />
-        <CustomLink href={'scholarships/add'}>Add Scholarship</CustomLink>
+        <CustomLink href={'scholarships/add'} className='self-end md:self-auto'>Add Scholarship</CustomLink>
       </div>
       {filteredData.length === 0 ? (
         <div className="text-center text-muted-foreground mt-8">

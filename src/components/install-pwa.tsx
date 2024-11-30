@@ -79,7 +79,7 @@ export function InstallPWA({ className }: { className?: string }) {
     }
   };
 
-  if (isInstalled) return null;
+  if (isInstalled || !deferredPrompt) return null;
 
   return (
     <>

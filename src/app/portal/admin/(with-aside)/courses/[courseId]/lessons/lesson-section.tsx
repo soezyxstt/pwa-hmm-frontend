@@ -1,34 +1,48 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Ellipsis } from "lucide-react";
-import Pagination from "@/components/client/pagination";
-import { $CourseAPI } from "lms-types";
-import Wrapper from "@/app/portal/admin/wrapper";
-import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'sonner';
+import { CourseLessonModel } from 'lms-types';
+import { Ellipsis } from 'lucide-react';
 import Link from 'next/link';
-import { deleteCourse } from '@/_actions/courses-action';
+import { useRouter } from 'next/navigation';
+import { deleteLesson } from '@/_actions/lessons-action';
+import { toast } from 'sonner';
+import { useAction } from 'next-safe-action/hooks';
+import Pagination from "@/components/client/pagination";
+import Wrapper from "@/app/portal/admin/wrapper";
 
-function CoursesTable({ data }: { data: $CourseAPI.GetCourses.Response["data"] }) {
+interface LessonSectionProps {
+  data: CourseLessonModel[];
+  courseId: string;
+}
+
+export default function LessonSection({ data, courseId }: LessonSectionProps) {
+  const router = useRouter();
   const [page, setPage] = useState(1);
-  const coursesPerPage = 6;
-  const totalPage = Math.ceil(data.length / coursesPerPage);
+  const lessonsPerPage = 6;
+  const totalPage = Math.ceil(data.length / lessonsPerPage);
 
-  const { execute: executeDelete } = useAction(deleteCourse, {
+  const { execute: executeDelete } = useAction(deleteLesson, {
     onSuccess: () => {
-      toast.success('Course deleted successfully');
+      toast.success('Lesson deleted successfully');
     },
     onError: (err) => {
-      toast.error(err.error.serverError || 'Failed to delete course');
+      toast.error(err.error.serverError || 'Failed to delete lesson');
     },
   });
 
-  const handleDelete = (courseId: number) => {
-    if (window.confirm('Are you sure you want to delete this course?')) {
-      executeDelete({ courseId });
+  const handleDelete = (lessonId: number) => {
+    if (window.confirm('Are you sure you want to delete this lesson?')) {
+      executeDelete({ courseId: Number(courseId), lessonId });
     }
   };
 
@@ -38,25 +52,29 @@ function CoursesTable({ data }: { data: $CourseAPI.GetCourses.Response["data"] }
         <TableHeader>
           <TableRow>
             <TableHead>Title</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead>Description</TableHead>
-            <TableHead>Updated At</TableHead>
+            <TableHead>Total Videos</TableHead>
+            <TableHead>Total Duration</TableHead>
+            <TableHead>Total Attachments</TableHead>
+            <TableHead>Created At</TableHead>
             <TableHead>
               <span className='sr-only'>Actions</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((course, index) => {
-            if (index < (page - 1) * coursesPerPage || index >= page * coursesPerPage) return null;
+          {data.map((lesson, index) => {
+            if (index < (page - 1) * lessonsPerPage || index >= page * lessonsPerPage) return null;
 
             return (
-              <TableRow key={course.id} className='even:bg-navy/5 odd:bg-transparent'>
-                <TableCell>{course.title}</TableCell>
-                <TableCell>{course.status}</TableCell>
-                <TableCell>{course.description}</TableCell>
+              <TableRow key={lesson.id}>
+                <TableCell>{lesson.title}</TableCell>
+                <TableCell>{lesson.description}</TableCell>
+                <TableCell>{lesson.totalVideos}</TableCell>
+                <TableCell>{lesson.totalDurations}</TableCell>
+                <TableCell>{lesson.totalAttachments}</TableCell>
                 <TableCell className='whitespace-nowrap text-nowrap'>
-                  {new Date(course.updatedAt).toDateString()}
+                  {new Date(lesson.createdAt).toDateString()}
                 </TableCell>
                 <TableCell>
                   <Popover>
@@ -67,13 +85,13 @@ function CoursesTable({ data }: { data: $CourseAPI.GetCourses.Response["data"] }
                       <div className='flex flex-col text-sm *:text-left *:font-medium'>
                         <h3 className='font-bold text-sm p-2'>Action</h3>
                         <Link
-                          href={`/portal/admin/courses/edit/${course.id}?title=${encodeURIComponent(course.title)}&code=${encodeURIComponent(course.code)}&status=${encodeURIComponent(course.status)}&description=${encodeURIComponent(course.description ?? '')}&image=${encodeURIComponent(course.image || '')}&categoryId=${course.categoryId || ''}`}
+                          href={`/portal/admin/courses/${courseId}/lessons/edit/${lesson.id}`}
                           className='hover:bg-navy/40 p-2 rounded-md transition'
                         >
                           Edit
                         </Link>
                         <button
-                          onClick={() => handleDelete(course.id)}
+                          onClick={() => handleDelete(lesson.id)}
                           className='hover:bg-navy/40 p-2 rounded-md transition text-left'
                         >
                           Delete
@@ -90,6 +108,4 @@ function CoursesTable({ data }: { data: $CourseAPI.GetCourses.Response["data"] }
       <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
     </Wrapper>
   );
-}
-
-export default CoursesTable;
+} 

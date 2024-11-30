@@ -5,13 +5,13 @@ import { fetchAction } from '@/lib/fetch';
 import {
   $UserAPI as userAPI,
   $CourseAPI as courseAPI,
-  $CourseLessonAPI as lessonAPI,
   $CourseLessonVideoAPI as videoAPI,
 } from 'lms-types';
 import { actionClient } from '@/lib/action-client';
 import { addCourseSchema, deleteCourseSchema, updateCourseSchema } from '@/lib/schema';
 import { flattenValidationErrors } from 'next-safe-action';
 import { z } from 'zod';
+import { getLessons as getLessonsAction } from './lessons-action';
 
 export const getEnrolledCourses = fetchAction<
   userAPI.GetUserEnrolledCourses.Response['data']
@@ -40,11 +40,7 @@ export const getCourseById = async (courseId: string) =>
     'Failed to fetch course'
   )();
 
-export const getLessons = async (courseId: string) =>
-  await fetchAction<lessonAPI.GetLessons.Response['data']>(
-    lessonAPI.GetLessons.generateUrl(Number(courseId)),
-    'Failed to fetch lessons'
-  )();
+export const getLessons = getLessonsAction;
 
 export const getVideos = async (
   courseId: string | number,

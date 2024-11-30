@@ -65,7 +65,7 @@ function ScholarshipTable({
               return null;
 
             return (
-              <TableRow key={scholarship.id}>
+              <TableRow key={scholarship.id} className='even:bg-navy/5 odd:bg-transparent'>
                 <TableCell>{scholarship.title}</TableCell>
                 <TableCell>{scholarship.provider}</TableCell>
                 <TableCell>

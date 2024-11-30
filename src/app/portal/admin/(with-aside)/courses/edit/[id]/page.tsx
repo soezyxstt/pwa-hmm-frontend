@@ -25,6 +25,11 @@ import { uploadCourseImage } from '@/_actions/upload-image-action';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import ManageTable from '@/app/portal/admin/manage-table';
+import { TableCell } from '@/components/ui/table';
+import { TableRow } from '@/components/ui/table';
+import Link from 'next/link';
+import { Pencil } from 'lucide-react';
 
 export default function Page() {
   const { id } = useParams();
@@ -53,11 +58,11 @@ export default function Page() {
     defaultValues,
   });
 
-  const { execute: executeUpload } = useAction(uploadCourseImage, {
-    onSuccess: (url) => {
-      if (url.data) {
-        setValue('image', url.data);
-        setPreviewUrl(url.data);
+  const { execute: executeUpload, isExecuting: isUploading } = useAction(uploadCourseImage, {
+    onSuccess: (result) => {
+      if (result?.data) {
+        setValue('image', result.data);
+        setPreviewUrl(result.data);
         toast.success('Image uploaded successfully');
       }
     },
@@ -74,9 +79,9 @@ export default function Page() {
     onError: ({ error: { serverError, validationErrors, fetchError } }) => {
       toast.error(
         serverError ||
-          fetchError ||
-          validationErrors?.toString() ||
-          'Failed to update course'
+        fetchError ||
+        validationErrors?.toString() ||
+        'Failed to update course'
       );
     },
   });
@@ -92,7 +97,10 @@ export default function Page() {
     // Upload
     const formData = new FormData();
     formData.append('file', file);
-    await executeUpload({ file: formData });
+    executeUpload({
+      file: formData,
+      oldImageUrl: defaultValues.image || null
+    });
   };
 
   const onSubmit = handleSubmit((data) => {
@@ -136,6 +144,7 @@ export default function Page() {
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
                 className='w-fit'
+                disabled={isUploading || isExecuting}
               >
                 Choose Image
               </Button>
@@ -171,10 +180,25 @@ export default function Page() {
             {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
           </div>
 
-          <Button type="submit" className="bg-navy" disabled={isExecuting}>
-            {isExecuting ? 'Updating...' : 'Update Course'}
+          <Button type="submit" className="bg-navy" disabled={isUploading || isExecuting}>
+            {isUploading ? 'Uploading...' : (isExecuting ? 'Updating...' : 'Update Course')}
           </Button>
         </form>
+      </Wrapper>
+      <Wrapper>
+        <h2 className='text-lg font-semibold mb-4'>Manage Course</h2>
+        <ManageTable>
+          {["lessons", "classes", "schedules", "instructors"].map((item, i) => (
+            <TableRow key={item + "-edit-course-admin-page"} className='even:bg-abu-1 odd:bg-white'>
+              <TableCell className='capitalize font-semibold '>{item}</TableCell>
+              <TableCell className='flex justify-end'>
+                <Link href={`/portal/admin/courses/${id}/${item}`} className='text-blue-500 flex gap-2 items-center'>
+                  <Pencil className='w-4 h-4' />
+                  Manage</Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </ManageTable>
       </Wrapper>
     </>
   );

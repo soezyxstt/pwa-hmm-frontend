@@ -196,6 +196,7 @@ export const createAssignment = actionClient
     const { courseId, classId, ...otherInput } = parsedInput;
     const bodyInput: $CourseClassAssignmentAPI.CreateAssignment.Dto = {
       ...otherInput,
+      deadline: new Date(otherInput.deadline).toISOString(),
     };
 
     try {

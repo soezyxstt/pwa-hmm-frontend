@@ -55,7 +55,7 @@ function AssignmentTable({
     <Wrapper>
       <Table className='table-admin'>
         <TableHeader>
-          <TableRow>
+          <TableRow >
             <TableHead>Course</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Due Date</TableHead>
@@ -88,7 +88,7 @@ function AssignmentTable({
                 return null;
 
               return (
-                <TableRow key={id + title}>
+                <TableRow key={id + title} className='even:bg-navy/5 odd:bg-transparent'>
                   <TableCell>{course}</TableCell>
                   <TableCell>{title}</TableCell>
                   <TableCell className='whitespace-nowrap text-nowrap'>

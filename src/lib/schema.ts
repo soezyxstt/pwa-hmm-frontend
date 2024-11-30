@@ -85,9 +85,15 @@ export const addPersonalAssignmentSchema = z.object({
 
 export const addAssignmentSchema = z.object({
   title: z.string().min(3, { message: 'Input at least 3 characters' }),
-  deadline: z.string().refine((val) => new Date(val) > new Date(), {
-    message: 'Deadline must be in the future',
-  }),
+  deadline: z.string()
+    .transform((str) => {
+      // Ensure the string ends with Z for UTC timezone
+      const date = new Date(str);
+      return date.toISOString(); // This will format to "2024-11-26T12:03:36.280Z"
+    })
+    .refine((val) => new Date(val) > new Date(), {
+      message: 'Deadline must be in the future',
+    }),
   submission: z.enum(submissionsEnum, { message: 'Invalid submission method' }),
   description: z.string().optional(),
   taskType: z.nativeEnum(AssignmentTaskTypeModel, {
@@ -410,4 +416,25 @@ export const updateCourseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   categoryId: z.number().optional(),
+});
+
+// Lesson schemas
+export const addLessonSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
+  description: z.string().optional(),
+  references: z.array(z.string()).optional(),
+});
+
+export const updateLessonSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  lessonId: z.number().min(1, { message: 'Lesson ID is required' }),
+  title: z.string().min(3, { message: 'Title must be at least 3 characters' }).optional(),
+  description: z.string().optional(),
+  references: z.array(z.string()).optional(),
+});
+
+export const deleteLessonSchema = z.object({
+  courseId: z.number().min(1, { message: 'Course ID is required' }),
+  lessonId: z.number().min(1, { message: 'Lesson ID is required' }),
 });

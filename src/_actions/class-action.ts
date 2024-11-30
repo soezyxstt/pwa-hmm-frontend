@@ -52,9 +52,7 @@ export const createClass = actionClient
         return handleError(error);
       }
 
-      revalidatePath('/classes');
       revalidateTag('classes');
-      revalidateTag(`course-${courseId}-classes`);
       return data;
     } catch (err) {
       if (err instanceof Error) {

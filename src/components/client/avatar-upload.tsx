@@ -58,7 +58,7 @@ export default function AvatarUpload({ currentAvatar, name }: AvatarUploadProps)
     },
   });
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -66,16 +66,6 @@ export default function AvatarUpload({ currentAvatar, name }: AvatarUploadProps)
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
     setSelectedFile(file);
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-
-    // Create FormData and append the file
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    await executeUpload({ file: formData });
   };
 
   return (
@@ -158,7 +148,15 @@ export default function AvatarUpload({ currentAvatar, name }: AvatarUploadProps)
                 Cancel
               </Button>
               <Button
-                onClick={handleUpload}
+                onClick={() => {
+                  if (!selectedFile) return;
+                  const formData = new FormData();
+                  formData.append('file', selectedFile);
+                  executeUpload({
+                    file: formData,
+                    oldImageUrl: currentAvatar || null
+                  });
+                }}
                 disabled={!selectedFile || isExecuting}
               >
                 {isExecuting ? 'Uploading...' : 'Upload'}

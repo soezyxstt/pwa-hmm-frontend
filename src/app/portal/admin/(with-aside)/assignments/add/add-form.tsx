@@ -69,7 +69,11 @@ function AddForm({
     e
   ) => {
     e?.preventDefault();
-    execute(data);
+    const formData = {
+      ...data,
+      deadline: new Date(data.deadline).toISOString()
+    };
+    execute(formData);
   };
 
   return (
@@ -106,7 +110,7 @@ function AddForm({
         <Label>Deadline</Label>
         <Input
           type='datetime-local'
-          step={60}
+          step="0.001"
           {...register('deadline', {
             validate: (val) => new Date(val) > new Date() || 'Deadline must be in the future',
           })}

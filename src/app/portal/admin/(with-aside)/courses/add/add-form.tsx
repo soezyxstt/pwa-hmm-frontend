@@ -39,6 +39,7 @@ function AddForm({ initialCategories }: AddFormProps) {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues
   } = useForm<FormData>({
     resolver: zodResolver(addCourseSchema),
     defaultValues: {
@@ -63,10 +64,10 @@ function AddForm({ initialCategories }: AddFormProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { execute: executeUpload } = useAction(uploadCourseImage, {
-    onSuccess: (url) => {
-      if (url.data) {
-        setValue('image', url.data);
-        setPreviewUrl(url.data);
+    onSuccess: (result) => {
+      if (result?.data) {
+        setValue('image', result.data);
+        setPreviewUrl(result.data);
         toast.success('Image uploaded successfully');
       }
     },
@@ -95,7 +96,10 @@ function AddForm({ initialCategories }: AddFormProps) {
     // Upload
     const formData = new FormData();
     formData.append('file', file);
-    await executeUpload({ file: formData });
+    await executeUpload({ 
+      file: formData,
+      oldImageUrl: getValues('image') || null 
+    });
   };
 
   return (

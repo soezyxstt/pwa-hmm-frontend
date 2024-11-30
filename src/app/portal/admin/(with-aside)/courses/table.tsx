@@ -67,7 +67,7 @@ function CoursesTable({ data }: { data: $CourseAPI.GetCourses.Response["data"] }
                       <div className='flex flex-col text-sm *:text-left *:font-medium'>
                         <h3 className='font-bold text-sm p-2'>Action</h3>
                         <Link
-                          href={`/portal/admin/courses/edit/${course.id}?title=${encodeURIComponent(course.title)}&code=${encodeURIComponent(course.code)}&status=${encodeURIComponent(course.status)}&description=${encodeURIComponent(course.description)}&image=${encodeURIComponent(course.image || '')}&categoryId=${course.categoryId || ''}`}
+                          href={`/portal/admin/courses/edit/${course.id}?title=${encodeURIComponent(course.title)}&code=${encodeURIComponent(course.code)}&status=${encodeURIComponent(course.status)}&description=${encodeURIComponent(course.description ?? '')}&image=${encodeURIComponent(course.image || '')}&categoryId=${course.categoryId || ''}`}
                           className='hover:bg-navy/40 p-2 rounded-md transition'
                         >
                           Edit

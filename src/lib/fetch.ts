@@ -15,7 +15,7 @@ export function fetchAction<T>(
     bodyObject?: {
       [key: string]: unknown;
     };
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
     revalidatePath?: string;
     revalidateTag?: string;
     logResponse?: boolean;

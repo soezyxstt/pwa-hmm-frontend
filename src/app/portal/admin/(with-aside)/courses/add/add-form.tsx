@@ -21,6 +21,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CourseCategoryModel } from 'lms-types';
+import { useRef, useState } from 'react';
+import { uploadCourseImage } from '@/_actions/upload-image-action';
+import Image from 'next/image';
 
 type FormData = z.infer<typeof addCourseSchema>;
 
@@ -56,6 +59,22 @@ function AddForm({ initialCategories }: AddFormProps) {
     },
   });
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const { execute: executeUpload } = useAction(uploadCourseImage, {
+    onSuccess: (url) => {
+      if (url.data) {
+        setValue('image', url.data);
+        setPreviewUrl(url.data);
+        toast.success('Image uploaded successfully');
+      }
+    },
+    onError: (error) => {
+      toast.error(error.error?.serverError || 'Failed to upload image');
+    },
+  });
+
   const onSubmit = handleSubmit((data) => {
     // Convert categoryId to number if it exists
     const formData = {
@@ -64,6 +83,20 @@ function AddForm({ initialCategories }: AddFormProps) {
     };
     executeAddCourse(formData);
   });
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Preview
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+
+    // Upload
+    const formData = new FormData();
+    formData.append('file', file);
+    await executeUpload({ file: formData });
+  };
 
   return (
     <form
@@ -80,13 +113,34 @@ function AddForm({ initialCategories }: AddFormProps) {
       </div>
 
       <div>
-        <Label>Image URL</Label>
-        <Input
-          id='imageUrl'
-          type='url'
-          placeholder='https://example.com/image.jpg'
-          {...register('image')}
-        />
+        <Label>Image</Label>
+        <div className="flex flex-col gap-4">
+          {previewUrl && (
+            <div className="relative w-40 h-40">
+              <Image
+                src={previewUrl}
+                alt="Preview"
+                fill
+                className="object-cover rounded-lg"
+              />
+            </div>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            ref={fileInputRef}
+            className="hidden"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            className='w-fit'
+          >
+            Choose Image
+          </Button>
+        </div>
         {errors.image && <ErrorText>{errors.image.message}</ErrorText>}
       </div>
 

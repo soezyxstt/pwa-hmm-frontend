@@ -10,6 +10,7 @@ import { env } from '@/env';
 import { handleError, PWAError } from '@/lib/error';
 import { cookieGenerator } from '@/lib/utils';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { getEnrolledCourses } from './courses-action';
 
 export const getSchedules = async (courseId: number) => 
   await fetchAction<$CourseScheduleAPI.GetSchedules.Response['data']>(
@@ -141,10 +142,7 @@ export const deleteSchedule = actionClient
 // Helper function to get all schedules for enrolled courses
 export const getAllUserSchedules = async () => {
   try {
-    const { data: courses } = await fetchAction<any>(
-      '/courses/enrolled',
-      'Failed to fetch enrolled courses'
-    )();
+    const courses = await getEnrolledCourses();
 
     const schedules = await Promise.all(
       courses.map(async (course: any) => {

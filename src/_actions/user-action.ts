@@ -17,6 +17,7 @@ import {getTokenFromResponse} from '@/lib/utils';
 import {flattenValidationErrors} from 'next-safe-action';
 import {$UserAPI as userAPI} from "lms-types";
 import { fetchAction } from '@/lib/fetch';
+import {z} from 'zod';
 
 export const signUp = actionClient
   .metadata({actionName: 'signUp'})
@@ -414,5 +415,48 @@ export const deleteUser = actionClient
         throw new PWAError(err.message);
       }
       throw new PWAError('Failed to delete user');
+    }
+  });
+
+// Add this with the other actions
+export const updateAvatar = actionClient
+  .metadata({ actionName: 'updateAvatar' })
+  .schema(z.object({ avatar: z.string() }), {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { avatar } }) => {
+    try {
+      const session = await verifySession();
+      
+      if (!session.isAuth) {
+        throw new PWAError('Unauthorized');
+      }
+
+      const res = await fetch(
+        env.API_URL + userAPI.UpdateBasicUser.generateUrl(session.userId),
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Cookie: `accessToken=${session.access_token}`,
+          },
+          body: JSON.stringify({ avatar }),
+        }
+      );
+
+      if (!res.ok) {
+        handleError(res);
+      }
+
+      return {
+        message: 'Avatar updated successfully',
+        status: 'success',
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new PWAError(err.message);
+      }
+      throw new PWAError('Failed to update avatar');
     }
   });

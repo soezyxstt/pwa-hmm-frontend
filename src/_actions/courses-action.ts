@@ -9,8 +9,9 @@ import {
   $CourseLessonVideoAPI as videoAPI,
 } from 'lms-types';
 import { actionClient } from '@/lib/action-client';
-import { addCourseSchema, deleteCourseSchema } from '@/lib/schema';
+import { addCourseSchema, deleteCourseSchema, updateCourseSchema } from '@/lib/schema';
 import { flattenValidationErrors } from 'next-safe-action';
+import { z } from 'zod';
 
 export const getEnrolledCourses = fetchAction<
   userAPI.GetUserEnrolledCourses.Response['data']
@@ -135,3 +136,115 @@ export const getMe = fetchAction<userAPI.GetMe.Response['data']>(
     name: 'getMe'
   }
 );
+
+export const updateCourseStatus = actionClient
+  .metadata({
+    actionName: 'updateCourseStatus',
+  })
+  .schema(z.object({
+    courseId: z.number(),
+    status: z.enum(['PUBLISHED', 'DRAFT'])
+  }), {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { courseId, status } }) => {
+    const res = await fetchAction<courseAPI.UpdateCourseStatus.Response['data']>(
+      courseAPI.UpdateCourseStatus.generateUrl(courseId),
+      'Failed to update course status',
+      {
+        method: 'PATCH',
+        bodyObject: { status },
+        revalidateTag: 'courses'
+      }
+    )();
+    return res;
+  });
+
+export const updateCourseCategory = actionClient
+  .metadata({
+    actionName: 'updateCourseCategory',
+  })
+  .schema(z.object({
+    courseId: z.number(),
+    categoryId: z.number()
+  }), {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { courseId, categoryId } }) => {
+    const res = await fetchAction<courseAPI.UpdateCourseCategoryId.Response['data']>(
+      courseAPI.UpdateCourseCategoryId.generateUrl(courseId),
+      'Failed to update course category',
+      {
+        method: 'PATCH',
+        bodyObject: { categoryId },
+        revalidateTag: 'courses'
+      }
+    )();
+    return res;
+  });
+
+export const updateCourseCode = actionClient
+  .metadata({
+    actionName: 'updateCourseCode',
+  })
+  .schema(z.object({
+    courseId: z.number(),
+    code: z.string()
+  }), {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { courseId, code } }) => {
+    const res = await fetchAction<courseAPI.UpdateCourseCode.Response['data']>(
+      courseAPI.UpdateCourseCode.generateUrl(courseId),
+      'Failed to update course code',
+      {
+        method: 'PATCH',
+        bodyObject: { code },
+        revalidateTag: 'courses'
+      }
+    )();
+    return res;
+  });
+
+export const updateCourse = actionClient
+  .metadata({
+    actionName: 'updateCourse',
+  })
+  .schema(updateCourseSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput }) => {
+    const { courseId, code, status, categoryId, ...rest } = parsedInput;
+    
+    // Update basic course info
+    const courseRes = await fetchAction<courseAPI.UpdateCourse.Response['data']>(
+      courseAPI.UpdateCourse.generateUrl(courseId),
+      'Failed to update course',
+      {
+        method: 'PATCH',
+        bodyObject: rest,
+        revalidateTag: 'courses'
+      }
+    )();
+
+    // Update status if provided
+    if (status) {
+      await updateCourseStatus({ courseId, status });
+    }
+
+    // Update code if provided
+    if (code) {
+      await updateCourseCode({ courseId, code });
+    }
+
+    // Update category if provided
+    if (categoryId) {
+      await updateCourseCategory({ courseId, categoryId });
+    }
+
+    return courseRes;
+  });

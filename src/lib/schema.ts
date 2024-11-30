@@ -400,3 +400,14 @@ export const updateCategorySchema = z.object({
 export const deleteCategorySchema = z.object({
   categoryId: z.number().min(1, { message: 'Category ID is required' }),
 });
+
+// Add this to your existing schema.ts file
+export const updateCourseSchema = z.object({
+  courseId: z.number(),
+  code: z.string().min(1, "Code is required"),
+  status: z.enum(['PUBLISHED', 'DRAFT']),
+  image: z.string().url().optional().nullable(),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  categoryId: z.number().optional(),
+});
